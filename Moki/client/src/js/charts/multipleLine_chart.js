@@ -27,6 +27,7 @@ import {
 } from "../helpers/getTimeBucket";
 import { parseTimestamp } from "../helpers/parseTimestamp";
 import { setTickNrForTimeXAxis } from "../helpers/chart";
+import { showTooltip } from '../helpers/tooltip.js';
 
 //STATE: absolute value or rate
 
@@ -384,24 +385,14 @@ export default class MultipleLineChart extends Component {
                 .attr("class", "circle" + id)
                 .style("cursor", "pointer")
                 .on("mouseover", function (d) {
-                    tooltip.style("visibility", "visible");
                     tooltip.select("div").html("<strong>Time: </strong>" + parseTimestamp(d.date) + " + " + getTimeBucket() + "<strong><br/>Value: </strong>" + d3.format(',')(d.value) + "<br/> ");
-
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(tooltip)
                 })
                 .on("mouseout", function (d) {
                     tooltip.style("visibility", "hidden")
                 })
                 .on("mousemove", function (d) {
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(tooltip)
                 })
                 .append("circle")
                 .attr("cx", d => xScale(d.date))

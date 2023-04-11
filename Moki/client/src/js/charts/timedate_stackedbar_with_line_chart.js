@@ -9,6 +9,7 @@ import emptyIcon from "../../styles/icons/empty_small.png";
 import { getTimeBucket, getTimeBucketInt } from "../helpers/getTimeBucket";
 import { parseTimestamp, parseTimestampD3js, parseTimeData } from "../helpers/parseTimestamp";
 import { setTickNrForTimeXAxis } from "../helpers/chart";
+import { showTooltip } from '../helpers/tooltip';
 
 /*
 format:
@@ -261,23 +262,14 @@ export default class StackedChartLine extends Component {
                     tooltip.select("div").html("<strong>Time: </strong> " + parseTimestamp(d.data.time) + " + " + getTimeBucket() + "<br/><strong>Value: </strong> " + d3.format(',')(d[1] - d[0]) + units + "<br/><strong>Type: </strong>" + this.parentNode.getAttribute("type") + "<br/> ");
                     d3.select(this).style("cursor", "pointer");
 
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("visibility", "visible")
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(tooltip)
                 })
                 .on("mouseout", function () {
                     //  d3.select(this).style("stroke","none");
                     tooltip.style("visibility", "hidden");
                 })
                 .on("mousemove", function (d) {
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(tooltip)
                 });
 
             //filter type onClick
@@ -324,13 +316,15 @@ export default class StackedChartLine extends Component {
 
             // tooltip
             var tooltip = d3.select('#' + id).append("div")
-                .style("background", "white")
-                .attr('class', 'tooltip tooltip' + id)
-                .style("opacity", "0.9")
-                .style("position", "absolute")
-                .style("visibility", "hidden")
-                .style("box-shadow", "0px 0px 6px black")
-                .style("padding", "10px");
+                .attr("id", "tooltip" + id)
+                .attr("class", "tooltipCharts")
+                // .style("background", "white")
+                // .attr('class', 'tooltip tooltip' + id)
+                // .style("opacity", "0.9")
+                // .style("position", "absolute")
+                // .style("visibility", "hidden")
+                // .style("box-shadow", "0px 0px 6px black")
+                // .style("padding", "10px");
 
             tooltip.append("div");
 
@@ -387,24 +381,15 @@ export default class StackedChartLine extends Component {
                         return d.agg.value;
                     })
                     .on("mouseover", function (d, i) {
-                        var tooltipDim = tooltip.node().getBoundingClientRect();
-                        var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                        tooltip
-                            .style("visibility", "visible")
-                            .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                            .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 15) + "px");
                         tooltip.select("div").html("<strong>Time: </strong> " + parseTimestamp(d.key) + "<br/><strong>ASR value:</strong> " + d3.format(',')(Math.round(d.agg.value)) + "% <br/>");
                         d3.select(this).style("cursor", "pointer");
+                        showTooltip(tooltip)
                     })
                     .on("mouseout", function () {
                         tooltip.style("visibility", "hidden");
                     })
                     .on("mousemove", function (d) {
-                        var tooltipDim = tooltip.node().getBoundingClientRect();
-                        var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                        tooltip
-                            .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                            .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 15) + "px");
+                        showTooltip(tooltip)
                     });
             }
         }

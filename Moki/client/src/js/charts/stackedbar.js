@@ -9,6 +9,7 @@ import {
     createFilter
 } from '@moki-client/gui';
 import emptyIcon from "../../styles/icons/empty_small.png";
+import { showTooltip } from '../helpers/tooltip';
 
 /*
 format:
@@ -274,24 +275,14 @@ export default class StackedChart extends Component {
                 .on("mouseover", function (d, i) {
                     tooltip.select("div").html("<strong>Type: </strong> " + this.parentNode.getAttribute("type") + "<br/><strong>Count:</strong> " + d3.format(',')(d[1] - d[0]) + units + "<br/>");
                     d3.select(this).style("cursor", "pointer");
-
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("visibility", "visible")
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(tooltip)
                 })
                 .on("mouseout", function () {
                     //  d3.select(this).style("stroke","none");
                     tooltip.style("visibility", "hidden");
                 })
                 .on("mousemove", function (d) {
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(tooltip)
                 });
 
 

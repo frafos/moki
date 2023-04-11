@@ -10,6 +10,7 @@ import emptyIcon from "../../styles/icons/empty_small.png";
 import Animation from '../helpers/Animation';
 import storePersistent from "../store/indexPersistent";
 import { getGeoData, decryptGeoData } from '@moki-client/gui';
+import { showTooltip } from '../helpers/tooltip';
 var geohash = require('ngeohash');
 
 export default class geoIpMap extends Component {
@@ -283,24 +284,14 @@ export default class geoIpMap extends Component {
 
                     if (!thiss.state.animation) {
                         cit.on("mouseover", function (d) {
-                            tooltip.style("visibility", "visible");
                             tooltip.select("div").html(d.city_ascii);
-
-                            var tooltipDim = tooltip.node().getBoundingClientRect();
-                            var chartRect = d3.select('#geoIpMap').node().getBoundingClientRect();
-                            tooltip
-                                .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                                .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                            showTooltip(tooltip)
                         })
                             .on("mouseout", function (d) {
                                 tooltip.style("visibility", "hidden")
                             })
                             .on("mousemove", function (d) {
-                                var tooltipDim = tooltip.node().getBoundingClientRect();
-                                var chartRect = d3.select('#geoIpMap').node().getBoundingClientRect();
-                                tooltip
-                                    .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                                    .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                                showTooltip(tooltip)
                             });
                     }
                     thiss.drawOnlyPins(g, name, data, dataNotShown, units, svg)
@@ -430,15 +421,10 @@ export default class geoIpMap extends Component {
                     types = " <strong>" + d.key + ": </strong> " + d.doc_count;
                 }
 
-                tooltip.style("visibility", "visible");
                 d3.select(this).style("cursor", "pointer");
                 tooltip.select("div").html(types);
 
-                var tooltipDim = tooltip.node().getBoundingClientRect();
-                var chartRect = d3.select('#geoIpMap').node().getBoundingClientRect();
-                tooltip
-                    .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                    .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 15) + "px");
+                showTooltip(tooltip)
             })
                 .on("mouseout", function (d) {
 
@@ -446,6 +432,7 @@ export default class geoIpMap extends Component {
 
                 })
                 .on("mousemove", function (d) {
+                    showTooltip(tooltip)
                     //position tooltip based on count of cities
                     // if (d.aggs && d.aggs.buckets) {
                     //     tooltip
@@ -510,20 +497,16 @@ export default class geoIpMap extends Component {
                         types = " <strong>" + d.country + ": </strong> " + d.doc_count;
                     }
 
-                    tooltip.style("visibility", "visible");
                     d3.select(this).style("cursor", "pointer");
                     tooltip.select("div").html("<strong>AVG longitude: </strong>" + geohash.decode(d.key).longitude + " <br/><strong>AVG latitude: </strong>" + geohash.decode(d.key).latitude + " <br/>" + types);
 
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#geoIpMap').node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 15) + "px");
+                    showTooltip(tooltip)
                 })
                     .on("mouseout", function (d) {
                         tooltip.style("visibility", "hidden")
                     })
                     .on("mousemove", function (d) {
+                        showTooltip(tooltip)
                         //position tooltip based on count of cities
                         // if (d.aggs && d.aggs.buckets) {
                         //     tooltip

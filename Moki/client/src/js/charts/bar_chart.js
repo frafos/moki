@@ -6,6 +6,7 @@ import { ColorType } from '@moki-client/gui';
 import { Colors } from '@moki-client/gui';
 import emptyIcon from "../../styles/icons/empty_small.png";
 import Animation from '../helpers/Animation';
+import { showTooltip } from '../helpers/tooltip';
 
 export default class barChart extends Component {
     constructor(props) {
@@ -233,25 +234,13 @@ export default class barChart extends Component {
                         .attr('id', 'tooltip tooltipBar')
                         .attr("class", "tooltipCharts");
 
-                    tooltip.style('opacity', 0.9);
-                    tooltip.style("visibility", "visible");
                     tooltip.html(`<strong>Key: </strong>${d.key}<br/><strong>Value: </strong>${d.doc_count + units}`);
-
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#barChart').node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
-
+                    showTooltip(tooltip)
                     // d3.select(this).style("cursor", "pointer");
                 })
                 .on('mouseout', () => tooltip.style('visibility', "hidden"))
                 .on("mousemove", function (d) {
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#barChart').node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(tooltip)
                 });
 
 

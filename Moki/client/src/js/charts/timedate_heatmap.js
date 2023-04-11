@@ -9,6 +9,7 @@ import { ColorsRedGreen } from "@moki-client/gui";
 import { ColorsGreen } from "@moki-client/gui";
 import { parseTimestamp, parseTimestampD3js, parseTimeData, parseTimestampUTC } from "../helpers/parseTimestamp";
 import { setTickNrForTimeXAxis } from "../helpers/chart";
+import { showTooltip } from '../helpers/tooltip';
 
 export default class timedateHeatmap extends Component {
     constructor(props) {
@@ -260,16 +261,10 @@ export default class timedateHeatmap extends Component {
                     }
 
                     tooltip.select("div").html("<strong>" + d.attr2.charAt(0).toUpperCase() + d.attr2.slice(1) + ": </strong>" + value + units + "<br/><strong>Time: </strong>" + parseTimestampUTC(d.attr1) + " + " + getTimeBucket());
-
-
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-
-                    tooltip
-                        .style("visibility", "visible")
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
-
+                    showTooltip(tooltip);
+                })
+                .on("mousemove", function () {
+                    showTooltip(tooltip);
                 })
                 .on("mouseout", function () {
                     d3.select(this).style("stroke", "none");

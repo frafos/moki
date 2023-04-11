@@ -10,6 +10,7 @@ import { getTimeBucket, getTimeBucketInt } from "../helpers/getTimeBucket";
 import { durationFormat } from "../helpers/durationFormat";
 import { parseTimestamp, parseTimestampD3js, parseTimeData } from "../helpers/parseTimestamp";
 import {setTickNrForTimeXAxis} from "../helpers/chart";
+import { showTooltip } from '../helpers/tooltip';
 
 export default class datebarChart extends Component {
     constructor(props) {
@@ -215,27 +216,17 @@ export default class datebarChart extends Component {
                 })
                 .on('mouseover', (d) => {
                     var timestamp = new Date(d.key);
-                    tooltip.style("visibility", "visible");
                     var value = d3.format(',')(Math.round(d.agg.value));
                     if (name.includes("DURATION")) {
                         value = durationFormat(d.agg.value);
                     }
                     tooltip.select("div").html("<strong>Value:</strong> " + value + units + "</br><strong>Time: </strong>" + parseTimestamp(timestamp) + " + " + getTimeBucket());
-
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(tooltip)
                 })
                 .on('mouseout', () => //tooltip.transition().style('opacity', 0));
                     tooltip.style("visibility", "hidden"))
                 .on("mousemove", function (d) {
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(tooltip)
                 });
 
 
