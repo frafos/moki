@@ -1,0 +1,1017 @@
+[
+  {
+    "app": "m_config",
+    "attrs": [
+      {
+        "attribute": "ccmAddr",
+        "label": "Hostname or IP of CCM",
+        "type": "string",
+        "value": "",
+        "required": true,
+        "restriction": {
+          "type": "hostnameOrIp"
+        },
+        "category": "Authentication"
+      },
+      {
+        "attribute": "ccmProxied",
+        "label": "Proxy CCM behind monitor",
+        "type": "boolean",
+        "value": false,
+        "category": "Authentication"
+      },
+      {
+        "attribute": "ccmPublicKey",
+        "label": "CCM public key",
+        "type": "file",
+        "value": "",
+        "required": true,
+        "details": "The uploaded file has to be in JWK format. CCM exports it on /oauth/jwk.php path.",
+        "category": "Authentication",
+        "restriction": {
+          "format": "JWK",
+          "type": "key"
+        }
+      },
+      {
+        "attribute": "input_tls_only",
+        "label": "Enable receiving events only via encrypted input",
+        "type": "boolean",
+        "value": false,
+        "category": "TLS"
+      },
+      {
+        "attribute": "event_tls_cert",
+        "label": "TLS certificate for events input",
+        "type": "file",
+        "value": "",
+        "details": "the uploaded file has to be in PEM encoding",
+        "category": "TLS",
+        "restriction": {
+          "extensions": [".pem", ".crt", ".key"],
+          "key": "event_tls_key"
+        }
+      },
+      {
+        "attribute": "event_tls_key",
+        "label": "TLS key for events input",
+        "type": "file",
+        "value": "",
+        "details": "the uploaded file has to be in PEM encoding and use PKCS8 format",
+        "category": "TLS",
+        "restriction": {
+          "format": "PKCS8",
+          "type": "key",
+          "extensions": [".pem", ".crt", ".key"]
+        }
+      },
+      {
+        "attribute": "event_tls_verify_peer",
+        "label": "Enable CA cert check for TLS events input",
+        "type": "boolean",
+        "value": false,
+        "category": "TLS"
+      },
+      {
+        "attribute": "event_tls_cacert",
+        "label": "CA cert to check for TLS events input",
+        "type": "file",
+        "value": "",
+        "category": "TLS",
+        "restriction": {
+          "type": "bundle",
+          "extensions": [".pem", ".crt", ".key"]
+        }
+      },
+      {
+        "attribute": "alarms_redis",
+        "label": "Enable sending alarms to redis",
+        "type": "boolean",
+        "value": false,
+        "category": "Alarms"
+      },
+      {
+        "attribute": "alarms_redis_addr",
+        "label": "Address of redis server for sending alarms",
+        "type": "string",
+        "required": true,
+        "value": "127.0.0.1",
+        "category": "Alarms"
+      },
+      {
+        "attribute": "alarms_redis_port",
+        "label": "Port of redis server for sending alarms",
+        "type": "number",
+        "value": "6379",
+        "required": true,
+        "restriction": {
+          "max": 65535,
+          "min": 1
+        },
+        "category": "Alarms"
+      },
+      {
+        "attribute": "gui_tls_cert",
+        "label": "TLS certificate for GUI access",
+        "type": "file",
+        "value": "",
+        "category": "TLS",
+        "restriction": {
+          "extensions": [".pem", ".crt", ".key"],
+          "key": "gui_tls_key"
+        }
+      },
+      {
+        "attribute": "gui_tls_key",
+        "label": "TLS key for GUI access",
+        "type": "file",
+        "value": "",
+        "category": "TLS",
+        "restriction": {
+          "type": "key",
+          "extensions": [".pem", ".crt", ".key"]
+        }
+      },
+      {
+        "attribute": "tlc_cert_verify_level",
+        "label": "Peer certificate verification level",
+        "details": "if TLS used (see doc for details)",
+        "value": 0,
+        "type": "string",
+        "category": "TLS",
+        "required": true,
+        "restriction": {
+          "type": {
+            "enum": [
+              { "key": 0, "value": "ignore peer certificate" },
+              { "key": 1, "value": "verify peer certificate if present" },
+              { "key": 2, "value": "verify peer certificate" },
+              {
+                "key": 3,
+                "value": "verify peer with locally installed certificate"
+              },
+              {
+                "key": 4,
+                "value": "ignore CA chain and only verify peer certificate"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "attribute": "eventTableCount",
+        "label": "Default records visible in table",
+        "details": "max 1000",
+        "type": "number",
+        "value": 10,
+        "category": "General",
+        "required": true,
+        "restriction": {
+          "max": 1000,
+          "min": 1
+        }
+      },
+      {
+        "attribute": "timeFormat",
+        "label": "Time format",
+        "type": "enum",
+        "value": "hh:mm:ss A",
+        "category": "General"
+      },
+      {
+        "attribute": "dateFormat",
+        "label": "Date format",
+        "type": "enum",
+        "value": "DD MMM, YYYY",
+        "category": "General"
+      },
+      {
+        "attribute": "gui_port",
+        "label": "Monitor gui https port",
+        "type": "number",
+        "value": "445",
+        "category": "General",
+        "required": true,
+        "restriction": {
+          "max": 65535,
+          "min": 1
+        }
+      },
+      {
+        "attribute": "events_cleanup_days",
+        "label": "Number of days to keep old events before deleting them",
+        "details": "more than 160 could cause ES lower performance",
+        "type": "number",
+        "value": "30",
+        "category": "Events",
+        "restriction": {
+          "min": 1
+        }
+      },
+      {
+        "attribute": "events_cleanup_percentage",
+        "label": "Minimum partition free space percentage before deleting old events",
+        "details": "0 to disable",
+        "type": "number",
+        "value": "20",
+        "category": "Events",
+        "restriction": {
+          "max": 100,
+          "min": 0
+        }
+      },
+      {
+        "attribute": "events_warning_percentage",
+        "label": "Minimum partition free space percentage before showing warning",
+        "type": "number",
+        "value": "25",
+        "category": "Events",
+        "restriction": {
+          "max": 100,
+          "min": 5
+        }
+      },
+      {
+        "attribute": "pcap_cleanup_minutes",
+        "label": "Time (in minutes) to keep old traffic pcap files before deleting them",
+        "details": "The script is run every night, should correspond to Sbc setting, use 0 to disable.",
+        "type": "number",
+        "value": "720",
+        "category": "Events",
+        "restriction": {
+          "min": 0
+        }
+      },
+      {
+        "attribute": "recordings_cleanup_minutes",
+        "label": "Time (in minutes) to keep old recordings files before deleting them",
+        "details": "The script is run every night, should correspond to Sbc setting, use 0 to disable.",
+        "type": "number",
+        "value": "720",
+        "category": "Events",
+        "restriction": {
+          "min": 0
+        }
+      },
+      {
+        "attribute": "monitor_name",
+        "label": "Monitor name",
+        "type": "string",
+        "value": "Monitor",
+        "category": "General"
+      },
+      {
+        "attribute": "bl_email_from",
+        "label": "E-mail FROM for alerts",
+        "type": "string",
+        "value": "console@localhost.localdomain",
+        "category": "Alarms",
+        "restriction": {
+          "type": "email"
+        }
+      },
+      {
+        "attribute": "bl_email_to",
+        "label": "E-mail TO for alerts",
+        "details": "empty to disable",
+        "type": "string",
+        "value": "",
+        "category": "Alarms",
+        "restriction": {
+          "type": "email"
+        }
+      },
+      {
+        "attribute": "email_address",
+        "label": "SMTP server address for sending emails",
+        "details": "default is localhost",
+        "type": "string",
+        "value": "localhost",
+        "category": "SMTP"
+      },
+      {
+        "attribute": "email_port",
+        "label": "SMTP server port",
+        "details": "default is 25",
+        "type": "number",
+        "value": "25",
+        "category": "SMTP",
+        "restriction": {
+          "max": 65535,
+          "min": 1
+        }
+      },
+      {
+        "attribute": "email_use_tls",
+        "label": "SMTP server - use TLS",
+        "details": "default is false",
+        "type": "boolean",
+        "value": false,
+        "category": "SMTP"
+      },
+      {
+        "attribute": "email_authentication",
+        "label": "SMTP server authentication method",
+        "details": "use empty for no authentication, which is default",
+        "type": "string",
+        "value": "",
+        "category": "SMTP"
+      },
+      {
+        "attribute": "email_username",
+        "label": "SMTP server authentication username",
+        "details": "default is empty",
+        "type": "string",
+        "value": "",
+        "category": "SMTP"
+      },
+      {
+        "attribute": "email_password",
+        "label": "SMTP server authentication password",
+        "details": "default is empty",
+        "type": "password",
+        "value": "",
+        "category": "SMTP"
+      },
+      {
+        "attribute": "logstash_heap_mem_perc",
+        "label": "Logstash heap memory size, percentage from system memory",
+        "details": "recommended 20% of available mem",
+        "type": "number",
+        "value": "20",
+        "category": "Logstash and elasticsearch",
+        "restriction": {
+          "min": 10,
+          "max": 90
+        }
+      },
+      {
+        "attribute": "logstash_workers",
+        "label": "Logstash workers (threads).",
+        "details": "If logstash's alarms are on, value MUST be 1 or some alarms show wrong numbers.",
+        "type": "number",
+        "value": "4",
+        "category": "Logstash and elasticsearch",
+        "restriction": {
+          "min": 1
+        }
+      },
+      {
+        "attribute": "disable_alarms",
+        "label": "Disable alarms in logstash.",
+        "details": "Enabling may cause logstash slowing down.",
+        "type": "boolean",
+        "value": true,
+        "category": "Alarms"
+      },
+      {
+        "attribute": "elasticsearch_heap_mem_perc",
+        "label": "Elasticsearch heap memory size, percentage from system memory",
+        "details": "recommended 40% of available mem",
+        "type": "number",
+        "value": "40",
+        "category": "Logstash and elasticsearch",
+        "restriction": {
+          "min": 10,
+          "max": 90
+        }
+      },
+      {
+        "attribute": "slowlog_query_warn",
+        "label": "Elasticsearch slowlog query warning level threshold (sec)",
+        "type": "string",
+        "value": "10s",
+        "category": "Slowlog"
+      },
+      {
+        "attribute": "slowlog_query_info",
+        "label": "Elasticsearch slowlog query info level threshold (sec)",
+        "type": "string",
+        "value": "4s",
+        "category": "Slowlog"
+      },
+      {
+        "attribute": "slowlog_fetch_warn",
+        "label": "Elasticsearch slowlog fetch warning level threshold (sec)",
+        "type": "string",
+        "value": "8s",
+        "category": "Slowlog"
+      },
+      {
+        "attribute": "slowlog_fetch_info",
+        "label": "Elasticsearch slowlog fetch info level threshold (sec)",
+        "type": "string",
+        "value": "4s",
+        "category": "Slowlog"
+      },
+      {
+        "attribute": "slowlog_indexing_info",
+        "label": "Elasticsearch slowlog indexing info level threshold (sec)",
+        "type": "string",
+        "value": "4s",
+        "category": "Slowlog"
+      },
+      {
+        "attribute": "slowlog_indexing_warn",
+        "label": "Elasticsearch slowlog indexing warn level threshold (sec)",
+        "type": "string",
+        "value": "4s",
+        "category": "Slowlog"
+      },
+      {
+        "attribute": "slowlog_search_level",
+        "label": "Elasticsearch slowlog search level (warn or info)",
+        "type": "string",
+        "value": "warn",
+        "category": "Slowlog",
+        "restriction": {
+          "type": {
+            "enum": [
+              { "key": "warn", "value": "warning" },
+              { "key": "info", "value": "info" }
+            ]
+          }
+        }
+      },
+      {
+        "attribute": "slowlog_indexing_level",
+        "label": "Elasticsearch slowlog indexing level (warn or info)",
+        "type": "string",
+        "value": "warn",
+        "category": "Slowlog",
+        "restriction": {
+          "type": {
+            "enum": [
+              { "key": "warn", "value": "warning" },
+              { "key": "info", "value": "info" }
+            ]
+          }
+        }
+      },
+      {
+        "attribute": "refresh_interval_logstash",
+        "label": "Elasticsearch refresh interval  for events (sec)",
+        "type": "string",
+        "value": "5s",
+        "category": "Slowlog"
+      },
+      {
+        "attribute": "refresh_interval_collectd",
+        "label": "Elasticsearch refresh interval  for network, system, realm events (sec)",
+        "type": "string",
+        "value": "10s",
+        "category": "Slowlog"
+      },
+      {
+        "attribute": "refresh_interval_exceeded",
+        "label": "Elasticsearch refresh interval  for exceeded events (sec)",
+        "type": "string",
+        "value": "10s",
+        "category": "Slowlog"
+      }
+    ]
+  },
+  {
+    "app": "m_alarms",
+    "attrs": [
+      {
+        "category": "URI",
+        "attribute": "duration_limit",
+        "label": "limit (seconds)",
+        "name": "Long calls",
+        "type": "number",
+        "value": "10800"
+      },
+      {
+        "category": "URI",
+        "attribute": "duration_limit_exclude",
+        "label": "exclude IPs",
+        "name": "Long calls",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "URI",
+        "attribute": "call_start",
+        "label": "time period (seconds)",
+        "name": "Too frequent call starts",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "URI",
+        "attribute": "call_start_exclude",
+        "label": "exclude URIs",
+        "name": "Too frequent call starts",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "URI",
+        "attribute": "call_start_uri_limit",
+        "label": "limit",
+        "name": "Too frequent call starts",
+        "type": "number",
+        "value": "10"
+      },
+      {
+        "category": "URI",
+        "attribute": "short_calls_uri_limit",
+        "label": "limit",
+        "name": "Too many short calls or call attempts by URI",
+        "type": "number",
+        "value": "10"
+      },
+      {
+        "category": "URI",
+        "attribute": "short_calls_uri_period",
+        "label": "time period (seconds)",
+        "name": "Too many short calls or call attempts by URI",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "URI",
+        "attribute": "short_calls_uri_exclude",
+        "label": "exclude URIs",
+        "name": "Too many short calls or call attempts by URI",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "IP",
+        "attribute": "short_calls_ip_limit",
+        "label": "limit",
+        "name": "Too many short calls or call attempts by IP",
+        "type": "number",
+        "value": "10"
+      },
+      {
+        "category": "IP",
+        "attribute": "short_calls_ip_period",
+        "label": "time period (seconds)",
+        "name": "Too many short calls or call attempts by IP",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "IP",
+        "attribute": "short_calls_ip_exclude",
+        "label": "exclude IPs",
+        "name": "Too many short calls or call attempts by IP",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "IP",
+        "attribute": "limit_ip_limit",
+        "label": "limit",
+        "name": "Too frequent limit violations",
+        "type": "number",
+        "value": "10"
+      },
+      {
+        "category": "IP",
+        "attribute": "limit_ip_period",
+        "label": "time period (seconds)",
+        "name": "Too frequent limit violations",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "IP",
+        "attribute": "limit_ip_limit_exclude",
+        "label": "exclude IPs",
+        "name": "Too frequent limit violations",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "IP",
+        "attribute": "drop_ip_limit",
+        "label": "limit",
+        "name": "Too frequent message-drop",
+        "type": "number",
+        "value": "10"
+      },
+      {
+        "category": "IP",
+        "attribute": "drop_ip_period",
+        "label": "time period (seconds)",
+        "name": "Too frequent message-drop",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "IP",
+        "attribute": "drop_ip_limit_exclude",
+        "label": "exclude IPs",
+        "name": "Too frequent message-drop",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "IP",
+        "attribute": "authfail_ip_limit",
+        "label": "limit",
+        "name": "Too frequent auth failure",
+        "type": "number",
+        "value": "10"
+      },
+      {
+        "category": "IP",
+        "attribute": "authfail_ip_period",
+        "label": "time period (seconds)",
+        "name": "Too frequent auth failure",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "IP",
+        "attribute": "authfail_ip_exclude",
+        "label": "exclude IPs",
+        "name": "Too frequent auth failure",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "URI",
+        "attribute": "authfail_uri_limit",
+        "label": "limit",
+        "name": "Too frequent auth failure URI",
+        "type": "number",
+        "value": "10"
+      },
+      {
+        "category": "URI",
+        "attribute": "authfail_uri_period",
+        "label": "time period (seconds)",
+        "name": "Too frequent auth failure URI",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "URI",
+        "attribute": "authfail_uri_exclude",
+        "label": "exclude URIs",
+        "name": "Too frequent auth failure URI",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "URI",
+        "attribute": "ip_limit_behind_uri",
+        "label": "limit",
+        "name": "Too many IPs behind an URI",
+        "type": "number",
+        "value": "5"
+      },
+      {
+        "category": "URI",
+        "attribute": "ip_limit_behind_uri_period",
+        "label": "time period (seconds)",
+        "name": "Too many IPs behind an URI",
+        "type": "number",
+        "value": "86400"
+      },
+      {
+        "category": "URI",
+        "attribute": "ip_limit_behind_uri_exclude",
+        "label": "exclude URIs",
+        "name": "Too many IPs behind an URI",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "IP",
+        "attribute": "uri_limit_behind_ip",
+        "label": "limit",
+        "name": "Too many URIs behind an IP",
+        "type": "number",
+        "value": "5"
+      },
+      {
+        "category": "IP",
+        "attribute": "uri_limit_behind_ip_period",
+        "label": "time period (seconds)",
+        "name": "Too many URIs behind an IP",
+        "type": "number",
+        "value": "86400"
+      },
+      {
+        "category": "IP",
+        "attribute": "uri_limit_behind_ip_exclude",
+        "label": "exclude IPs",
+        "name": "Too many URIs behind an IP",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "URI",
+        "attribute": "too_many_minutes",
+        "label": "time period (seconds)",
+        "name": "Too many minutes",
+        "type": "number",
+        "value": "7260"
+      },
+      {
+        "category": "URI",
+        "attribute": "too_many_minutes_exclude",
+        "label": "exclude URIs",
+        "name": "Too many minutes",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "CA",
+        "attribute": "poor_ratio_ca",
+        "label": "time period (seconds)",
+        "name": "Poor failure ratio for a destination CA",
+        "type": "number",
+        "value": "3600"
+      },
+      {
+        "category": "CA",
+        "attribute": "poor_ratio_ca_exclude",
+        "label": "exclude CA id",
+        "name": "Poor failure ratio for a destination CA",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "CA",
+        "attribute": "poor_ratio_ca_threshold",
+        "label": "limit",
+        "name": "Poor failure ratio for a destination CA",
+        "type": "number",
+        "value": "90"
+      },
+      {
+        "category": "URI",
+        "attribute": "changing_location_exclude",
+        "label": "exclude URIs",
+        "name": "Too fast changing location",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "URI",
+        "attribute": "changing_location",
+        "label": "time period (minutes)",
+        "name": "Too fast changing location",
+        "type": "string",
+        "value": "86400"
+      },
+      {
+        "category": "SYSTEM",
+        "attribute": "high_rx",
+        "label": "limit",
+        "name": "Too high RX traffic",
+        "type": "number",
+        "value": "10000"
+      },
+      {
+        "category": "SYSTEM",
+        "attribute": "high_rx_limit_period",
+        "label": "time period (seconds)",
+        "name": "Too high RX traffic",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "URI",
+        "attribute": "low_MOScqex_min",
+        "label": "MOScqex-min limit",
+        "name": "MOS limit",
+        "type": "number",
+        "value": "2"
+      },
+      {
+        "category": "URI",
+        "attribute": "high_rtp_lossavg",
+        "label": "rtp-lossavg limit",
+        "name": "MOS limit",
+        "type": "number",
+        "value": "15"
+      },
+      {
+        "category": "URI",
+        "attribute": "low_MOScqex_avg",
+        "label": "MOScqex-avg limit",
+        "name": "MOS limit",
+        "type": "number",
+        "value": "3"
+      },
+      {
+        "category": "URI",
+        "attribute": "low_MoS_exclude",
+        "label": "exclude URI",
+        "name": "MOS limit",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "CA",
+        "attribute": "CA_unreachable",
+        "label": "time period (seconds)",
+        "name": "Unreachable CA",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "CA",
+        "attribute": "CA_unreachable_exclude",
+        "label": "exclude CA id",
+        "name": "Unreachable CA",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "CA",
+        "attribute": "CA_reachable_again",
+        "label": "time period (seconds)",
+        "name": "Again reachable CA",
+        "type": "number",
+        "value": "600"
+      },
+      {
+        "category": "CA",
+        "attribute": "CA_reachable_again_exclude",
+        "label": "exclude CA id",
+        "name": "Again reachable CA",
+        "type": "string",
+        "value": [],
+        "comments": []
+      },
+      {
+        "category": "SYSTEM",
+        "attribute": "high_tx",
+        "label": "limit",
+        "name": "Too high TX traffic",
+        "type": "number",
+        "value": "10000"
+      },
+      {
+        "category": "SYSTEM",
+        "attribute": "high_tx_limit_period",
+        "label": "time period (seconds)",
+        "name": "Too high TX traffic",
+        "type": "number",
+        "value": "600"
+      }
+    ]
+  },
+  {
+    "app": "m_sns",
+    "attrs": [
+      {
+        "attribute": "sns_arn_uri",
+        "label": "ARN for URI type",
+        "type": "string",
+        "value": "default"
+      },
+      {
+        "attribute": "sns_region_uri",
+        "label": "Region for URI type",
+        "type": "string",
+        "value": "eu-west-1"
+      },
+      {
+        "attribute": "sns_arn_ip",
+        "label": "ARN for IP type",
+        "type": "string",
+        "value": "default"
+      },
+      {
+        "attribute": "sns_region_ip",
+        "label": "Region for IP type",
+        "type": "string",
+        "value": "eu-west-1"
+      },
+      {
+        "attribute": "sns_arn_alert",
+        "label": "ARN for ALERT type",
+        "type": "string",
+        "value": "default"
+      },
+      {
+        "attribute": "sns_region_alert",
+        "default": "eu-west-1",
+        "label": "Region for ALERT type",
+        "type": "string",
+        "value": "eu-west-1"
+      },
+      {
+        "attribute": "many_IPs",
+        "label": "Too many IPs behind an uri",
+        "type": "URI",
+        "value": "true"
+      },
+      {
+        "attribute": "diff_country",
+        "label": "Changing location",
+        "type": "URI",
+        "value": "true"
+      },
+      {
+        "attribute": "auth_failed_ip",
+        "label": "Too frequent auth failure",
+        "type": "IP",
+        "value": "true"
+      },
+      {
+        "attribute": "auth_failed_uri",
+        "label": "Too frequent auth failure",
+        "type": "URI",
+        "value": "true"
+      },
+      {
+        "attribute": "many_URIs",
+        "label": "Many URI behind an IP",
+        "type": "IP",
+        "value": "true"
+      },
+      {
+        "attribute": "scanners",
+        "label": "Too frequent call attempts or short calls",
+        "type": "URI",
+        "value": "true"
+      },
+      {
+        "attribute": "poor_failure_ratio_ca",
+        "label": "Poor failure ratio for a destination CA",
+        "type": "CA",
+        "value": "true"
+      },
+      {
+        "attribute": "max_duration",
+        "label": "Long calls",
+        "type": "FROM",
+        "value": "true"
+      },
+      {
+        "attribute": "call_start",
+        "label": "Too frequent call starts",
+        "type": "URI",
+        "value": "true"
+      },
+      {
+        "attribute": "too_many_minute",
+        "label": "Too many minutes",
+        "type": "URI",
+        "value": "true"
+      },
+      {
+        "attribute": "too_high_rx",
+        "label": "Too high RX traffic",
+        "type": "URI",
+        "value": "true"
+      },
+      {
+        "attribute": "too_high_tx",
+        "label": "Too high TX traffic",
+        "type": "URI",
+        "value": "true"
+      },
+      {
+        "attribute": "limit",
+        "label": "Too frequent limit violations",
+        "type": "IP",
+        "value": "true"
+      },
+      {
+        "attribute": "security_metrics",
+        "label": "Security metrics over limit",
+        "type": "SYSTEM",
+        "value": "true"
+      },
+      {
+        "attribute": "message_drop",
+        "label": "Too frequent message-drops",
+        "type": "IP",
+        "value": "true"
+      },
+      {
+        "attribute": "action_log",
+        "label": "Too frequent action logs",
+        "type": "URI",
+        "value": "true"
+      }
+    ]
+  }
+]

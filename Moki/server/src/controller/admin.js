@@ -167,9 +167,17 @@ class AdminController {
     const userbackend = parsedHeader['custom:userbackend'];
 
     if (jwtbit === undefined) {
-      //default user for web dashboard
+      // TODO: hack to bypass auth, should be handled in a config file
       console.info("ACCESS web user - jwtbit undefined");
-      return res.json({ user: `DEFAULT`, aws: true });
+      return res.json({
+        aws: false, 
+        domainID: "foo-bar", 
+        jwt: 0, 
+        sub: "foo-bar",
+        user: "USER", 
+        userbackend: "DB",
+        username: "foo-bar-user"
+      });
     }
 
     //store login to ES
@@ -382,6 +390,10 @@ create new user with password in htpasswd
 
   //get username from authorization header that nginx pass
   static getUsername(req, res) {
+    // TODO: hack to have a username, should be config file
+    if (process.env.NODE_ENV === "dev") {
+      return res.json({ username: "Dev" });
+    }
     try {
       let parsedHeader = parseBase64(req.headers['x-amzn-oidc-data']);
       return res.json({ username: parsedHeader.username });

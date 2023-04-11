@@ -1,0 +1,570 @@
+{
+  "color": "#58a959",
+  "colorSecondary": "#58a959",
+  "logo": "data/logo.png",
+  "favicon": "data/logo_circle.png",
+  "autoRefresh": true,
+  "export": ["attrs.*", "geoip.*", "@timestamp"],
+  "dashboards": {
+    "home": true,
+    "calls": true,
+    "registration": true,
+    "overview": true,
+    "conference": true,
+    "security": true,
+    "exceeded": true,
+    "diagnostics": true,
+    "microanalysis": true,
+    "transport": true,
+    "qos": true,
+    "realm": true,
+    "connectivityCA": true,
+    "connectivity": true,
+    "domains": false,
+    "network": true,
+    "system": true,
+    "web": true
+  },
+  "settingsDashboards": {
+    "alarms": true,
+    "settings": true,
+    "monitoring": true
+  },
+  "userDashboards": {
+    "account": false,
+    "logout": true,
+    "changePassword": true
+  },
+  "types": {
+    "calls": [
+      "call-end",
+      "call-start",
+      "call-attempt"
+    ],
+    "overview": [
+      "call-end",
+      "call-start",
+      "call-attempt",
+      "reg-new",
+      "reg-del",
+      "reg-expired",
+      "auth-failed",
+      "error",
+      "alert",
+      "notice",
+      "other-failed",
+      "other-timeout",
+      "other-ok",
+      "parse-error",
+      "msg-probe",
+      "conf-join",
+      "conf-leave"
+    ],
+    "microanalysis": [
+      "call-end",
+      "call-start",
+      "call-attempt",
+      "reg-new",
+      "reg-del",
+      "reg-expired",
+      "auth-failed",
+      "error",
+      "alert",
+      "notice"
+    ],
+    "registration": [
+      "reg-del",
+      "reg-new",
+      "reg-expired"
+    ],
+    "diagnostics": [
+      "alert",
+      "error",
+      "notice",
+      "msg-probe",
+      "message-log",
+      "action-log",
+      "prompt",
+      "recording"
+    ],
+    "security": [
+      "auth-failed",
+      "limit",
+      "message-dropped",
+      "log-reply",
+      "fbl-new",
+      "fgl-new"
+    ],
+    "transport": [
+      "error",
+      "alert",
+      "notice"
+    ],
+    "exceeded": [
+      "low_MoS",
+      "high_rx",
+      "high_tx",
+      "call_start",
+      "short_calls_ip",
+      "short_calls_uri",
+      "limit_ip",
+      "drop_ip",
+      "authfail_ip",
+      "authfail_uri",
+      "ip_limit_behind_uri",
+      "uri_limit_behind_ip",
+      "changing_location",
+      "too_many_minutes",
+      "poor_ratio_ca",
+      "CA_unreachable",
+      "poor_parallel_reg",
+      "security_metrics",
+      "reg_lost"
+    ],
+    "user": [
+      "call-end",
+      "call-start",
+      "call-attempt",
+      "message-dropped",
+      "auth-failed",
+      "limit",
+      "reg-del",
+      "reg-new",
+      "reg-expired"
+    ],
+    "conference": [
+      "conf-join",
+      "conf-leave"
+    ]
+  },
+  "charts": {
+    "home": {
+      "# CALLS": true,
+      "# ATTEMPTS": true,
+      "SUM DURATION": true,
+      "ASR (%)": true,
+      "AVG DURATION": true,
+      "DISTINCT IP": true,
+      "DISTINCT URI": true,
+      "# FILTRED PACKETS": false,
+      "BLACKLISTED RATIO": false,
+      "WHITELISTED RATIO": false,
+      "TYPE DATE HEATMAP": true,
+      "BLACKLIST STATISTICS": false,
+      "PARALLEL CALLS": true,
+      "ACTUAL CALLS": true,
+      "PARALLEL REGS": true,
+      "ACTUAL REGS": true,
+      "INCIDENTS": true,
+      "INCIDENTS ACTUAL": true,
+      "SEVERITY": false
+    },
+    "overview": {
+      "TOTAL EVENTS": true,
+      "DISTINCT IP": true,
+      "EVENTS OVER TIME": true,
+      "TOTAL EVENTS IN INTERVAL": true,
+      "NODES - ACTIVITY": true,
+      "NODES - KEEP ALIVE": true
+    },
+    "exceeded": {
+      "EVENTS OVER TIME": true,
+      "INCIDENTS COUNT": true,
+      "EXCEEDED TYPE": true,
+      "TOP OFFENDERS": true,
+      "TOP SUBNETS /24 EXCEEDED": true,
+      "EXCEEDED EVENTS BY IP ADDR": true
+    },
+    "microanalysis": {
+      "DISTINCT IP": true,
+      "TYPES": true,
+      "FROM UA": true,
+      "SIP METHOD": true,
+      "SIP CODE": true,
+      "TOP SUBNETS /24": true,
+      "r-URI": true,
+      "SOURCE IP ADDRESS": true,
+      "SRC CA": false,
+      "DST CA": false,
+      "ORIGINATOR": true,
+      "TOP 10 FROM": true,
+      "CALLER DOMAIN": true,
+      "TOP 10 TO": true,
+      "DISTINCT DESTINATIONS": true,
+      "TOP CALL ATTEMPTS": true,
+      "TOP CALL ENDS": true,
+      "DESTINATION BY R-URI": true,
+      "SUM DURATION": true,
+      "DURATION GROUP": true,
+      "TOP DURATION": true,
+      "TOP DURATION < 5 sec": true,
+      "TOP SBCs LIST": true,
+      "TOP NODEs LIST": true
+    },
+    "calls": {
+      "ATTEMPTs": true,
+      "ENDs": true,
+      "STARTs": true,
+      "ASR (%)": true,
+      "MAX DURATION": true,
+      "AVG DURATION": true,
+      "SUM DURATION": true,
+      "AVG MoS": false,
+      "EVENTS OVER TIME": true,
+      "SUM DURATION OVER TIME": true,
+      "ASR OVER TIME": true,
+      "CALL SUCCESS RATIO": true,
+      "CALL TERMINATED": true,
+      "CALLING COUNTRIES": true,
+      "CALLED COUNTRIES": false,
+      "DURATION GROUP": true,
+      "SIP-CODE COUNT": true
+    },
+    "registration": {
+      "EVENTS OVER TIME": true,
+      "PARALLEL REGS": true,
+      "ACTUAL REGS": true,
+      "REGISTRATIONS MAP": true,
+      "USER-AGENTS IN REG. NEW": true,
+      "TRANSPORT PROTOCOL": true,
+      "TOP REG. EXPIRED": true
+    },
+    "security": {
+      "EVENTS OVER TIME": true,
+      "SECURITY GEO EVENTS": true,
+      "TYPES": true,
+      "EVENTS BY IP ADDR": true,
+      "TOP SUBNETS": true,
+      "EVENTS BY COUNTRY": true
+    },
+    "network": {
+      "MAX CALLS BY HOST": true,
+      "MAX REGS BY HOST": true,
+      "MAX CALL STARTS BY HOST": true,
+      "RELAYED RTP BY HOST": true,
+      "TX BYTES BY HOST": true,
+      "RX PACKET BY HOST": true,
+      "TX PACKET BY HOST": true,
+      "RX BYTES BY INTERFACE": true,
+      "TX BYTES BY INTERFACE": true,
+      "RX PACKETS BY INTERFACE": true,
+      "TX PACKETS BY INTERFACE": true,
+      "IPS ON FW BLACKLIST BY HOST": true,
+      "IPS ON FW GREYLIST BY HOST": true,
+      "IPS ON FW WHITELIST BY HOST": true,
+      "PACKET DROP ALERT COUNTERS": false
+    }
+  },
+  "table": {
+    "columns": {
+      "calls": [
+        { "source": "_id", "name": "" },
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.to", "name": "to" },
+        { "source": "attrs.duration", "name": "duration" },
+        { "source": "attrs.source", "name": "source" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "diagram", "details", "share"]
+        }
+      ],
+      "overview": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.to", "name": "to" },
+        { "source": "attrs.source", "name": "source" },
+        { "source": "attrs.method", "name": "method" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "diagram", "details", "share"]
+        }
+      ],
+      "logins": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "tls-cn", "name": "tls-cn" },
+        { "source": "email", "name": "email" },
+        { "source": "domain", "name": "domain" },
+        { "source": "source", "name": "source" },
+        { "source": "level", "name": "level" }
+      ],
+      "report": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "ts-start", "name": "start time", "fnc": "time" },
+        { "source": "tls-cn", "name": "tls-cn" },
+        { "source": "count", "name": "count" },
+        { "source": "period", "name": "period" }
+      ],
+      "domains": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.to", "name": "to" },
+        { "source": "tls-cn", "name": "tls-cn" },
+        { "source": "attrs.source", "name": "source" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "downloadAll", "diagram", "details", "share"]
+        }
+      ],
+      "conference": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.to", "name": "to" },
+        { "source": "attrs.conf_id", "name": "conf id" },
+        { "source": "attrs.source", "name": "source" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "downloadAll", "diagram", "details", "share"]
+        }
+      ],
+      "homeLoginCalls": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.to", "name": "to" },
+        { "source": "attrs.duration", "name": "duration" },
+        { "source": "attrs.source", "name": "source" },
+        { "source": "attrs.rtp-MOScqex-avg", "name": "MOScqex-avg" },
+        { "source": "attrs.sip-code", "name": "sip-code" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "downloadAll", "diagram", "details", "share"]
+        }
+      ],
+      "diagnostics": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.reason", "name": "reason" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.to", "name": "to" },
+        { "source": "attrs.source", "name": "source" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "downloadAll", "diagram", "details", "share"]
+        }
+      ],
+      "exceeded": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "exceeded", "name": "exceeded" },
+        { "source": "el-reason", "name": "el-reason" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.source", "name": "source" },
+        { "source": "exceeded-by", "name": "exceeded-by" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "downloadAll", "diagram", "details", "share"]
+        }
+      ],
+      "qos": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.rtp-lossmax", "name": "rtp-lossmax" },
+        { "source": "attrs.rtp-lossavg", "name": "rtp-lossavg" },
+        { "source": "attrs.rtp-MOScqex-min", "name": "rtp-MOScqex-min" },
+        { "source": "attrs.rtp-MOScqex-avg", "name": "rtp-MOScqex-avg" },
+        { "source": "attrs.rtp-direction", "name": "rtp-direction" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "diagram", "details", "share"]
+        }
+      ],
+      "registration": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.to", "name": "to" },
+        { "source": "attrs.contact", "name": "contact", "width": "100px" },
+        { "source": "attrs.source", "name": "source" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "diagram", "details", "share"]
+        }
+      ],
+      "security": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.to", "name": "to" },
+        { "source": "attrs.source", "name": "source" },
+        { "source": "attrs.reason", "name": "reason" },
+        { "source": "geoip.country_name", "name": "country name" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "diagram", "details", "share"]
+        }
+      ],
+      "transport": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.reason", "name": "reason" },
+        { "source": "attrs.source", "name": "source" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "diagram", "details", "share"]
+        }
+      ],
+      "realm": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.hostname", "name": "hostname" },
+        { "source": "attrs.callfrom", "name": "call from" },
+        { "source": "attrs.callsto", "name": "calls to" },
+        { "source": "attrs.callstartfrom", "name": "call start from" },
+        { "source": "attrs.callstartto", "name": "call start to" },
+        { "source": "attrs.bitsfrom", "name": "bits from" },
+        { "source": "attrs.bitsto", "name": "bits to" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "details", "share"]
+        }
+      ],
+      "network": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.hostname", "name": "hostname" },
+        { "source": "type_instance", "name": "type inst." },
+        { "source": "plugin_instance", "name": "plugin inst." },
+        { "source": "rx", "name": "rx", "fnc": "round" },
+        { "source": "tx", "name": "tx", "fnc": "round" },
+        { "source": "value", "name": "value" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "details", "share"]
+        }
+      ],
+      "system": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.hostname", "name": "hostname" },
+        { "source": "type_instance", "name": "type inst." },
+        { "source": "value", "name": "value" },
+        { "source": "shortterm", "name": "shortterm", "fnc": "round" },
+        { "source": "midterm", "name": "midterm", "fnc": "round" },
+        { "source": "longterm", "name": "longterm", "fnc": "round" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "details", "share"]
+        }
+      ],
+      "connectivityCA": [
+        { "source": "@timestamp", "name": "timestamp", "fnc": "time" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.dest_ca_name", "name": "CA name" },
+        { "source": "attrs.dest_ca_uuid", "name": "CA uuid" },
+        { "source": "attrs.dest_state", "name": "state" },
+        { "source": "attrs.dest_dns_only", "name": "DNS only" },
+        { "source": "attrs.source", "name": "source" },
+        {
+          "source": "advanced",
+          "name": "advanced",
+          "icons": ["download", "details", "share"]
+        }
+      ]
+    },
+    "toggleList": {
+      "default": [
+        { "source": "attrs.call-id", "name": "call-id" },
+        { "source": "attrs.duration", "name": "duration" },
+        { "source": "attrs.dst_ca_id", "name": "dst_ca_id" },
+        { "source": "attrs.src_ca_id", "name": "src_ca_id" },
+        { "source": "attrs.dst_rlm_name", "name": "dst_rlm_name" },
+        { "source": "attrs.src_rlm_name", "name": "src_rlm_name" },
+        { "source": "attrs.from-domain", "name": "from-domain" },
+        { "source": "attrs.from-ua", "name": "from-ua" },
+        { "source": "attrs.to-ua", "name": "to-ua" },
+        { "source": "attrs.hostname", "name": "hostname" },
+        { "source": "attrs.method", "name": "method" },
+        { "source": "attrs.originator", "name": "originator" },
+        { "source": "attrs.rtp-moscqex-avg", "name": "rtp-moscqex-avg" },
+        { "source": "attrs.rtp-moscqex-min", "name": "rtp-moscqex-min" },
+        { "source": "attrs.r-uri", "name": "r-uri" },
+        { "source": "attrs.sbc", "name": "sbc" },
+        { "source": "attrs.sip-code", "name": "sip-code" },
+        { "source": "attrs.sip-reason", "name": "sip-reason" },
+        { "source": "attrs.source-alias", "name": "source-alias" },
+        { "source": "attrs.sourcesubnets", "name": "sourcesubnets" },
+        { "source": "attrs.src-port", "name": "src-port" }
+      ],
+      "overview": [
+        { "source": "attrs.call-id", "name": "call-id" },
+        { "source": "attrs.duration", "name": "duration" },
+        { "source": "attrs.from", "name": "from" },
+        { "source": "attrs.to", "name": "to" },
+        { "source": "attrs.from-domain", "name": "from-domain" },
+        { "source": "attrs.from-ua", "name": "from-ua" },
+        { "source": "attrs.to-ua", "name": "to-ua" },
+        { "source": "attrs.hostname", "name": "hostname" },
+        { "source": "attrs.method", "name": "method" },
+        { "source": "attrs.originator", "name": "originator" },
+        { "source": "attrs.r-uri", "name": "r-uri" },
+        { "source": "attrs.reason", "name": "reason" },
+        { "source": "attrs.sip-code", "name": "sip-code" },
+        { "source": "attrs.src-port", "name": "src-port" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.source", "name": "source" }
+      ],
+      "account": [],
+      "connectivityCA": [],
+      "calls": [
+        { "source": "attrs.call-id", "name": "call-id" },
+        { "source": "attrs.duration", "name": "duration" },
+        { "source": "attrs.dst_ca_id", "name": "dst_ca_id" },
+        { "source": "attrs.src_ca_id", "name": "src_ca_id" },
+        { "source": "attrs.dst_rlm_name", "name": "dst_rlm_name" },
+        { "source": "attrs.src_rlm_name", "name": "src_rlm_name" },
+        { "source": "attrs.from-domain", "name": "from-domain" },
+        { "source": "attrs.from-ua", "name": "from-ua" },
+        { "source": "attrs.to-ua", "name": "to-ua" },
+        { "source": "attrs.hostname", "name": "hostname" },
+        { "source": "attrs.method", "name": "method" },
+        { "source": "attrs.originator", "name": "originator" },
+        { "source": "attrs.rtp-moscqex-avg", "name": "rtp-moscqex-avg" },
+        { "source": "attrs.rtp-moscqex-min", "name": "rtp-moscqex-min" },
+        { "source": "attrs.r-uri", "name": "r-uri" },
+        { "source": "attrs.sbc", "name": "sbc" },
+        { "source": "attrs.sip-code", "name": "sip-code" },
+        { "source": "attrs.sip-reason", "name": "sip-reason" },
+        { "source": "attrs.source-alias", "name": "source-alias" },
+        { "source": "attrs.sourcesubnets", "name": "sourcesubnets" },
+        { "source": "attrs.src-port", "name": "src-port" }
+      ],
+      "realm": [
+        { "source": "attrs.hostname", "name": "hostname" },
+        { "source": "attrs.realm", "name": "realm" },
+        { "source": "attrs.sbc", "name": "sbc" },
+        { "source": "attrs.type", "name": "type" },
+        { "source": "attrs.regs", "name": "regs" },
+        { "source": "attrs.calls", "name": "calls" },
+        { "source": "attrs.uac_trans", "name": "uac trans" },
+        { "source": "attrs.uas_trans", "name": "uas trans" }
+      ],
+      "system": [
+        { "source": "attrs.sbc", "name": "sbc" },
+        { "source": "interval", "name": "interval" },
+        { "source": "plugin_instance", "name": "plugin_instance" },
+        { "source": "plugin", "name": "plugin" }
+      ],
+      "network": [
+        { "source": "attrs.sbc", "name": "sbc" },
+        { "source": "interval", "name": "interval" },
+        { "source": "plugin", "name": "plugin" }
+      ]
+    }
+  }
+}

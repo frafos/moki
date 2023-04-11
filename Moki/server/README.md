@@ -1,52 +1,53 @@
-# README.md
+# Moki Server
 
-## What
+Moki Server is an API written in NodeJS using the Express framework. The API
+provides a Swagger documentation available at `/api/docs`.
 
-`moki-express-app` is a 
+## Getting Started
 
-The api is written in `nodejs`, using the `express` framework. 
+### Installation
 
-A elk connection blablabla
+1. Install all the required packages by running `npm install`.
+1. Create a `.env` file in the root directory with the following skeleton:
 
-The project can be run in docker, but npm is required if you want to run in developement mode. 
-The `node_modules` directory need to be in the root package, but the root directory is also 
-shared via a volume with the docker. 
+```bash
+NODE_ENV=dev 
+PORT=5000 
+ES=http://elasticsearch-url:port
+LOGSTASH=http://logstash-url:port
+```
 
-The dev target of the docker iamge run the code via `nodemon`, which allow a hot reload of the content.
+Replace the `ELASTICSEARCH_URL` and `LOGSTASH_URL` placeholders with your
+Elasticsearch and Logstash URLs, respectively.
 
-## Use it 
+### Development
 
-### dev 
+To run the server in development mode, run `npm run dev`. The server will reload
+automatically when you make changes to any file.
 
-- `make build` to build the docker image
-- npm install to install the node_modules (so it's not missing at runtime)
-- `make run` to run the docker image
+You can access the API at `http://127.0.0.1:PORT/api`.
 
-Access 127.0.0.1:5000/api/docs :) or `curl 127.0.0.1:5000/api/docs.json`
+### Docker
 
-### prod 
+You can also run the Moki Server in Docker by following these steps:
 
-- `make build -e TARGET=prod`
-- `make run`
+1. Run `make build` to build the Docker image.
+1. Run `npm install` to install the `node_modules` folder (which is not included
+   in the Docker image).
+1. Run `make run` to start the Docker container.
 
-## project
+## Production
 
-### nodejs
+The Dockerfile contains two stages, `dev` and `prod`. To build the
+production-ready Docker image, provide the `--target`argument to`docker build`.
 
-A JSON API, contacting redis, serving a swagger doc. 
+1. Run `make build -e TARGET=prod` to build the container image.
+1. Run `make run` to start the container.
 
-#### external library 
+## Targets
 
-Use of: [`express`](1), [`express-prettify`](2), [`swagger-ui-express`](3), [`swagger-jsdoc`](4), [`morgan`](5), [`dotenv`](8), [`mocha`](9), [`chai`](10)
-
-
-[1]: https://github.com/expressjs/express
-[2]: https://github.com/stipsan/express-prettiffy
-
-#### targets
-
-| **target** | **description**                          | **where**      |
-| :-         | :-                                       | -:             |
+| **target** | **description**                          |      **where** |
+| :--------- | :--------------------------------------- | -------------: |
 | `lint`     | run eslint                               | `package.json` |
 | `lintfix`  | run eslint + fixer                       | `package.json` |
 | `pretty`   | run prettier                             | `package.json` |
@@ -55,24 +56,3 @@ Use of: [`express`](1), [`express-prettify`](2), [`swagger-ui-express`](3), [`sw
 | `swagger`  | generate a swagger.json file             | `package.json` |
 | `coverage` | generate code coverage                   | `package.json` |
 | `codecov`  | generate and publish coverage to codecov | `package.json` |
-
-#### Makefile
-
-```
-16:33:57 ❯ make help              
-Usage:
-moki-express-app   Default target, run build
-  build                    Build the nodejs docker image (default target)
-  build-prod               Build a production readu nodejs docker image
-  run                      Run the nodejs server from the docker image
-  exec                     Run a custom command inside a running the docker container
-  stop                     Stop the docker image
-  lint                     Run the linter
-  all                      Build then run the dockerized nodejs
-  help                     Prints this help message
-```
-
-### docker
-
-The dockerfile hold 2 steps : `dev` and `prod`. Provide the `--target` arguemnt to `docker build` 
-to stop at the desired target.

@@ -21,4 +21,4 @@ tmp/
 *.tar.gz
 *.deb
 *.rpm
-
+package-lock.json

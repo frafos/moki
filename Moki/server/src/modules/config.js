@@ -2,8 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const appDir = path.dirname(require.main.filename);
-const c = require('@moki-server/server/modules/config');
-
+const c = require("../../config");
 
 if (c.nodeEnv === 'test') {
   c.port = 5001;

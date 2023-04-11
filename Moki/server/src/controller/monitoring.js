@@ -12,6 +12,7 @@ let {
 } = require('../utils/ts');
 const { getJWTsipUserFilter } = require('../modules/jwt');
 const two_agg_query_limit = require('../../js/template_queries/two_agg_query_limit');
+const { cfg } = require('../modules/config');
 
 let domainFilter = "*"; 
 const supress = "nofield";
@@ -142,6 +143,10 @@ class monitoringController {
         res.send(data);
       }
 
+      // TODO: hardcoded, should be better
+      // sucessfully fetched es data
+      elasticsearch = "active";
+      logstash = "active";
       data.push(node);
       data.push({
         logstash: logstash,
@@ -219,7 +224,7 @@ class monitoringController {
 */
   static getEvents(req, res, next) {
     async function search() {
-      http.get('http://localhost:9600/_node/stats/events', (resp) => {
+      http.get(`${cfg.logstash}/_node/stats/events`, (resp) => {
         let data = '';
 
         // A chunk of data has been recieved.
