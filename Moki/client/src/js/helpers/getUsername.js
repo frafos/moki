@@ -4,9 +4,10 @@ import querySrv from './querySrv';
 
 import storePersistent from "../store/indexPersistent";
 import { setUser } from "../actions/index";
+const BASE_URL = import.meta.env.BASE_URL;
 
 export async function getUsername() {
-    var url = process.env.PUBLIC_URL + "/api/user/username";
+    var url = BASE_URL + "api/user/username";
     try {
         const response = await querySrv(url, {
             method: "GET",

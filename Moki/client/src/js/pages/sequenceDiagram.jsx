@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import * as d3 from "d3";
 import { downloadPcap } from '../helpers/download/downloadPcap';
-import downloadIcon from "../../styles/icons/download.png";
-import downloadPcapIcon from "../../styles/icons/downloadPcap.png";
 import { downloadPcapMerged } from '../helpers/download/downloadPcapMerged';
 import { downloadSD } from '../helpers/download/downloadSD';
 import querySrv from '../helpers/querySrv';
 import { parseTimestamp } from "../helpers/parseTimestamp";
+
+import downloadIcon from "/icons/download.png";
+import downloadPcapIcon from "/icons/downloadPcap.png";
 
 
 class SequenceDiagram extends Component {
@@ -42,7 +43,7 @@ class SequenceDiagram extends Component {
     }
 
     try {
-      await querySrv("/api/diagram", {
+      await querySrv("api/diagram", {
         method: "POST",
         credentials: 'include',
         body:

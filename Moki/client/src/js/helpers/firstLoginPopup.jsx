@@ -86,7 +86,7 @@ export default class FirstLoginPopup extends Component {
         const ccmProxied = document.getElementById("ccmProxied").checked;
 
         try {
-            var response = await querySrv("/api/firsttimelogin/save", {
+            var response = await querySrv("api/firsttimelogin/save", {
                 method: "POST",
                 body:
                     JSON.stringify({

@@ -21,7 +21,7 @@ class Settings extends Component {
     }
 
     componentWillMount() {
-        this.load("/api/setting");
+        this.load("api/setting");
     }
 
     /*

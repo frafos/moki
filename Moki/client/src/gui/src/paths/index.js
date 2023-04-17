@@ -1,0 +1,22 @@
+// list of controllers for router path
+export { default as connectivityCA } from '../../../js/dashboards/ConnectivityCA/ConnectivityCA';
+export { default as monitoring } from '../../../js/dashboards/Monitoring/Monitoring';
+export { default as realm } from '../../../js/dashboards/Realm/Realm';
+export { default as conference } from '../../../js/dashboards/Conference/Conference';
+export { default as home } from '../../../js/dashboards/Home/Home';
+export { default as qos } from '../../../js/dashboards/QoS/QoS';
+export { default as system } from '../../../js/dashboards/System/System';
+export { default as network } from '../../../js/dashboards/Network/Network';
+export { default as overview } from '../../../js/dashboards/Overview/Overview';
+export { default as registration } from '../../../js/dashboards/Registration/Registration';
+export { default as diagnostics } from '../../../js/dashboards/Diagnostics/Diagnostics';
+export { default as microanalysis } from '../../../js/dashboards/Microanalysis/Microanalysis';
+export { default as transport } from '../../../js/dashboards/Transport/Transport';
+export { default as security } from '../../../js/dashboards/Security/Security';
+export { default as exceeded } from '../../../js/dashboards/Exceeded/Exceeded';
+export { default as connectivity } from '../../../js/dashboards/Connectivity/Connectivity';
+export { default as calls } from '../../../js/dashboards/Call/Calls';
+export { default as alarms } from '../../../js/pages/alarms_settings';
+export { default as sns } from '../../../js/pages/sns_settings';
+export { default as sequence } from '../../../js/pages/sequenceDiagram';
+export { default as settings } from '../../../js/pages/general_settings';

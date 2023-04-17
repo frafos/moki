@@ -1,9 +1,10 @@
 import querySrv from './querySrv';
+const BASE_URL = import.meta.env.BASE_URL;
 
 //get monitor layout form monitor-layout.json
 
 export async function getLayoutSettings() {
-    var url = process.env.PUBLIC_URL+"/api/layout";
+    var url = BASE_URL+"api/layout";
     try {
         const response = await querySrv(url, {
             method: "GET",

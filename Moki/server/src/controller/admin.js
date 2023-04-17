@@ -110,6 +110,20 @@ class AdminController {
     //     return res.json({ user: 'localhost', aws: false });
     // }
 
+    if (process.env.NODE_ENV === "dev") {
+      // TODO: hack to bypass auth, should be handled in a config file
+      console.info("ACCESS web user - jwtbit undefined");
+      return res.json({
+        aws: false, 
+        domainID: "foo-bar", 
+        jwt: 0, 
+        sub: "foo-bar",
+        user: "USER", 
+        userbackend: "DB",
+        username: "foo-bar-user"
+      });
+    }
+
     // check config if JWT required
     let isAccept;
     try {
@@ -121,6 +135,7 @@ class AdminController {
       //  https://stackoverflow.com/questions/42453683/how-to-reject-in-async-await-syntax
       return res.json({ redirect: "errorInConfigProcessing" });
     }
+
 
     // WE DON¨T HAVE THIS OPTION ANYMORE
     // JWT not required -- open up

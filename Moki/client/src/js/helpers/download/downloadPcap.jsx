@@ -4,7 +4,7 @@ export async function downloadPcap(pathname) {
     var response;
     console.info("Downloading pcap " + pathname);
     try {
-        response = await querySrv("/api/download/pcap", {
+        response = await querySrv("api/download/pcap", {
             method: "POST",
             timeout: 10000,
             credentials: 'include',

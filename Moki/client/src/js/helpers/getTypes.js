@@ -1,6 +1,6 @@
 import store from "../store/index";
 import storePersistent from "../store/indexPersistent";
-import { getExceededTypes } from '@moki-client/gui';
+import { getExceededTypes } from '../../gui';
 
 export const getTypes = () => {
     var types = store.getState().types;

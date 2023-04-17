@@ -1,13 +1,14 @@
 import React, {
     Component
 } from 'react';
-import logoutIcon from "../../styles/icons/log_out.png";
-import password from "../../styles/icons/password.png";
 import store from "../store/index";
 import { setWidthChart } from "../actions/index";
-import collapseIcon from "../../styles/icons/collapse.png";
-import { renderNavBar, logout } from '@moki-client/gui';
+import { renderNavBar, logout } from '../../gui';
 import storePersistent from "../store/indexPersistent";
+
+import logoutIcon from "/icons/log_out.png";
+import password from "/icons/password.png";
+import collapseIcon from "/icons/collapse.png";
 
 class navBar extends Component {
     constructor(props) {

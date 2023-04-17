@@ -1,14 +1,13 @@
-import React, {
-    Component
-} from 'react';
-import deleteIcon from "../../styles/icons/delete.png";
-import disableIcon from "../../styles/icons/disable.png";
-import enableIcon from "../../styles/icons/enable.png";
-import editIcon from "../../styles/icons/edit.png";
-import pinIcon from "../../styles/icons/pin.png";
-import unpinIcon from "../../styles/icons/unpin.png";
-import negationIcon from "../../styles/icons/negation.png";
+import React, { Component } from 'react'; 
 import storePersistent from "../store/indexPersistent";
+
+import deleteIcon from "/icons/delete.png";
+import disableIcon from "/icons/disable.png";
+import enableIcon from "/icons/enable.png";
+import editIcon from "/icons/edit.png";
+import pinIcon from "/icons/pin.png";
+import unpinIcon from "/icons/unpin.png";
+import negationIcon from "/icons/negation.png";
 
 class Filter extends Component {
     constructor(props) {

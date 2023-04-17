@@ -1,10 +1,9 @@
 import querySrv from './querySrv';
 import storePersistent from "../store/indexPersistent";
-
-const BASE_NAME = process.env.PUBLIC_URL;
+const BASE_NAME = import.meta.env.BASE_URL;
 
 export async function status() {
-    const response = await querySrv(BASE_NAME + "/api/status", {
+    const response = await querySrv(BASE_NAME + "api/status", {
         method: "GET",
         timeout: 10000,
         credentials: 'include',
@@ -30,7 +29,7 @@ export async function status() {
 }
 
 export async function diskSpace() {
-    const res = await querySrv(BASE_NAME + "/api/monitoring/charts", {
+    const res = await querySrv(BASE_NAME + "api/monitoring/charts", {
         method: "POST",
         timeout: 10000,
         credentials: 'include',

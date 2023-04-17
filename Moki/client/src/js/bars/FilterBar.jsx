@@ -1,22 +1,20 @@
-import React, {
-    Component
-} from 'react';
-
+import React, { Component } from "react";
 import { Navbar } from 'react-bootstrap';
 import Autocomplete from "./Autocomplete";
-import { getSearchableAttributes } from '@moki-client/gui';
+import { getSearchableAttributes } from '../../gui';
 import store from "../store/index";
 import { setFilters } from "../actions/index";
-import { createFilter } from '@moki-client/gui';
-import { renderFilters } from '../helpers/renderFilters';
+import { createFilter } from '../../gui';
+import { renderFilters } from '../helpers/renderFilters.jsx';
 import StoredFilters from "../pages/stored_filters";
 import SaveFilters from "../pages/save_filters";
 import Popup from "reactjs-popup";
-import saveIcon from "../../styles/icons/save_filters.png";
-import loadIcon from "../../styles/icons/load_filters.png";
-import search from "../../styles/icons/search.png";
 
-class filterBar extends Component {
+import saveIcon from "/icons/save_filters.png";
+import loadIcon from "/icons/load_filters.png";
+import search from "/icons/search.png";
+
+class FilterBar extends Component {
     constructor(props) {
         super(props);
         var oldFilters = store.getState().filters;
@@ -373,4 +371,4 @@ class filterBar extends Component {
     }
 }
 
-export default filterBar;
+export default FilterBar;

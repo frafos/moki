@@ -7,8 +7,11 @@ import {
 
 import store from "../store/index";
 import storePersistent from "../store/indexPersistent";
-import { elasticsearchConnection } from '@moki-client/gui';
-const HAS_TABLE = ["calls", "conference", "connectivityCA", "diagnostics", "exceeded", "causeAnalysis", "flow", "network", "overview", "alerts", "qos", "realm", "registration", "restricted", "security", "system", "transport", "account"];
+import { elasticsearchConnection } from '../../gui';
+const HAS_TABLE = ["calls", "conference", "connectivityCA", 
+  "diagnostics", "exceeded", "causeAnalysis", "flow", "network", 
+  "overview", "alerts", "qos", "realm", "registration", 
+  "restricted", "security", "system", "transport", "account"];
 
 class Dashboard extends Component {
 

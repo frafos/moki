@@ -6,8 +6,8 @@ import { downloadPcap } from './downloadPcap';
 import { downloadSD } from './downloadSD';
 import storePersistent from "../../store/indexPersistent";
 
-var FileSaver = require('file-saver');
-var JSZip = require("jszip");
+import FileSaver from "file-saver"
+import JSZip from "jszip"
 
 export async function downloadAll(obj) {
     var fileName = obj.attrs.filename;

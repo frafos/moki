@@ -3,13 +3,12 @@ import React, {
 } from 'react';
 
 import Type from './Type';
-import { Types, getExceededTypes } from '@moki-client/gui';
-import checkAll from "../../styles/icons/checkAll.png";
-import uncheckAll from "../../styles/icons/uncheckAll.png";
+import checkAll from "/icons/checkAll.png";
+import uncheckAll from "/icons/uncheckAll.png";
 import store from "../store/index";
 import { assignType } from "../actions/index";
 import { getLayoutSettings } from '../helpers/getLayout';
-import { ColorType, getExceededColor } from '@moki-client/gui';
+import { ColorType, getExceededColor, Types, getExceededTypes } from '../../gui';
 const STORED_TYPES_VERSION = "1.0";
 
 class Typebar extends Component {

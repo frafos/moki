@@ -3,10 +3,10 @@ import React, {
 } from 'react';
 import SavingScreen from '../helpers/SavingScreen';
 import isIP from '../helpers/isIP';
-import deleteIcon from "../../styles/icons/delete_grey.png";
-import editIcon from "../../styles/icons/edit_grey.png";
 import querySrv from '../helpers/querySrv';
 
+import deleteIcon from "/icons/delete_grey.png";
+import editIcon from "/icons/edit_grey.png";
 
 class Settings extends Component {
     constructor(props) {
@@ -35,7 +35,7 @@ class Settings extends Component {
     }
 
     componentWillMount() {
-        this.load("/api/setting");
+        this.load("api/setting");
     }
 
     /*

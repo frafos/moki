@@ -1,0 +1,155 @@
+        {
+            "transport": {
+                "attrs.source": [
+                    "searchable"
+                ],
+                "attrs.src-port": [
+                    "searchable"
+                ],
+                "client.ip": [
+                    "searchable"
+                ],
+                "client.port": [
+                    "searchable"
+                ],
+                "attrs.transport": [
+                    "searchable"
+                ],
+                "attrs.receiced_ip": [],
+                "attrs.local-if": [],
+                "attrs.reg_nh_ip": [],
+                "attrs.sourceSubnets": [
+                    "searchable"
+                ]
+            },
+            "topology": {
+                "attrs.src_rlm_name": [
+                    "searchable"
+                ],
+                "attrs.dst_rlm_name": [
+                    "searchable"
+                ],
+                "attrs.dst_ca_id": [
+                    "searchable"
+                ],
+                "attrs.src_ca_id": [
+                    "searchable"
+                ],
+                "attrs.dest_ca_name": [
+                    "searchable"
+                ],
+                "attrs.dest_ca_uuid": [
+                    "searchable"
+                ],
+                "attrs.sbc": [
+                    "searchable"
+                ],
+                "attrs.hostname": [
+                    "searchable"
+                ]
+            },
+            "SIP": {
+                "attrs.method": [
+                    "searchable"
+                ],
+                "attrs.from": [
+                    "searchable"
+                ],
+                "attrs.to": [
+                    "searchable"
+                ],
+                "attrs.to-ua": [
+                    "searchable"
+                ],
+                "attrs.r-uri": [
+                    "searchable"
+                ],
+                "attrs.r-uri-shorted": [
+                    "searchable"
+                ],
+                "attrs.aor": [],
+                "attrs.call-id": [
+                    "searchable"
+                ],
+                "attrs.from-ua": [
+                    "searchable"
+                ],
+                "attrs.sip-reason": [
+                    "searchable"
+                ],
+                "sip.pai1": [
+                    "searchable"
+                ],
+                "sip.pai2": [
+                    "searchable"
+                ],
+                "attrs.sip-code": [
+                    "searchable"
+                ],
+                "attrs.contact": []
+            },
+            "GeoIP": {
+                "attrs.dst_cc": [
+                    "searchable"
+                ],
+                "geoip.country_name": [
+                    "searchable"
+                ],
+                "geoip.city_name": [
+                    "searchable"
+                ],
+                "geoip.country_code2": [
+                    "searchable"
+                ],
+                "firstCountry": []
+            },
+            "RTP": {
+                "attrs.rtp-MOScqex-avg": [
+                    "searchable"
+                ],
+                "attrs.rtp-MOScqex-min": [
+                    "searchable"
+                ],
+                "attrs.rtp-MOScqex-avg-a": [],
+                "attrs.rtp-MOScqex-avg-b": [],
+                "attrs.rtp-lossavg": [],
+                "attrs.rtp-lossmax": [],
+                "attrs.rtp-direction": []
+            },
+            "others": {
+                "attrs.release": [
+                    "searchable"
+                ],
+                "attrs.type": [
+                    "searchable"
+                ],
+                "attrs.originator": [
+                    "searchable"
+                ],
+                "from-domain": [
+                    "searchable"
+                ],
+                "attrs.conf_id": [
+                    "searchable"
+                ],
+                "attrs.filename": [],
+                "attrs.description": [],
+                "attrs.terminator": [],
+                "attrs.room": [],
+                "attrs.reg_expire": [],
+                "attrs.ua_expire": [],
+                "attrs.bitsfrom": [],
+                "attrs.bitsto": [],
+                "attrs.callfrom": [],
+                "attrs.callstartfrom": [],
+                "attrs.callstartto": [],
+                "attrs.callsto": [],
+                "attrs.tags": [],
+                "plugin": [],
+                "plugin_instance": [],
+                "rx": [],
+                "tx": [],
+                "sources": [],
+                "URIs": []
+            }
+        }

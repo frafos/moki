@@ -7,14 +7,16 @@ import React, {
     Component
 } from 'react';
 import store from "../store/index";
-import playIcon from "../../styles/icons/play.png";
-import pauseIcon from "../../styles/icons/stop.png";
-import historyIcon from "../../styles/icons/reload_time_grey.png";
-import {
-    elasticsearchConnection
-} from '@moki-client/gui';
 import { setTimerange } from "../actions/index";
-import { parseDateHeatmapAnimation, parseDateHeatmapDocCountAnimation, parseTwoAggAnimation, parseGeoipAnimation, parseTopologyDataAnimation, parseHistogramDataAnimation, parseListDataAnimation, parseQueryStringDataAnimation, parseDistinctDataAnimation } from '@moki-client/es-response-parser';
+import { elasticsearchConnection } from '../../gui';
+import { parseDateHeatmapAnimation, parseDateHeatmapDocCountAnimation, 
+    parseTwoAggAnimation, parseGeoipAnimation, parseTopologyDataAnimation, 
+    parseHistogramDataAnimation, parseListDataAnimation, 
+    parseQueryStringDataAnimation, parseDistinctDataAnimation } from '../../es-response-parser';
+
+import playIcon from "/icons/play.png";
+import pauseIcon from "/icons/stop.png";
+import historyIcon from "/icons/reload_time_grey.png";
 
 class Animation extends Component {
     // Initialize the state

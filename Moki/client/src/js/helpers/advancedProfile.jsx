@@ -1,9 +1,10 @@
 import { Component } from 'react';
 import querySrv from './querySrv';
-import unlistthemAll from "../../styles/icons/whitelist_remove.png";
-import listthemAll from "../../styles/icons/whitelist.png";
-import suppressIcon from "../../styles/icons/suppress.png";
-import unsuppressIcon from "../../styles/icons/view.png";
+
+import unlistthemAll from "/icons/whitelist_remove.png";
+import listthemAll from "/icons/whitelist.png";
+import suppressIcon from "/icons/suppress.png";
+import unsuppressIcon from "/icons/view.png";
 
 
 class AdvancedProfile extends Component {

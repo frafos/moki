@@ -1,0 +1,49 @@
+.chart {
+    border: 1px solid #006100;
+    border-radius: 5px;
+}
+
+.btn-small {
+    border: 1px solid #006100;
+    border-radius: 5px;
+}
+
+.sidebar-separator-title {
+    height: 5px;
+    padding: 0 !important;
+}
+
+.bg-dark {
+    border-radius: 5px;
+}
+
+.shadow {
+    border: 1px solid #006100;
+    border-radius: 5px;
+}
+
+.filterBody {
+    border: 1px solid #006100;
+    border-radius: 5px;
+}
+
+.Advance {
+    border: 1px solid #006100;
+    border-radius: 5px;
+}
+
+#searchBar {
+    border: 1px solid #006100;
+    border-radius: 5px;
+}
+
+#user {
+    align-self: center;
+    padding-bottom: 0px;
+    padding-left: 15px;
+}
+
+#footerlogo {
+    float: right;
+    height: 20px;
+}

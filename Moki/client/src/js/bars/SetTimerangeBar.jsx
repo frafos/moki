@@ -1,26 +1,28 @@
-import React, {
-    Component
-} from 'react';
-import Datetime from 'react-datetime';
-import timeForward from "../../styles/icons/timeForward.png";
-import timeBack from "../../styles/icons/timeBack.png";
-import shareIcon from "../../styles/icons/share.png";
+
+import ReactDatetimeClass from "react-datetime";
+const Datetime = ReactDatetimeClass.default ?? ReactDatetimeClass;
+
+import React, { Component } from 'react';
 import store from "../store/index";
 import storePersistent from "../store/indexPersistent";
 import { setTimerange } from "../actions/index";
-import reloadIcon from "../../styles/icons/reload.png";
-import historyIcon from "../../styles/icons/reload_time.png";
-import historyIconGrey from "../../styles/icons/reload_time_grey.png";
-import refreshIcon from "../../styles/icons/refresh.png";
-import refreshStopIcon from "../../styles/icons/refreshStop.png";
 import Export from "./Export";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { parseTimestamp } from "../helpers/parseTimestamp";
-import { shareFilters } from '@moki-client/gui';
+import { shareFilters } from '../../gui';
 const hiddenExport = ["wblist", "config", "account", "alarms", "settings", "monitoring"];
 
-class timerangeBar extends Component {
+import timeForward from "/icons/timeForward.png";
+import timeBack from "/icons/timeBack.png";
+import shareIcon from "/icons/share.png";
+import reloadIcon from "/icons/reload.png";
+import historyIcon from "/icons/reload_time.png";
+import historyIconGrey from "/icons/reload_time_grey.png";
+import refreshIcon from "/icons/refresh.png";
+import refreshStopIcon from "/icons/refreshStop.png";
+
+class TimerangeBar extends Component {
     constructor(props) {
         super(props);
 
@@ -514,7 +516,7 @@ class timerangeBar extends Component {
 
 
     render() {
-        //const sipUser = this.state.sipUser.user;
+        // const sipUser = this.state.sipUser.user;
         // const aws =store.getState().user.aws;
         let sipUserSwitch = <div />;
         var name = window.location.pathname.substr(1);
@@ -616,5 +618,5 @@ class timerangeBar extends Component {
         );
     }
 }
-export default timerangeBar;
+export default TimerangeBar;
 

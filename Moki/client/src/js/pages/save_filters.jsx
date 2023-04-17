@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import store from "../store/index";
 import storePersistent from "../store/indexPersistent";
-import { getFilters } from '@moki-client/gui';
+import { getFilters } from '../../gui';
 import querySrv from '../helpers/querySrv';
 
 class SaveFilters extends Component {

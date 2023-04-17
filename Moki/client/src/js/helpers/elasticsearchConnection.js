@@ -1,6 +1,6 @@
 import querySrv from './querySrv';
 
-export async function elasticsearchConnection(url, params){
+export async function elasticsearchConnection(url, params) {
             var data;
             var response;
             try{

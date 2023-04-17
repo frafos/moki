@@ -10,7 +10,7 @@ export async function exclude(i){
     if (comment && comment !== "") {
         //fetch old exclude data
         try {
-            const response = await querySrv("/api/setting", {
+            const response = await querySrv("api/setting", {
                 method: "GET",
                 credentials: 'include',
                 headers: {

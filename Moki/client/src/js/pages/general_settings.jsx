@@ -6,13 +6,13 @@ import isNumber from '../helpers/isNumber';
 import isIP from '../helpers/isIP';
 import { isHostnameOrIp }  from '../helpers/isHostnameOrIp';
 import isEmail from '../helpers/isEmail';
-import deleteIcon from "../../styles/icons/delete_grey.png";
-import { elasticsearchConnection } from '@moki-client/gui';
 import storePersistent from "../store/indexPersistent";
 import Popup from "reactjs-popup";
-import detailsIcon from "../../styles/icons/details.png";
 import { setSettings } from "../actions/index";
 import querySrv from '../helpers/querySrv';
+import { elasticsearchConnection } from '../../gui';
+import deleteIcon from "/icons/delete_grey.png";
+import detailsIcon from "/icons/details.png";
 
 class Certificate extends Component {
     constructor(props) {
@@ -30,7 +30,7 @@ class Certificate extends Component {
     async getCertificate(cert) {
         //parse cert with OpenSSL
         try {
-            const response = await querySrv("/api/parse/certificate", {
+            const response = await querySrv("api/parse/certificate", {
                 method: "POST",
                 credentials: 'include',
                 headers: {
@@ -81,7 +81,7 @@ class Settings extends Component {
     }
 
     UNSAFE_componentWillMount() {
-        this.load("/api/setting");
+        this.load("api/setting");
     }
 
 
@@ -539,7 +539,7 @@ class Settings extends Component {
 
     async deleteTag(e) {
         var tag = e.currentTarget.id;
-        var data = await elasticsearchConnection("/api/tag/delete", { id: "", index: "", tags: tag });
+        var data = await elasticsearchConnection("api/tag/delete", { id: "", index: "", tags: tag });
         if (data.deleted >= 0) {
             var tags = this.state.tags;
             for (var i = 0; i < tags.length; i++) {

@@ -1,11 +1,15 @@
 import { Component } from 'react';
 import { parseTimestamp } from "./parseTimestamp";
 import storePersistent from "../store/indexPersistent";
-import clipboardIcon from "../../styles/icons/clipboard.png";
-import removeIcon from "../../styles/icons/delete_lightgrey.png";
-import { cipherAttr } from '@moki-client/gui';
 import querySrv from './querySrv';
-const DATEFORMATS = ["lastModified", "created", "lastLogin", "lastExceeded", "ts", "lastRaised", "lastLaunchedTimer", "lastRaisedTS", "lastExceededTS", "timestamp", "lastTimerTS", "lastExpired", "lastReceivedTimer"];
+import { cipherAttr } from '../../gui';
+
+import clipboardIcon from "/icons/clipboard.png";
+import removeIcon from "/icons/delete_lightgrey.png";
+
+const DATEFORMATS = ["lastModified", "created", "lastLogin", "lastExceeded", 
+    "ts", "lastRaised", "lastLaunchedTimer", "lastRaisedTS", "lastExceededTS", 
+    "timestamp", "lastTimerTS", "lastExpired", "lastReceivedTimer"];
 
 class AlertProfile extends Component {
     constructor(props) {

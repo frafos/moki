@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { elasticsearchConnection } from '@moki-client/gui';
-import { parseTableHits, decrypt } from '@moki-client/es-response-parser';
+import { elasticsearchConnection } from '../../gui';
+import { parseTableHits, decrypt } from '../../es-response-parser';
 import storePersistent from "../store/indexPersistent";
 
 class Export extends Component {

@@ -1,15 +1,16 @@
 import React, {
     Component
 } from 'react';
-import { createFilter } from '@moki-client/gui';
-import disableIcon from "../../styles/icons/disable.png";
-import enableIcon from "../../styles/icons/enable.png";
+import { createFilter } from '../../gui';
 import store from "../store/index";
 import storePersistent from "../store/indexPersistent";
 import { setTimerange } from "../actions/index";
 import { assignType } from "../actions/index";
 import { setFilters } from "../actions/index";
 import querySrv from '../helpers/querySrv';
+
+import disableIcon from "/icons/disable.png";
+import enableIcon from "/icons/enable.png";
 
 class StoredFilters extends Component {
     constructor(props) {

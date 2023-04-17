@@ -2,149 +2,150 @@
 <html>
 
 <head>
-    <!-- <script type="text/javascript" src="d3.min.js"></script>-->
-    <link rel="stylesheet" href="./style.css">
-    <script src="http://d3js.org/d3.v4.min.js"></script>
-    <script type="text/javascript" src="./multipleChart.js"></script>
-    <script type="text/javascript" src="./multipleAreaChart.js"></script>
-    <script type="text/javascript" src="./barChart.js"></script>
-    <script type="text/javascript" src="./listChart.js"></script>
-    <script type="text/javascript" src="./parseMultipleAreaChart.js"></script>
-    <script type="text/javascript" src="./parseMultipleAreaChartIncidents.js"></script>
-    <script type="text/javascript" src="./parseListData.js"></script>
-    <script type="text/javascript" src="./parseHistogramData.js"></script>
+  <!-- <script type="text/javascript" src="d3.min.js"></script>-->
+  <link rel="stylesheet" href="./style.css">
+  <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script type="text/javascript" src="./multipleChart.js"></script>
+  <script type="text/javascript" src="./multipleAreaChart.js"></script>
+  <script type="text/javascript" src="./barChart.js"></script>
+  <script type="text/javascript" src="./listChart.js"></script>
+  <script type="text/javascript" src="./parseMultipleAreaChart.js"></script>
+  <script type="text/javascript" src="./parseMultipleAreaChartIncidents.js"></script>
+  <script type="text/javascript" src="./parseListData.js"></script>
+  <script type="text/javascript" src="./parseHistogramData.js"></script>
 
-    <title>Report</title>
+  <title>Report</title>
 </head>
 
 <body id="body">
-    <div style="float: right; font-size: medium !important; color: gray !important; font-weight: 350;"> <span id="gte"></span> - <span id="lte"></span></div>
-    <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
-        <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">ENDs</h3>
-        <h4 className="alignLeft" id="ends"></h4>
+  <div style="float: right; font-size: medium !important; color: gray !important; font-weight: 350;"> <span
+      id="gte"></span> - <span id="lte"></span></div>
+  <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
+    <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">ENDs</h3>
+    <h4 className="alignLeft" id="ends"></h4>
+  </div>
+  <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
+    <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">ATTEMPTs</h3>
+    <h4 className="alignLeft" id="attempts"></h4>
+  </div>
+  <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
+    <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">SUM DURATION</h3>
+    <h4 className="alignLeft" id="durationSum"></h4>
+  </div>
+  <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
+    <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">ASR</h3>
+    <h4 className="alignLeft" id="asr"></h4>
+  </div>
+  <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
+    <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">AVG MoS</h3>
+    <h4 className="alignLeft" id="avgMos"></h4>
+  </div>
+  <div id="parallel_calls" style="display: inline-block;">
+    <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">PARALLEL CALLS</h3>
+  </div>
+  <div id="parallel_regs" style="display: inline-block;">
+    <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">PARALLEL REGS</h3>
+  </div>
+  <div id="incidents" style="display: inline-block;">
+    <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">INCIDENTS</h3>
+  </div>
+  <div style="display: inline-block;">
+    <div id="sipMethod" style="float:left; margin-left: 20px; margin-right: 50px;">
+      <h3 className="alignLeft title" style="margin-bottom: 0;">SIP METHOD</h3>
     </div>
-    <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
-        <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">ATTEMPTs</h3>
-        <h4 className="alignLeft" id="attempts"></h4>
+    <div id="sipCode" style="float:left; margin-left: 20px; margin-right: 50px;">
+      <h3 className="alignLeft title" style="margin-bottom: 0;">SIP CODE</h3>
     </div>
-    <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
-        <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">SUM DURATION</h3>
-        <h4 className="alignLeft" id="durationSum"></h4>
+    <div id="sourceIP" style="float:left; margin-left: 20px; margin-right: 50px;">
+      <h3 className="alignLeft title" style="margin-bottom: 0;">SOURCE IP</h3>
     </div>
-    <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
-        <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">ASR</h3>
-        <h4 className="alignLeft" id="asr"></h4>
-    </div>
-    <div className="valueChart alignLeft" style="float:left; min-width: 10%;">
-        <h3 className="alignLeft title" style="margin-left:28px; margin-bottom: 0;">AVG MoS</h3>
-        <h4 className="alignLeft" id="avgMos"></h4>
-    </div>
-    <div id="parallel_calls" style="display: inline-block;">
-        <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">PARALLEL CALLS</h3>
-    </div>
-    <div id="parallel_regs" style="display: inline-block;">
-        <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">PARALLEL REGS</h3>
-    </div>
-    <div id="incidents" style="display: inline-block;">
-        <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">INCIDENTS</h3>
-    </div>
-    <div style="display: inline-block;">
-        <div id="sipMethod" style="float:left; margin-left: 20px; margin-right: 50px;">
-            <h3 className="alignLeft title" style="margin-bottom: 0;">SIP METHOD</h3>
-        </div>
-        <div id="sipCode" style="float:left; margin-left: 20px; margin-right: 50px;">
-            <h3 className="alignLeft title" style="margin-bottom: 0;">SIP CODE</h3>
-        </div>
-        <div id="sourceIP" style="float:left; margin-left: 20px; margin-right: 50px;">
-            <h3 className="alignLeft title" style="margin-bottom: 0;">SOURCE IP</h3>
-        </div>
-    </div>
-    <div id="QoShistogram" style="display: inline-block;">
-        <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">QoS HISTOGRAM</h3>
-    </div>
-    <div style="display: inline-block;">
-        <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">DESTINATIONS CAs STATISTICS</h3>
-        <table>
-            <tbody id="multivalueChart">
-                <tr>
-                    <th style="min-width: 250px;">
-                        <h3 style="text-align: initial; margin-bottom: 0;">CA name</h3>
-                    </th>
-                    <th style="min-width: 150px;">
-                        <h3 style="text-align: initial; margin-bottom: 0;">AVG failure</h3>
-                    </th>
-                    <th style="min-width: 150px;">
-                        <h3 style="text-align: initial; margin-bottom: 0;">Minutes</h3>
-                    </th>
-                    <th style="min-width: 150px;">
-                        <h3 style="text-align: initial; margin-bottom: 0;">Ends</h3>
-                    </th>
-                    <th style="min-width: 150px;">
-                        <h3 style="text-align: initial; margin-bottom: 0;">Attempts</h3>
-                    </th>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+  </div>
+  <div id="QoShistogram" style="display: inline-block;">
+    <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">QoS HISTOGRAM</h3>
+  </div>
+  <div style="display: inline-block;">
+    <h3 className="alignLeft title" style="margin-left: 25px; margin-bottom: 0;">DESTINATIONS CAs STATISTICS</h3>
+    <table>
+      <tbody id="multivalueChart">
+        <tr>
+          <th style="min-width: 250px;">
+            <h3 style="text-align: initial; margin-bottom: 0;">CA name</h3>
+          </th>
+          <th style="min-width: 150px;">
+            <h3 style="text-align: initial; margin-bottom: 0;">AVG failure</h3>
+          </th>
+          <th style="min-width: 150px;">
+            <h3 style="text-align: initial; margin-bottom: 0;">Minutes</h3>
+          </th>
+          <th style="min-width: 150px;">
+            <h3 style="text-align: initial; margin-bottom: 0;">Ends</h3>
+          </th>
+          <th style="min-width: 150px;">
+            <h3 style="text-align: initial; margin-bottom: 0;">Attempts</h3>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <script type="text/javascript">
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/report' + window.location.search);
-        //set timerange in report
-        var url = window.location.search;
-        if (url.indexOf("gte") && url.indexOf("lte")) {
-            var gte = url.substring(url.indexOf("gte") + 4, url.indexOf("&lte"));
-            var lte = url.substring(url.indexOf("&lte") + 5);
-            document.getElementById("gte").innerHTML = new Date(gte * 1).toLocaleString();
-            document.getElementById("lte").innerHTML = new Date(lte * 1).toLocaleString();
-        }
+  <script type="text/javascript">
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/report' + window.location.search);
+    //set timerange in report
+    var url = window.location.search;
+    if (url.indexOf("gte") && url.indexOf("lte")) {
+      var gte = url.substring(url.indexOf("gte") + 4, url.indexOf("&lte"));
+      var lte = url.substring(url.indexOf("&lte") + 5);
+      document.getElementById("gte").innerHTML = new Date(gte * 1).toLocaleString();
+      document.getElementById("lte").innerHTML = new Date(lte * 1).toLocaleString();
+    }
 
-        xhr.onload = function() {
-            if (xhr.status != 200) { // analyze HTTP status of the response
-                document.getElementById("body").innerHTML = xhr.statusText;
-                // alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-            } else { // show the result
+    xhr.onload = function () {
+      if (xhr.status != 200) { // analyze HTTP status of the response
+        document.getElementById("body").innerHTML = xhr.statusText;
+        // alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+      } else { // show the result
 
-                var res = JSON.parse(xhr.response)
-                res = res.responses;
-                document.getElementById("ends").innerHTML = res[0].hits.total.value.toLocaleString();
-                document.getElementById("attempts").innerHTML = res[1].hits.total.value.toLocaleString();
-                document.getElementById("durationSum").innerHTML = res[2].aggregations.agg.value ? Number((res[2].aggregations.agg.value).toFixed(2)) : 0;
-                document.getElementById("asr").innerHTML = Number(res[3].aggregations.agg.value).toFixed(2);
-                document.getElementById("avgMos").innerHTML = Number(res[4].aggregations.agg.value).toFixed(2);
+        var res = JSON.parse(xhr.response)
+        res = res.responses;
+        document.getElementById("ends").innerHTML = res[0].hits.total.value.toLocaleString();
+        document.getElementById("attempts").innerHTML = res[1].hits.total.value.toLocaleString();
+        document.getElementById("durationSum").innerHTML = res[2].aggregations.agg.value ? Number((res[2].aggregations.agg.value).toFixed(2)) : 0;
+        document.getElementById("asr").innerHTML = Number(res[3].aggregations.agg.value).toFixed(2);
+        document.getElementById("avgMos").innerHTML = Number(res[4].aggregations.agg.value).toFixed(2);
 
 
-                drawMultipleAreaChart(parseMultipleAreaChart("Calls", res[5], "Calls-1d", res[6]), "parallel_calls", 1000);
+        drawMultipleAreaChart(parseMultipleAreaChart("Calls", res[5], "Calls-1d", res[6]), "parallel_calls", 1000);
 
-                drawMultipleAreaChart(parseMultipleAreaChart("Regs", res[7], "Regs-1d", res[8]), "parallel_regs", 1000);
+        drawMultipleAreaChart(parseMultipleAreaChart("Regs", res[7], "Regs-1d", res[8]), "parallel_regs", 1000);
 
-                drawMultipleAreaChart(parseMultipleAreaChartIncidents("Incidents", res[9], "Incidents-1d", res[10]), "incidents", 1000);
+        drawMultipleAreaChart(parseMultipleAreaChartIncidents("Incidents", res[9], "Incidents-1d", res[10]), "incidents", 1000);
 
-                drawMultipleChart(res[11]);
+        drawMultipleChart(res[11]);
 
-                //SIP METHOD
-                drawListChart(parseListData(res[12]), "sipMethod");
+        //SIP METHOD
+        drawListChart(parseListData(res[12]), "sipMethod");
 
-                //SIP CODE
-                drawListChart(parseListData(res[13]), "sipCode");
+        //SIP CODE
+        drawListChart(parseListData(res[13]), "sipCode");
 
-                //SOURCE IP ADDRESS
-                drawListChart(parseListData(res[14]), "sourceIP");
+        //SOURCE IP ADDRESS
+        drawListChart(parseListData(res[14]), "sourceIP");
 
-                //QoS histogram
-                drawBarChart(parseHistogramData(res[15]), "QoShistogram", 1000);
+        //QoS histogram
+        drawBarChart(parseHistogramData(res[15]), "QoShistogram", 1000);
 
-            }
-        };
+      }
+    };
 
-        //req.body.timerange_lte, req.body.timerange_gte
-        xhr.send({
-            "timerange_lte": new Date(),
-            "timerange_gte": new Date(new Date().setDate(new Date().getDate() - 1))
+    //req.body.timerange_lte, req.body.timerange_gte
+    xhr.send({
+      "timerange_lte": new Date(),
+      "timerange_gte": new Date(new Date().setDate(new Date().getDate() - 1))
 
-        });
+    });
 
-    </script>
+  </script>
 </body>
 
 </html>

@@ -202,7 +202,7 @@ class SettingController {
    *             example:
    *               error: "bash: not found"
    */
-  static loadFilters(req, res) {
+  static loadFilters(req, res, next) {
     async function search(req) {
       //get user's right to load correct filters
       const user = AdminController.getUser(req);

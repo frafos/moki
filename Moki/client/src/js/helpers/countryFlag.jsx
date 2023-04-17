@@ -25,21 +25,24 @@ class CountryFlag extends Component {
     }
 
     async getCountryFlag(countryCode) {
-        try {
-            const picture = (await import(`../../styles/flags/${countryCode.toLowerCase()}.png`));
-            if(picture.default)   this.setState({ picture: picture.default });
-            else this.setState({ picture: null });
-        }
-        catch (err) {
-            this.setState({ picture: null });
-            //Do whatever you want when the image failed to load here
+        const picture = await import(`../../assets/flags/${countryCode.toLowerCase()}.png`)
+          .catch(() => null);
+        if (picture) {
+          this.setState({ picture: picture.default });
+        } else {
+          this.setState({ picture: null });
         }
     }
 
     render() {
         return (
             <span>
-                {this.state.picture && <img alt="flag" src={this.state.picture} style={{ "width": "20px", "height": "14px","marginBottom": "2px", "marginRight": "2px"}}></img>}
+              {this.state.picture != null && 
+                <img alt="flag" src={this.state.picture} 
+                    style={{ "width": "20px", 
+                        "height": "14px","marginBottom": "2px", 
+                        "marginRight": "2px" }}>
+                </img>}
             </span>
         )
     }

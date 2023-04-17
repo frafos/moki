@@ -7,8 +7,8 @@ import {
 
 import store from "../store/index";
 import storePersistent from "../store/indexPersistent";
-import { elasticsearchConnection } from '@moki-client/gui';
-import { parseTableHits } from '@moki-client/es-response-parser';
+import { elasticsearchConnection } from '../../gui';
+import { parseTableHits } from '../../es-response-parser';
 
 class Table extends Component {
 

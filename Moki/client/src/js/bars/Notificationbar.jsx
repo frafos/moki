@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { status } from '../helpers/status'
 import { diskSpace } from '../helpers/status';
-import { Redirect } from 'react-router';
-import infoIcon from "../../styles/icons/info.png";
-import warningIcon from "../../styles/icons/warning.png";
+// import { Navigate } from 'react-router';
 import storePersistent from "../store/indexPersistent";
 //import errorIcon from "../../styles/icons/error.png";
+
+import infoIcon from "/icons/info.png";
+import warningIcon from "/icons/warning.png";
 
 
 /*
@@ -253,7 +254,7 @@ class Notificationbar extends Component {
                         </div>
                     })}
                     </div>}
-                    {this.state.redirect && <Redirect push to="/monitoring" />}
+                    {this.state.redirect && <Navigate push to="/monitoring" />}
                 </div>)
         }
 

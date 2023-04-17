@@ -1,18 +1,6 @@
 import React, { Component } from 'react';
 import Popup from "reactjs-popup";
-import detailsIcon from "../../styles/icons/details.png";
 import TagRanger from "../bars/TagRanger";
-import filterIcon from "../../styles/icons/filter.png";
-import clipboardIcon from "../../styles/icons/clipboard.png";
-import shareIcon from "../../styles/icons/share_dark.png";
-import overviewIcon from "../../styles/icons/alertProfile.png";
-import suppressIcon from "../../styles/icons/suppress.png";
-import unfilterIcon from "../../styles/icons/unfilter.png";
-import BLIcon from "../../styles/icons/blacklist.png";
-import downloadPcapIcon from "../../styles/icons/downloadPcap.png";
-import downloadIcon from "../../styles/icons/download.png";
-import viewIcon from "../../styles/icons/view.png";
-import { createFilter } from "@moki-client/gui"
 import { formatDuration } from "./getDurationFormat";
 import { downloadAll } from "./download/downloadAll";
 import { exportJSON } from "./export";
@@ -23,8 +11,22 @@ import store from "../store/index";
 import { parseTimestamp } from "../helpers/parseTimestamp";
 import SimpleSequenceDiagram from "../charts/simpleSequenceDiagram";
 import { checkBLip } from "../helpers/alertProfile";
-import { getSearchableAttributes, getExceededName, isEncryptedAttr } from '@moki-client/gui';
+import { getSearchableAttributes, getExceededName, 
+isEncryptedAttr, createFilter } from "../../gui";
 import querySrv from './querySrv';
+
+
+import detailsIcon from "/icons/details.png";
+import filterIcon from "/icons/filter.png";
+import clipboardIcon from "/icons/clipboard.png";
+import shareIcon from "/icons/share_dark.png";
+import overviewIcon from "/icons/alertProfile.png";
+import suppressIcon from "/icons/suppress.png";
+import unfilterIcon from "/icons/unfilter.png";
+import BLIcon from "/icons/blacklist.png";
+import downloadPcapIcon from "/icons/downloadPcap.png";
+import downloadIcon from "/icons/download.png";
+import viewIcon from "/icons/view.png";
 
 const attrsTypes = {
     "@timestamp": "time",
