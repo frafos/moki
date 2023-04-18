@@ -653,15 +653,16 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
             }
             //time format
             else if ((attrsTypes[column_name.source] && attrsTypes[column_name.source] === "time") || column_name.source.includes("TS")) {
-                let dataPath = "_source";
+                let dataPath = "_source.";
                 if (window.location.pathname === "/profiles") {
                     dataPath = "";
                 }
 
-                let dataField = 'dataPath' + column_name.source;
+                let dataField = dataPath + column_name.source;
                 if (rawTables.includes(dashboard)) {
                     dataField = column_name.source;
                 }
+       
                 return {
                     dataField: dataField,
                     text: column_name ? column_name.name.toUpperCase() : "",

@@ -17,7 +17,7 @@ class CountryFlag extends Component {
 
 
       //after redirect delete unpinned filters
-      componentWillReceiveProps(nextProps) {
+      UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.countryCode !== this.props.countryCode) {
             this.setState({ countryCode: nextProps.countryCode });
             this.getCountryFlag(nextProps.countryCode);

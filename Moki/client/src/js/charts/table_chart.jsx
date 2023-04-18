@@ -24,21 +24,124 @@ import { downloadPcapMerged } from '../helpers/download/downloadPcapMerged';
 import { parseTimestamp } from "../helpers/parseTimestamp";
 import querySrv from '../helpers/querySrv';
 
+import { EventsPage } from "./events_page"
+
 import shareIcon from "/icons/share_dark.png";
 import downloadPcapIcon from "/icons/downloadPcap.png";
 import viewIcon from "/icons/view.png";
-import filter from "/icons/filter.png";
-import unfilter from "/icons/unfilter.png";
+import filterIcon from "/icons/filter.png";
+import unfilterIcon from "/icons/unfilter.png";
 import emptyIcon from "/icons/empty_small.png";
 import downloadIcon from "/icons/download.png";
 import resetIcon from "/icons/disable_grey.png";
 
 const NOT_EXPAND_OR_COLUMNS_SELECTION = ["LAST LOGIN EVENTS", "LAST MODE CHANGES"];
+const COLUMNS_USER_PREF_STORE = "columns";
 
 import FileSaver from "file-saver";
 import JSZip from "jszip";
 
-export default class listChart extends Component {
+function renderExpandRow(cell, value, isSearchable, category, attr) {
+
+  const filter = (event) => {
+      createFilter(event.currentTarget.getAttribute('field') 
+        + ":\"" + event.currentTarget.getAttribute('value') + "\"");
+  }
+
+  const unfilter = (event) => {
+      createFilter("NOT " + event.currentTarget.getAttribute('field') 
+        + ":\"" + event.currentTarget.getAttribute('value') + "\"");
+  }
+
+
+  let isEncrypted = false;
+  // if (attr.encrypt) {
+  //     isEncrypted = isEncryptedAttr(category + "." + cell, attr.encrypt);
+  // }
+  var style = { "color": isEncrypted ? "darkred" : "#212529" };
+  //if  attrs.rtp-MOScqex-avg: [* TO 3] red
+  //attrs.rtp-MOScqex-min : [* TO 2] red
+  //attrs.rtp-lossmax: [25 TO *]  red
+  //attrs.rtp-lossavg: [15 TO *] red
+  //attrs.rtp-direction:'oneway'  red
+  if ((cell === "rtp-MOScqex-avg" && value < 3) || (cell === "rtp-MOScqex-min" && value < 2) || (cell === "rtp-lossmax" && value > 25) || (cell === "rtp-lossavg" && value > 15) || (cell === "rtp-direction" && value === "oneway")) {
+      return <p value={value}>
+          <span className="spanTab">{cell}:</span>
+          <span className="red">{value}</span>
+      </p>
+  }
+
+  //attrs.to or attrs.from, use keyword
+  if (cell === "from" || cell === "to") {
+      return <p key={cell} field={"attrs." + cell + ".keyword"} value={value}>
+          <span className="spanTab">{cell}: </span>
+          <img onClick={filter} field={"attrs." + cell + ".keyword"} value={value} title="filter" className="icon" alt="filterIcon" src={filterIcon} />
+          <img field={"attrs." + cell + ".keyword"} value={value} onClick={unfilter} className="icon" alt="unfilterIcon" title="unfilter" src={unfilterIcon} />
+          <span className="spanTab" style={style} >{value}</span>
+      </p>
+  }
+
+  //if filename make a link
+  if (cell === "filename") {
+      return <p value={value}> <span className="spanTab">{cell}: </span>
+          <span className="tab">
+              <button className="noFormatButton" onClick={getPcap} file={value}>
+                  <img className="icon" alt="downloadIcon" src={downloadPcapIcon} title="download PCAP" />
+              </button>
+              <a href={"/sequenceDiagram/" + value} target="_blank" rel="noopener noreferrer"><img className="icon" alt="viewIcon" src={viewIcon} title="view PCAP" /></a></span></p>
+  }
+
+  //if audio_file make download icon (only for call-end)
+  if (cell === "audio_file") {
+      return <p value={value}> <span className="spanTab">{cell}: </span>
+          <span className="tab">
+              <a href={value} ><img className="icon" alt="wavIcon" title="download WAV" src={downloadIcon} /></a>
+          </span></p>
+  }
+
+  //if  reg_expire make human-readable format
+  if (cell === "reg_expire" || cell === "ua_expire") {
+      return <p value={value}>
+          <span className="spanTab">{cell}: </span>
+          <span className="tab">{parseTimestamp(new Date(value * 1000))}</span>
+      </p>
+  }
+
+  //special case: if filename contains "downloadWav" (only for recording) - make a wav link
+  if (cell === "downloadWav") {
+      return <p value={value}> <span className="spanTab">{cell}: </span>
+          <span className="tab">
+              <a href={value} ><img className="icon" alt="wavIcon" title="download WAV" src={downloadIcon} /></a>
+          </span></p>
+  }
+
+  //searchable fields with attrs
+  if (getSearchableAttributes().includes("attrs." + cell)) {
+      return <p key={cell} field={"attrs." + cell} value={value}>
+          <span className="spanTab">{cell}: </span>
+          <img onClick={filter} field={"attrs." + cell} value={value} title="filter" className="icon" alt="filterIcon" src={filterIcon} />
+          <img field={"attrs." + cell} value={value} onClick={unfilter} className="icon" alt="unfilterIcon" title="unfilter" src={unfilterIcon} />
+          <span className="spanTab" style={style} >{value}</span>
+      </p>
+  }
+
+  //var*
+  if (isSearchable) {
+      return <p key={cell} field={"attrs.vars." + cell} value={value}>
+          <span className="spanTab">{cell}: </span>
+          <img onClick={filter} field={"attrs.vars." + cell} value={value} title="filter" className="icon" alt="filterIcon" src={filterIcon} />
+          <img field={"attrs.vars." + cell} value={value} onClick={unfilter} className="icon" alt="unfilterIcon" title="unfilter" src={unfilterIcon} />
+          <span className="spanTab" style={style} >{value}</span>
+      </p>
+  }
+
+  return <p value={value} key={value}>
+      <span className="spanTab">{cell}: </span>
+      <span className="tab" style={style} >{value}</span>
+  </p>
+}
+
+export default class ListChart extends Component {
     constructor(props) {
         super(props);
         var layout = storePersistent.getState().layout.table;
@@ -76,8 +179,6 @@ export default class listChart extends Component {
 
         this.chartRef = React.createRef();
 
-        this.filter = this.filter.bind(this);
-        this.unfilter = this.unfilter.bind(this);
         this.tags = this.tags.bind(this);
         this.movetooltip = this.movetooltip.bind(this);
         this.onEnterKey = this.onEnterKey.bind(this);
@@ -91,6 +192,17 @@ export default class listChart extends Component {
         this.focousSaveOutLte = this.focousSaveOutLte.bind(this);
         this.focousSaveOutGte = this.focousSaveOutGte.bind(this);
         window.tableChart = this;
+    }
+
+    saveColumnPref(columns) {
+      const storedColumns = JSON.parse(
+        window.localStorage.getItem(COLUMNS_USER_PREF_STORE) 
+      ) ?? { "version": "1.0" };
+
+      const dashboard = window.location.pathname.substring(1);
+      storedColumns[dashboard] = columns;
+
+      window.localStorage.setItem("columns", JSON.stringify(storedColumns));
     }
 
     async UNSAFE_componentWillReceiveProps(nextProps) {
@@ -308,7 +420,7 @@ export default class listChart extends Component {
         //store already exclude alarms list
         if (window.location.pathname === "/exceeded" || window.location.pathname === "/alerts") {
             try {
-                const response = await querySrv(import.meta.env.BAE_URL + "api/setting", {
+                const response = await querySrv(import.meta.env.BASE_URL + "api/setting", {
                     method: "GET",
                     credentials: 'include',
                     headers: {
@@ -352,15 +464,6 @@ export default class listChart extends Component {
 
     }
 
-    //filter
-    filter(event) {
-        createFilter(event.currentTarget.getAttribute('field') + ":\"" + event.currentTarget.getAttribute('value') + "\"");
-    }
-
-    //unfilter
-    unfilter(event) {
-        createFilter("NOT " + event.currentTarget.getAttribute('field') + ":\"" + event.currentTarget.getAttribute('value') + "\"");
-    }
 
     //moving tooltip according cursor position
     movetooltip(e) {
@@ -535,93 +638,7 @@ export default class listChart extends Component {
         }
     }
 
-    renderExpandRow(cell, value, isSearchable, category, attr) {
-        let isEncrypted = false;
-        if (attr.encrypt) {
-            isEncrypted = isEncryptedAttr(category + "." + cell, attr.encrypt);
-        }
-        var style = { "color": isEncrypted ? "darkred" : "#212529" };
-        //if  attrs.rtp-MOScqex-avg: [* TO 3] red
-        //attrs.rtp-MOScqex-min : [* TO 2] red
-        //attrs.rtp-lossmax: [25 TO *]  red
-        //attrs.rtp-lossavg: [15 TO *] red
-        //attrs.rtp-direction:'oneway'  red
-        if ((cell === "rtp-MOScqex-avg" && value < 3) || (cell === "rtp-MOScqex-min" && value < 2) || (cell === "rtp-lossmax" && value > 25) || (cell === "rtp-lossavg" && value > 15) || (cell === "rtp-direction" && value === "oneway")) {
-            return <p value={value}>
-                <span className="spanTab">{cell}:</span>
-                <span className="red">{value}</span>
-            </p>
-        }
-
-        //attrs.to or attrs.from, use keyword
-        if (cell === "from" || cell === "to") {
-            return <p key={cell} field={"attrs." + cell + ".keyword"} value={value}>
-                <span className="spanTab">{cell}: </span>
-                <img onClick={this.filter} field={"attrs." + cell + ".keyword"} value={value} title="filter" className="icon" alt="filterIcon" src={filter} />
-                <img field={"attrs." + cell + ".keyword"} value={value} onClick={this.unfilter} className="icon" alt="unfilterIcon" title="unfilter" src={unfilter} />
-                <span className="spanTab" style={style} >{value}</span>
-            </p>
-        }
-
-        //if filename make a link
-        if (cell === "filename") {
-            return <p value={value}> <span className="spanTab">{cell}: </span>
-                <span className="tab">
-                    <button className="noFormatButton" onClick={getPcap} file={value}>
-                        <img className="icon" alt="downloadIcon" src={downloadPcapIcon} title="download PCAP" />
-                    </button>
-                    <a href={"/sequenceDiagram/" + value} target="_blank" rel="noopener noreferrer"><img className="icon" alt="viewIcon" src={viewIcon} title="view PCAP" /></a></span></p>
-        }
-
-        //if audio_file make download icon (only for call-end)
-        if (cell === "audio_file") {
-            return <p value={value}> <span className="spanTab">{cell}: </span>
-                <span className="tab">
-                    <a href={value} ><img className="icon" alt="wavIcon" title="download WAV" src={downloadIcon} /></a>
-                </span></p>
-        }
-
-        //if  reg_expire make human-readable format
-        if (cell === "reg_expire" || cell === "ua_expire") {
-            return <p value={value}>
-                <span className="spanTab">{cell}: </span>
-                <span className="tab">{parseTimestamp(new Date(value * 1000))}</span>
-            </p>
-        }
-
-        //special case: if filename contains "downloadWav" (only for recording) - make a wav link
-        if (cell === "downloadWav") {
-            return <p value={value}> <span className="spanTab">{cell}: </span>
-                <span className="tab">
-                    <a href={value} ><img className="icon" alt="wavIcon" title="download WAV" src={downloadIcon} /></a>
-                </span></p>
-        }
-
-        //searchable fields with attrs
-        if (getSearchableAttributes().includes("attrs." + cell)) {
-            return <p key={cell} field={"attrs." + cell} value={value}>
-                <span className="spanTab">{cell}: </span>
-                <img onClick={this.filter} field={"attrs." + cell} value={value} title="filter" className="icon" alt="filterIcon" src={filter} />
-                <img field={"attrs." + cell} value={value} onClick={this.unfilter} className="icon" alt="unfilterIcon" title="unfilter" src={unfilter} />
-                <span className="spanTab" style={style} >{value}</span>
-            </p>
-        }
-
-        //var*
-        if (isSearchable) {
-            return <p key={cell} field={"attrs.vars." + cell} value={value}>
-                <span className="spanTab">{cell}: </span>
-                <img onClick={this.filter} field={"attrs.vars." + cell} value={value} title="filter" className="icon" alt="filterIcon" src={filter} />
-                <img field={"attrs.vars." + cell} value={value} onClick={this.unfilter} className="icon" alt="unfilterIcon" title="unfilter" src={unfilter} />
-                <span className="spanTab" style={style} >{value}</span>
-            </p>
-        }
-
-        return <p value={value} key={value}>
-            <span className="spanTab">{cell}: </span>
-            <span className="tab" style={style} >{value}</span>
-        </p>
-    }
+    
 
     renderExpand(row, all = false) {
         var keys = Object.keys(row);
@@ -652,7 +669,7 @@ export default class listChart extends Component {
                         if (displayedAttrs.includes("attrs." + attrs[j])) {
                             let category = getCategory("attrs." + attrs[j]);
                             if (!categorySort[category]) categorySort[category] = [];
-                            categorySort[category].push(this.renderExpandRow(attrs[j], row[keys[i]][attrs[j]], false, "attrs", row));
+                            categorySort[category].push(renderExpandRow(attrs[j], row[keys[i]][attrs[j]], false, "attrs", row));
                         }
 
                         //custom variable in vars.* - render all and everything is searchable
@@ -661,7 +678,7 @@ export default class listChart extends Component {
                             for (let k = 0; k < variable.length; k++) {
                                 let categoryInner = "VARS";
                                 if (!categorySort[categoryInner]) categorySort[categoryInner] = [];
-                                categorySort[categoryInner].push(this.renderExpandRow(variable[k], row[keys[i]][attrs[j]][variable[k]], true, "attrs.vars", row));
+                                categorySort[categoryInner].push(renderExpandRow(variable[k], row[keys[i]][attrs[j]][variable[k]], true, "attrs.vars", row));
                             }
                         }
                     }
@@ -673,7 +690,7 @@ export default class listChart extends Component {
                         if (displayedAttrs.includes("geoip." + attrs[j])) {
                             let category = getCategory("geoip." + attrs[j]);
                             if (!categorySort[category]) categorySort[category] = [];
-                            categorySort[category].push(this.renderExpandRow(attrs[j], row[keys[i]][attrs[j]], false, "geoip", row));
+                            categorySort[category].push(renderExpandRow(attrs[j], row[keys[i]][attrs[j]], false, "geoip", row));
                         }
                     }
 
@@ -682,7 +699,7 @@ export default class listChart extends Component {
                     if (displayedAttrs.includes(keys[i])) {
                         let category = getCategory(keys[i]);
                         if (!categorySort[category]) categorySort[category] = [];
-                        categorySort[category].push(this.renderExpandRow(keys[i], row[keys[i]], false, "", row));
+                        categorySort[category].push(renderExpandRow(keys[i], row[keys[i]], false, "", row));
                     }
                 }
 
@@ -823,7 +840,7 @@ export default class listChart extends Component {
             },
             renderer: row => (
                 <div className="tab">
-                    {this.renderExpand(row._source ? row._source : row, row._source ? false : true)}
+                    {renderExpand(row._source ? row._source : row, row._source ? false : true)}
                 </div>
             ),
             expandByColumnOnly: true,
@@ -919,6 +936,7 @@ export default class listChart extends Component {
                 }
             </div>
         );
+
 
         const pageButtonRenderer = ({
             page,
@@ -1027,6 +1045,20 @@ export default class listChart extends Component {
             </li>
         );
 
+    
+        const saveColumnVisibility = (name) => {
+          // update columns state
+          const columns = this.state.columns
+            .map(col => {
+              if (col.text !== name) return col;
+              return { ...col, hidden: !col.hidden }
+            });
+          this.setState({ columns: columns });
+
+          //store new columns in browser storage
+          this.saveColumnPref(columns);
+        }
+
 
         const options = {
             pageButtonRenderer,
@@ -1034,16 +1066,26 @@ export default class listChart extends Component {
             sizePerPageOptionRenderer
         };
 
-        getSearchableAttributes();
+        const attributes = getSearchableAttributes();
         const data = Array.isArray(this.state.data) ? this.state.data : [];
+        console.log(this.state.columns)
+        // console.log("COLUUUUMMMNN", this.state.columns, data)
 
+        // console.log("DATA", columnsList, data, options)
         
         return (
-            <div key={"table" + this.props.name} className="chart">
-                <div>Hello</div>
-                {this.state.redirect && <Navigate push to={this.state.redirectLink} />}
-            </div>
+          <div key={"table" + this.props.name} className="chart">
+              <EventsPage 
+                {...{
+                  columns: columnsList, 
+                  data, 
+                  saveColumnVisibility
+                }} 
+            />
+            {this.state.redirect && <Navigate push to={this.state.redirectLink} />}
+          </div>
         );
     }
 }
 
+export { renderExpandRow }
