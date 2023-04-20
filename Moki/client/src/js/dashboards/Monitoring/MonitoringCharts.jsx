@@ -5,18 +5,18 @@ import React, {
     Component
 } from 'react';
 
-import ValueChart from '../../charts/value_chart.js';
-import CircleChart from '../../charts/circle_chart.js';
-import GaugeChart from '../../charts/gauge_chart.js';
+import ValueChart from '../../charts/value_chart.jsx';
+import CircleChart from '../../charts/circle_chart.jsx';
+import GaugeChart from '../../charts/gauge_chart.jsx';
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
 import store from "../../store/index";
-import MultiListChart from '../../charts/multiple_list_chart.js';
-import ListChartMonitoring from '../../charts/list_chart_monitoring.js';
-import MonitoringListChart from '../../charts/monitoring_list_chart.js';
-import BootstrapTable from '@moki-client/react-bootstrap-table-next';
+import MultiListChart from '../../charts/multiple_list_chart.jsx';
+import ListChartMonitoring from '../../charts/list_chart_monitoring.jsx';
+import MonitoringListChart from '../../charts/monitoring_list_chart.jsx';
 import { parseTimestamp } from "../../helpers/parseTimestamp";
-import paginationFactory, { PaginationProvider } from 'react-bootstrap-table2-paginator';
-import {elasticsearchConnection} from '@moki-client/gui';
+import { elasticsearchConnection } from '../../../gui';
+// import BootstrapTable from '@moki-client/react-bootstrap-table-next';
+// import paginationFactory, { PaginationProvider } from 'react-bootstrap-table2-paginator';
 
 class MonitoringCharts extends Component {
 
@@ -228,27 +228,11 @@ class MonitoringCharts extends Component {
         }
             <h4> NOTIFICATIONS </h4> <div className="row no-gutters bottomMargin" >
                 <div className="col-auto" style={{ "marginRight": "5px" }}>
-                    <PaginationProvider pagination={paginationFactory(paginationOption)}>
-                        {({
-                            paginationProps,
-                            paginationTableProps
-                        }) => (
                             <span >
-                                <BootstrapTable
-                                    keyField="sub"
-                                    data={window.notification.getAllNotifications(true)}
-                                    bordered={false}
-                                    bootstrap4
-                                    hover
-                                    printable
-                                    noDataIndication={"No notifications"}
-                                    columns={columns}
-                                    {...paginationTableProps}
-                                />
+                                <div>
+                                    window.notification.getAllNotifications(true)
+                                </div>
                             </span>
-                        )
-                        }
-                    </PaginationProvider>
                 </div>
             </div>
             <h4> CPU </h4> <div className="row no-gutters bottomMargin" >

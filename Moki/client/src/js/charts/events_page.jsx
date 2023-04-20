@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Pagination from "react-bootstrap/Pagination";
 
@@ -6,42 +6,21 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
+  getExpandedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
-const COLUMNS_PREF_STORAGE = "columns-pref";
 const NON_HIDEABLE_COLUMNS = ["TYPE", "ADVANCED"];
 
-// User storage
+const SELECT_COLUMN_MAX_SIZE = 50;
+const DEFAULT_COLUMN_SIZE = 150;
+const MIN_COLUM_SIZE = 60;
+const MAX_COLUMN_SIZE = 250;
 
-/**
- * @returns {any | null}
- */
-function getUserColumnsPref() {
-  try {
-    return JSON.parse(window.localStorage.getItem(COLUMNS_PREF_STORAGE));
-  } catch (err) {
-    console.error("Could not get user hidden columns:", err);
-    return null;
-  }
-}
+const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50];
+const PAGINATION_SIBLINGS = 2;
 
-/**
- * @param hiddenColumns {any}
- */
-function saveUserColumnsPref(columnsPref) {
-  try {
-    window.localStorage.setItem(
-      COLUMNS_PREF_STORAGE,
-      JSON.stringify(columnsPref),
-    );
-  } catch (err) {
-    console.error("Could not save user hidden columns:", err);
-  }
-}
-
-// Columns visibility buttons at the bottom of the table
+// Columns visibility buttons at the top of the table
 
 /**
  * @param {{column: import("@tanstack/react-table").Column<any, any>}}
@@ -62,7 +41,7 @@ function ColumnButton({ saveColumnVisibility, column }) {
         saveColumnVisibility(column.id);
       }}
     >
-      {column.columnDef.id}
+      {column.columnDef.text}
     </button>
   );
 }
@@ -85,7 +64,7 @@ function IndeterminateCheckbox({
     <input
       type="checkbox"
       ref={ref}
-      className={className + " cursor-pointer"}
+      className={className + " cursor-pointer mb-0"}
       {...rest}
     />
   );
@@ -97,9 +76,7 @@ function renderCell({ column, row, getValue }) {
   const value = getValue();
   const columnData = column.columnDef.original;
   const eventData = row.original;
-
   const formattedData = columnData.formatter?.(value, eventData);
-  console.log(value, formattedData)
 
   return (
     <span className="text-truncate" style={{ fontSize: "0.9em" }}>
@@ -115,8 +92,7 @@ function range(start, end) {
   return Array.from({ length }, (_, i) => i + start);
 }
 
-function getVisiblePages(current, total) {
-  const siblings = 2;
+function getVisiblePages(current, total, siblings = 2) {
   if (total < siblings + 3) {
     return range(1, total);
   }
@@ -124,13 +100,13 @@ function getVisiblePages(current, total) {
   const left = Math.max(current - siblings, 1);
   const right = Math.min(current + siblings, total);
   const nearBegin = left < 2;
-  const nearEnd = right > total - 2;
+  const nearEnd = right > total - 1;
 
   if (nearBegin && !nearEnd) {
-    return range(1, siblings + 3);
+    return range(1, siblings * 2 + 1);
   }
   if (!nearBegin && nearEnd) {
-    return range(total - (siblings + 2), total);
+    return range(total - (siblings * 2), total);
   }
 
   return range(left, right);
@@ -159,6 +135,7 @@ function TablePagination({ table }) {
         {getVisiblePages(
           table.getState().pagination.pageIndex + 1,
           table.getPageCount(),
+          PAGINATION_SIBLINGS,
         ).map((page) => (
           <Pagination.Item
             key={page}
@@ -192,7 +169,7 @@ function TablePagination({ table }) {
             table.setPageSize(Number(e.target.value));
           }}
         >
-          {[10, 20, 30, 40, 50].map((pageSize) => (
+          {PAGE_SIZE_OPTIONS.map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>
@@ -222,44 +199,79 @@ function TablePagination({ table }) {
 
 // Create columns
 
-function createColumns({ columns, columnHelper }) {
+// return field in nested object based on string key (separated by .)
+function accessKeyField(data, stringKey) {
+  let result = data;
+  for (const key of stringKey.split(".")) {
+    result = result?.[key];
+  }
+  return result;
+}
+
+function createColumns({ allSelected, setAllSelected, columns, columnHelper }) {
   return [
     {
       enableHiding: false,
       id: "select",
-      maxSize: 30,
+      enableResizing: false,
+      maxSize: SELECT_COLUMN_MAX_SIZE,
       header: ({ table }) => (
         <IndeterminateCheckbox
-          className="mb-0"
-          style={{ height: "0.9rem" }}
-          checked={table.getIsAllRowsSelected()}
+          checked={allSelected}
           indeterminate={table.getIsSomeRowsSelected()}
-          onChange={table.getToggleAllRowsSelectedHandler()}
+          onChange={() => {
+            if (table.getIsSomeRowsSelected()) {
+              table.resetRowSelection();
+            } else {
+              setAllSelected(!allSelected);
+            }
+          }}
         />
       ),
-      cell: ({ row }) => (
-        <IndeterminateCheckbox
-          className="mb-0"
-          style={{ height: "0.9rem" }}
-          checked={row.getIsSelected()}
-          disabled={!row.getCanSelect()}
-          indeterminate={row.getIsSomeSelected()}
-          onChange={row.getToggleSelectedHandler()}
-        />
-      ),
+      cell: ({ row }) => {
+        return (
+          <div
+            style={{
+              paddingLeft: `${row.depth * 2}rem`,
+            }}
+          >
+            <IndeterminateCheckbox
+              className="mb-0"
+              style={{ height: "0.9rem" }}
+              checked={allSelected || row.getIsSelected()}
+              disabled={!row.getCanSelect()}
+              indeterminate={row.getIsSomeSelected()}
+              onChange={row.getToggleSelectedHandler()}
+            />{" "}
+            {row.getCanExpand()
+              ? (
+                <span
+                  onClick={row.getToggleExpandedHandler()}
+                  style={{ cursor: "pointer" }}
+                >
+                  {row.getIsExpanded() ? "-" : "+"}
+                </span>
+              )
+              : (
+                "?"
+              )}
+          </div>
+        );
+      },
     },
     ...columns.map((c) => {
       const canHide = !NON_HIDEABLE_COLUMNS.includes(c.text);
+      const prefWidth = Number(c.headerStyle?.width);
       return columnHelper.accessor((row) => {
-        let result = row;
-        for (const key of c.dataField.split(".")) {
-          result = result?.[key];
-        }
-        return result;
+        return accessKeyField(row, c.dataField);
       }, {
-        id: c.text,
-        original: {...c},
-        header: () => <div className="small">{c.text}</div>,
+        minSize: MIN_COLUM_SIZE,
+        size: isNaN(prefWidth) ? DEFAULT_COLUMN_SIZE : prefWidth,
+        maxSize: MAX_COLUMN_SIZE,
+        text: c.text,
+        id: c.dataField,
+        original: { ...c },
+        header: () => c.text,
         cell: ({ column, row, getValue }) =>
           renderCell({ column, row, getValue }),
         enableHiding: canHide,
@@ -268,91 +280,258 @@ function createColumns({ columns, columnHelper }) {
   ];
 }
 
-// Render table with pagination
+// Table header and row content rendering
+
+function TableHeader({ header, saveColumnSize }) {
+  const [showResizer, setShowResizer] = useState(false);
+  const sortedAsc = header.column.getIsSorted() === "asc";
+
+  return (
+    <th
+      colSpan={header.colSpan}
+      style={{
+        width: header.getSize(),
+        position: "relative",
+      }}
+    >
+      <div
+        className="d-flex"
+        style={{
+          cursor: header.column.getCanSort() ? "pointer" : "",
+        }}
+        onClick={() => {
+          if (!header.column.getCanSort()) return;
+          header.column.toggleSorting(sortedAsc);
+        }}
+      >
+        {header.isPlaceholder ? null : flexRender(
+          header.column.columnDef.header,
+          header.getContext(),
+        )}
+        {{ asc: " 🔼", desc: " 🔽" }[header.column.getIsSorted()] ?? null}
+      </div>
+      {header.column.getCanResize() &&
+        (
+          <div
+            onMouseDown={header.getResizeHandler()}
+            onMouseUp={() => {
+              saveColumnSize(header.id, header.getSize());
+            }}
+            onMouseEnter={() => setShowResizer(true)}
+            onMouseLeave={() => setShowResizer(false)}
+            style={{
+              position: "absolute",
+              right: 0,
+              top: 0,
+              width: "2rem",
+              height: "100%",
+              cursor: "col-resize",
+              userSelect: "none",
+            }}
+          >
+            <div
+              style={{
+                display: showResizer ? "" : "none",
+                background: !header.column.getIsResizing()
+                  ? "rgba(0, 0, 0, 0.5)"
+                  : "rgba(0, 0, 1, 0.8)",
+                width: "5px",
+                position: "absolute",
+                right: 0,
+                height: "100%",
+              }}
+            />
+          </div>
+        )}
+    </th>
+  );
+}
+
+function TableRow({ row, renderExpandedRow }) {
+  return (
+    <>
+      <tr>
+        {row.getVisibleCells().map((cell) => {
+          return (
+            <td
+              key={cell.id}
+              style={{ width: cell.column.getSize() }}
+            >
+              {flexRender(
+                cell.column.columnDef.cell,
+                cell.getContext(),
+              )}
+            </td>
+          );
+        })}
+      </tr>
+      {row.getIsExpanded() && (
+        <tr>
+          <td colSpan={row.getVisibleCells().length}>
+            {renderExpandedRow(row.original)}
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+// Process page data
+// data can be transformed here in case decryption is needed
+
+// Assuming you want case-insensitive comparison
+function compareStrings(key, desc) {
+  return function (a, b) {
+
+    a = accessKeyField(a, key);
+    b = accessKeyField(b, key);
+
+    if (a === b) return 0;
+    if (a == undefined) return 1; 
+    if (b == undefined) return -1;
+
+    a = typeof a === "string" ? a.toLowerCase() : a;
+    b = typeof b === "string" ? b.toLowerCase() : b;
+
+    if (desc) {
+      return (a < b) ? 1 : (a > b) ? -1 : 0;
+    } else {
+      return (a > b) ? 1 : (a < b) ? -1 : 0;
+    }
+  };
+}
 
 /**
- * param events {{}}
+ * @param {{ data: any[], pageIndex: number, pageSize: number }}
  */
-function EventsPage(props) {
-  const columnHelper = createColumnHelper();
-  const [rowSelection, setRowSelection] = useState({});
+function useProcessData({ data, pageIndex, pageSize, sorting }) {
+  const [pageData, setPageData] = useState([]);
 
-  const columns = useMemo(
-    () => createColumns({ columns: props.columns, columnHelper }),
-    [],
+  const sortedData = useMemo(() => {
+    for (const sort of sorting) {
+      data.sort(compareStrings(sort.id, sort.desc));
+    }
+    return data;
+  }, [data, sorting]);
+
+  useEffect(() => {
+    (async () => {
+      const index = pageIndex * pageSize;
+      setPageData(sortedData.slice(index, index + pageSize));
+    })();
+  }, [data, pageIndex, pageSize, sorting]);
+
+  return pageData;
+}
+
+// Events table logic
+
+function EventsPage(
+  {
+    columns,
+    data,
+    saveColumnVisibility,
+    saveColumnSize,
+    renderExpandedRow,
+    updateSelectedRows,
+  },
+) {
+  const [rowSelection, setRowSelection] = useState({});
+  const [sorting, setSorting] = useState([]);
+  const [allSelected, setAllSelected] = useState(false);
+  const [{ pageIndex, pageSize }, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const columnHelper = createColumnHelper();
+  const tableColumns = useMemo(
+    () => createColumns({ allSelected, setAllSelected, columns, columnHelper }),
+    [allSelected],
   );
 
-  const table = useReactTable({
-    data: props.data,
+  const pageData = useProcessData({
+    pageIndex,
+    pageSize,
+    data,
+    sorting,
     columns,
+  });
+
+  useEffect(() => updateSelectedRows(allSelected, rowSelection, data), [
+    rowSelection,
+    allSelected,
+  ]);
+
+  const pagination = useMemo(() => {
+    return {
+      pageIndex,
+      pageSize,
+    };
+  }, [pageIndex, pageSize]);
+
+  const table = useReactTable({
+    data: pageData,
+    columns: tableColumns,
+    pageCount: Math.ceil(data.length / pageSize),
     state: {
       rowSelection,
+      pagination,
+      sorting,
     },
     initialState: {
-      columnVisibility: props.columns.reduce((obj, col) => ({
+      columnVisibility: columns.reduce((obj, col) => ({
         ...obj,
-        [col.text]: !col.hidden ?? false,
+        [col.dataField]: !col.hidden ?? false,
       }), []),
     },
-    enableRowSelection: true,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
+    enableRowSelection: true,
+    manualPagination: true,
+    manualSorting: true,
+    columnResizeMode: "onChange",
+    getRowId: (row) => row._id,
+    getRowCanExpand: () => true,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
   });
 
   return (
     <div className="medium">
       <div className="flex ml-3">
         {table.getAllColumns()
-          .map((
-            column,
-          ) => (
+          .map((column) => (
             <ColumnButton
-              saveColumnVisibility={props.saveColumnVisibility}
+              saveColumnVisibility={saveColumnVisibility}
               key={column.id}
               column={column}
             />
           ))}
       </div>
-      <Table
-        hover
-        responsive
-      >
-        <thead>
+      <Table hover responsive>
+        <thead style={{ fontSize: "0.9rem" }}>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th
+                <TableHeader
+                  saveColumnSize={saveColumnSize}
                   key={header.id}
-                  colSpan={header.colSpan}
-                  style={{ width: header.getSize() }}
-                >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                </th>
+                  {...{ header }}
+                />
               ))}
             </tr>
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
+          {table.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              row={row}
+              renderExpandedRow={renderExpandedRow}
+            />
+          ))}
         </tbody>
       </Table>
       <TablePagination table={table} />

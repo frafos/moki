@@ -51,10 +51,11 @@ class Table extends Component {
     } catch (e) {
       console.log("Error: " + e);
     }
-    this.setState({
+    this.setState(prevState => ({
+      ...prevState,
       calls: data,
       total: total
-    })
+    }))
   }
 
   async loadData() {
@@ -69,7 +70,6 @@ class Table extends Component {
           return;
         } else if (data) {
           await this.processESData(data);
-          this.setState(this.state);
           console.info(new Date() + " MOKI " + this.state.dashboardName + ": finished parsing table");
         }
       } catch (e) {

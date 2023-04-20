@@ -6,7 +6,7 @@ import Dashboard from '../Dashboard.js';
 import SunburstChart from '../../charts/sunburst_chart.jsx';
 import DonutChart from '../../charts/donut_chart.jsx';
 import DatebarChart from '../../charts/datebar_chart.jsx';
-import ListChart from '../../charts/list_chart.jsx';
+import TableChart from '../../charts/list_chart.jsx';
 import ValueChart from '../../charts/value_chart.jsx';
 import StackedChartLine from '../../charts/timedate_stackedbar_with_line_chart.jsx'; 
 import store from "../../store/index";
@@ -157,7 +157,7 @@ class CallCharts extends Dashboard {
                         } name={"CALL SUCCESS RATIO"} width={((store.getState().width - 300) / 2)} ends={this.state.sumCallEnd} units={"count"} />
                     </div>}
                     {this.state.charts["SIP-CODE COUNT"] && <div className="col-auto">
-                        <ListChart data={
+                        <TableChart data={
                             this.state.sipcodeCount
                         } name={"SIP-CODE COUNT"} field={"attrs.sip-code"} />
                     </div>}
@@ -167,17 +167,17 @@ class CallCharts extends Dashboard {
                         } name={"CALL TERMINATED"} id="callTerminated" width={(store.getState().width - 300) / 2} height={170} field={"attrs.originator"} legendSize={120} units={"count"} />
                     </div>}
                     {this.state.charts["CALLING COUNTRIES"] && <div className="col-auto">
-                        <ListChart data={
+                        <TableChart data={
                             this.state.callingCountries
                         } name={"CALLING COUNTRIES"} field={"geoip.country_code2"} />
                     </div>}
                     {this.state.charts["CALLED COUNTRIES"] && <div className="col-auto">
-                        <ListChart data={
+                        <TableChart data={
                             this.state.calledCountries
                         } name={"CALLED COUNTRIES"} field={"attrs.dst_cc"} />
                     </div>}
                     {this.state.charts["DURATION GROUP"] && <div className="col-auto">
-                        <ListChart data={
+                        <TableChart data={
                             this.state.durationGroup
                         } name={"DURATION GROUP"} field={"attrs.durationGroup"} />
                     </div>}

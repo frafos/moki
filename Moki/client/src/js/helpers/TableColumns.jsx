@@ -40,8 +40,6 @@ const attrsTypes = {
     "longterm": "round"
 }
 
-const rawTables = ["apiLogs"];
-
 //support class for async value
 class ExceededName extends Component {
     constructor(props) {
@@ -659,9 +657,6 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
                 }
 
                 let dataField = dataPath + column_name.source;
-                if (rawTables.includes(dashboard)) {
-                    dataField = column_name.source;
-                }
        
                 return {
                     dataField: dataField,
@@ -669,24 +664,14 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
                     editable: false,
                     sort: true,
                     hidden: hidden,
-                    headerStyle: { width: '170px' },
+                    headerStyle: { width: getColumnWidth(column_name.source, width) },
                     formatter: (cell, obj) => {
-                        if (rawTables.includes(dashboard)) {
-                            var ob = obj[column_name.source];
-                            return parseTimestamp(new Date(parseInt(ob * 1000)));
-                        }
-                        else {
-                            if (obj[dataPath]) {
-                                ob = obj[dataPath][column_name.source];
-                            }
-                        }
-
-                        if (ob) {
-                            if (parseTimestamp(ob) !== "Invalid date") {
-                                return parseTimestamp(ob)
+                        if (cell) {
+                            if (parseTimestamp(cell) !== "Invalid date") {
+                                return parseTimestamp(cell)
                             }
                             else {
-                                return parseTimestamp(new Date(parseInt(ob)));
+                                return parseTimestamp(new Date(parseInt(cell)));
                             }
                         }
                     }
@@ -752,9 +737,6 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
                 }
 
                 let dataField = dataPath + column_name.source;
-                if (rawTables.includes(dashboard)) {
-                    dataField = column_name.source;
-                }
 
                 let col = {
                     dataField: dataField,

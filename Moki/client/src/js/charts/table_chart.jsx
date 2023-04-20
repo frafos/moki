@@ -5,10 +5,6 @@ Get call table
 it is seperate request from call charts
 */
 import React, { Component } from 'react';
-// import BootstrapTable from '@moki-client/react-bootstrap-table-next';
-// import paginationFactory from 'react-bootstrap-table-next/lib/';
-// import ToolkitProvider from 'react-bootstrap-table2-toolkit';
-import Datetime from 'react-datetime';
 import { Navigate } from 'react-router';
 import { getSearchableAttributes, getDisplayedAttributes, 
     isEncryptedAttr, createFilter, getCategory, elasticsearchConnection } from '../../gui';
@@ -35,7 +31,6 @@ import emptyIcon from "/icons/empty_small.png";
 import downloadIcon from "/icons/download.png";
 import resetIcon from "/icons/disable_grey.png";
 
-const NOT_EXPAND_OR_COLUMNS_SELECTION = ["LAST LOGIN EVENTS", "LAST MODE CHANGES"];
 const COLUMNS_USER_PREF_STORE = "columns";
 
 import FileSaver from "file-saver";
@@ -163,7 +158,6 @@ export default class ListChart extends Component {
             data: [],
             dataEncrypted: [],
             excludeList: [],
-            selectedRowsList: [],
             tags: this.props.tags,
             checkall: false,
             selected: [],
@@ -182,10 +176,7 @@ export default class ListChart extends Component {
         this.tags = this.tags.bind(this);
         this.movetooltip = this.movetooltip.bind(this);
         this.onEnterKey = this.onEnterKey.bind(this);
-        this.handleOnSelect = this.handleOnSelect.bind(this);
-        this.handleOnSelectAll = this.handleOnSelectAll.bind(this);
         this.getRecord = this.getRecord.bind(this);
-        this.resizableGrid = this.resizableGrid.bind(this);
         this.orderDecrypt = this.orderDecrypt.bind(this);
         this.focousOutLte = this.focousOutLte.bind(this);
         this.focousOutGte = this.focousOutGte.bind(this);
@@ -198,6 +189,7 @@ export default class ListChart extends Component {
       const storedColumns = JSON.parse(
         window.localStorage.getItem(COLUMNS_USER_PREF_STORE) 
       ) ?? { "version": "1.0" };
+
 
       const dashboard = window.location.pathname.substring(1);
       storedColumns[dashboard] = columns;
@@ -238,11 +230,6 @@ export default class ListChart extends Component {
                     dataEncrypted: this.props.data
                 });
             }
-        }
-
-        var table = this.chartRef.current?.getElementsByClassName('table table-hover')[0];
-        if (table) {
-            this.resizableGrid(table);
         }
     }
 
@@ -294,126 +281,6 @@ export default class ListChart extends Component {
         });
     }
 
-    //add resizable grid to table, function from https://www.brainbell.com/javascript/making-resizable-table-js.html
-    resizableGrid(table) {
-        var thiss = this;
-        var row = table.getElementsByTagName('tr')[0],
-            cols = row ? row.children : undefined;
-        if (!cols) return;
-
-        table.style.overflow = 'hidden';
-
-        var tableHeight = table.offsetHeight;
-        for (var i = 0; i < cols.length; i++) {
-            if (cols[i].querySelector(':scope > div')) continue;                // do not add the resizable element if the column already contains it
-            if (cols[i].classList.contains('expand-cell-header')) continue;     // do not add the resizable element to expand column
-            if (cols[i].classList.contains('selection-cell-header')) continue;  // do not add the resizable element to selection column
-
-            var div = createDiv(tableHeight);
-            cols[i].appendChild(div);
-            cols[i].style.position = 'relative';
-            setListeners(div);
-        }
-        function setListeners(div) {
-
-            var pageX, curCol, nxtCol, curColWidth, nxtColWidth;
-
-            div.addEventListener('mousedown', function (e) {
-                e.stopPropagation();
-                curCol = e.target.parentElement;
-                nxtCol = curCol.nextElementSibling;
-                pageX = e.pageX;
-
-                var padding = paddingDiff(curCol);
-
-                curColWidth = curCol.offsetWidth - padding;
-                if (nxtCol)
-                    nxtColWidth = nxtCol.offsetWidth - padding;
-            });
-
-            div.addEventListener('mouseover', function (e) {
-                e.target.style.borderRight = '4px solid #30427f';
-            })
-
-            div.addEventListener('mouseout', function (e) {
-                e.target.style.borderRight = '';
-            })
-            document.addEventListener('mousemove', function (e) {
-                if (curCol) {
-                    var diffX = e.pageX - pageX;
-                    if (curColWidth + diffX > 80 && curColWidth + diffX < 400) {
-                        if (nxtCol && nxtColWidth - (diffX) > 80) {
-                            nxtCol.style.width = (nxtColWidth - (diffX)) + 'px';
-                            curCol.style.width = (curColWidth + diffX) + 'px';
-                        }
-                    }
-                }
-            });
-
-            document.addEventListener('mouseup', function (e) {
-                //store column width in browser localstorage
-                if (curCol) {
-                    var width = curCol.style.width;
-                    var column = curCol.innerHTML.substr(0, curCol.innerHTML.indexOf("<"));
-                    var columns = JSON.parse(window.localStorage.getItem("columns"));
-                    var dashboard = window.location.pathname.substring(1);
-                    if (!columns) {
-                        columns = { "version": "1.0" };
-                    }
-
-                    var result = JSON.parse(JSON.stringify(thiss.state.columns));
-
-                    for (let hit of result) {
-                        if (hit.text === column) {
-                            hit.headerStyle.width = width;
-                        }
-                    }
-
-                    var stateColumns = thiss.state.columns;
-                    for (let hit of stateColumns) {
-                        if (hit.text === column) {
-                            hit.headerStyle.width = width;
-                        }
-                    }
-                    thiss.setState({ columns: stateColumns });
-                    columns[dashboard] = result;
-
-                    window.localStorage.setItem("columns", JSON.stringify(columns));
-                }
-                curCol = undefined;
-                nxtCol = undefined;
-                pageX = undefined;
-                nxtColWidth = undefined;
-                curColWidth = undefined
-            });
-        } function createDiv(height) {
-            var div = document.createElement('div');
-            div.className = "resize";
-            div.style.top = 0;
-            div.style.right = 0;
-            div.style.width = '50px';
-            div.style.position = 'absolute';
-            div.style.cursor = 'col-resize';
-            div.style.userSelect = 'none';
-            div.style.height = height + 'px';
-            return div;
-        }
-
-        function paddingDiff(col) {
-
-            if (getStyleVal(col, 'box-sizing') === 'border-box') {
-                return 0;
-            }
-            var padLeft = getStyleVal(col, 'padding-left');
-            var padRight = getStyleVal(col, 'padding-right');
-            return (parseInt(padLeft) + parseInt(padRight));
-
-        }
-
-        function getStyleVal(elm, css) {
-            return (window.getComputedStyle(elm, null).getPropertyValue(css))
-        }
-    }
 
     //insert columns into table
     async componentDidMount() {
@@ -438,11 +305,6 @@ export default class ListChart extends Component {
                 console.error(error);
                 alert("Problem with receiving alarms data. " + error);
             }
-        }
-
-        var table = this.chartRef.current?.getElementsByClassName('table table-hover')[0];
-        if (table) {
-            this.resizableGrid(table);
         }
     }
 
@@ -608,45 +470,19 @@ export default class ListChart extends Component {
             if (user.includes("ADMIN")) {
                 return true;
             }
-        }
+       }
         return false;
     }
 
-
-    handleOnSelect(row, isSelect) {
-        if (isSelect) {
-            this.setState(() => ({
-                selected: [...this.state.selected, row._id]
-            }));
-        } else {
-            this.setState(() => ({
-                selected: this.state.selected.filter(x => x !== row._id)
-            }));
-        }
-    }
-
-    handleOnSelectAll(isSelect, rows) {
-        const ids = this.state.data.map(r => r._id);
-        if (isSelect) {
-            this.setState(() => ({
-                selected: ids
-            }));
-        } else {
-            this.setState(() => ({
-                selected: []
-            }));
-        }
-    }
-
-    
+  
 
     renderExpand(row, all = false) {
         var keys = Object.keys(row);
         var displayedAttrs = getDisplayedAttributes();
         var result = [];
         var categorySort = [];
-        for (var i = 0; i < keys.length; i++) {
-            if (all) {
+        if (all) {
+            for (var i = 0; i < keys.length; i++) {
                 result.push(<p value={row[keys[i]]} key={keys[i]}>
                     <span className="spanTab">{keys[i]}{!["id", "_id", "key", "description"].includes(keys[i]) && window.location.pathname.includes("/profiles") && <AdvancedProfile obj={{"id": keys[i], "key": row.key, "supression": row.supression, "listmall": row.listmall}} />}: </span>
                     {typeof row[keys[i]] !== 'object' ?
@@ -662,7 +498,9 @@ export default class ListChart extends Component {
                         </div>}
                 </p>)
             }
-            else {
+        }
+        else {
+            for (var i = 0; i < keys.length; i++) {
                 if (keys[i] === "attrs") {
                     let attrs = Object.keys(row[keys[i]]);
                     for (let j = 0; j < attrs.length; j++) {
@@ -682,9 +520,8 @@ export default class ListChart extends Component {
                             }
                         }
                     }
-
-                }
-                else if (keys[i] === "geoip") {
+                } 
+               else if (keys[i] === "geoip") {
                     let attrs = Object.keys(row[keys[i]]);
                     for (let j = 0; j < attrs.length; j++) {
                         if (displayedAttrs.includes("geoip." + attrs[j])) {
@@ -702,6 +539,7 @@ export default class ListChart extends Component {
                         categorySort[category].push(renderExpandRow(keys[i], row[keys[i]], false, "", row));
                     }
                 }
+              }
 
 
                 var categories = Object.keys(categorySort);
@@ -714,7 +552,6 @@ export default class ListChart extends Component {
                     )
                 }
             }
-        }
         return result;
 
     }
@@ -829,40 +666,7 @@ export default class ListChart extends Component {
             else {
                 window.open("/sequenceDiagram/?id=" + pcaps.join(','), '_blank');
             }
-
-
         }
-
-        //this.isAdmin() || isDisplay("attrs."+cell) ?
-        //what render if user click on row
-        const expandRow = {
-            onExpand: (row, isExpand, rowIndex, e) => {
-            },
-            renderer: row => (
-                <div className="tab">
-                    {renderExpand(row._source ? row._source : row, row._source ? false : true)}
-                </div>
-            ),
-            expandByColumnOnly: true,
-            showExpandColumn: true,
-            nonExpandable: [1],
-            expandHeaderColumnRenderer: ({ isAnyExpands }) => {
-                if (isAnyExpands) {
-                    return <span>-</span>;
-                }
-                return <span>+</span>;
-            },
-            expandColumnRenderer: ({ expanded }) => {
-                if (expanded) {
-                    return (
-                        <span>-</span>
-                    );
-                }
-                return (
-                    <span>+</span>
-                );
-            }
-        };
 
         const NoDataIndication = () => (
             <span className="noDataIcon">
@@ -870,217 +674,104 @@ export default class ListChart extends Component {
             </span>
         );
 
-
-        const selectRowProp = {
-            mode: 'checkbox',
-            clickToSelect: false,
-            clickToEdit: true,
-            selected: this.state.selected,
-            onSelect: this.handleOnSelect,
-            onSelectAll: this.handleOnSelectAll
-        };
-
         const columnsList = this.state.columns;
 
-        var CustomToggleList = ({
-            columns,
-            onColumnToggle,
-            toggles
-        }) => (
-            <div style={{ "display": "inline-block", "marginLeft": "15px" }} data-toggle="buttons">
-                {
-                    columns
-                        .map(column => ({
-                            ...column,
-                            toggle: toggles[column.toggles]
-                        }))
-                        .filter(column => column.dataField !== "_source" && !NOT_EXPAND_OR_COLUMNS_SELECTION.includes(this.props.id)).map(column => (
-                            <button
-                                type="button"
-                                id={column.dataField}
-                                key={column.dataField + this.props.name}
-                                className={`${!column.hidden ? ' selectColumnButton green' : 'selectColumnButton'}`}
-                                data-toggle="button"
-                                aria-pressed={column.toggle ? 'true' : 'false'}
-                                onClick={() => {
-                                    onColumnToggle(column.dataField);
-                                    if (document.getElementById(column.dataField).classList.contains('green')) {
-                                        document.getElementById(column.dataField).classList.remove('green');
-                                    }
-                                    else {
-                                        document.getElementById(column.dataField).classList.add('green');
-                                    }
-                                    //add change color also to state
-                                    var columns = this.state.columns;
-                                    for (var i = 0; i < columns.length; i++) {
-                                        if (columns[i].dataField === column.dataField) {
-                                            columns[i].hidden = columns[i].hidden ? false : true;
-                                        }
-                                    }
-                                    this.setState({ columns: columns });
-                                    //store new columns in browser storage
-                                    var storedColumns = JSON.parse(window.localStorage.getItem("columns"));
-                                    var dashboard = window.location.pathname.substring(1);
-
-                                    if (!storedColumns) {
-                                        storedColumns = { "version": "1.0" };
-                                    }
-                                    storedColumns[dashboard] = columns;
-                                    window.localStorage.setItem("columns", JSON.stringify(storedColumns));
-                                }
-                                }>
-                                {column.text}
-                            </button>
-
-                        ))
-                }
+        //this.isAdmin() || isDisplay("attrs."+cell) ?
+        //what render if user click on row
+        const renderExpandedRow = row => (
+            <div className="tab">
+                {this.renderExpand(row._source ? row._source : row, row._source ? false : true)}
             </div>
         );
-
-
-        const pageButtonRenderer = ({
-            page,
-            active,
-            disable,
-            title,
-            onPageChange
-        }) => {
-            const handleClick = async (e) => {
-                e.preventDefault();
-                //if allcheck button is active, check everything
-                //if(this.state.checkall){
-                // this.rowCheckAll(true);
-                // }
-                let actualpage = page;
-                if (page === "<<") page = 1;
-                if (page === ">>") page = Math.ceil(this.state.data.length / this.state.count);
-                if (page === ">") page = this.state.page + 1;
-                if (page === "<") page = this.state.page - 1;
-
-                let profile = storePersistent.getState().profile;
-                //if there is mode stored in local storage, use this
-                let storedProfile = localStorage.getItem('profile');
-                if (storedProfile) {
-                    profile = JSON.parse(storedProfile);
-                }
-
-                if (profile && profile[0] && profile[0].userprefs.mode === "encrypt") {
-                    //decrypt only not seen data
-                    if (!this.state.seenPages.includes(page)) {
-                        let parseData = await decryptTableHits(this.state.data, storePersistent.getState().profile, this.state.count, page, this.state.decryptAttrs);
-                        this.setState({
-                            data: parseData,
-                            seenPages: [...this.state.seenPages, page]
-                        });
-                    }
-                }
-
-                this.setState({
-                    page: page
-                });
-                onPageChange(actualpage);
-            }
-            const activeStyle = {};
-            if (active) {
-                activeStyle.backgroundColor = 'grey';
-                activeStyle.color = 'white';
-            } else {
-                activeStyle.backgroundColor = 'white';
-                activeStyle.color = 'black';
-            }
-            if (typeof page === 'string') {
-                activeStyle.backgroundColor = 'white';
-                activeStyle.color = 'black';
-            }
-            return (
-                <li className="page-item" key={page}>
-                    <button onClick={handleClick} className="noFormatButton page-link" style={activeStyle} >{page}</button>
-                </li>
-            );
-        };
-
-        const sizePerPageOptionRenderer = ({
-            text,
-            page,
-            onSizePerPageChange
-        }) => (
-            <li
-                key={text}
-                role="presentation"
-                className="dropdown-item"
-                onMouseDown={async (e) => {
-                    e.preventDefault();
-                    onSizePerPageChange(page);
-                    //decrypt new pages
-                    let parseData = await decryptTableHits(JSON.parse(JSON.stringify(this.state.dataEncrypted)), storePersistent.getState().profile, page, this.state.page);
-                    this.setState({
-                        count: page,
-                        data: parseData,
-                        seenPages: [this.state.page],
-                    });
-                }}
-            >
-                <a
-                    href="#"
-                    tabIndex="-1"
-                    role="menuitem"
-                    data-page={page}
-                    onMouseDown={async (e) => {
-                        e.preventDefault();
-                        onSizePerPageChange(page);
-                        //decrypt new pages
-                        let parseData = await decryptTableHits(JSON.parse(JSON.stringify(this.state.dataEncrypted)), storePersistent.getState().profile, page, this.state.page);
-                        this.setState({
-                            count: page,
-                            data: parseData,
-                            seenPages: [this.state.page],
-                        });
-
-
-                    }}
-                    style={{ color: 'black' }}
-                >
-                    {text}
-                </a>
-            </li>
-        );
+        renderExpandedRow.bind(this);
 
     
         const saveColumnVisibility = (name) => {
-          // update columns state
           const columns = this.state.columns
             .map(col => {
-              if (col.text !== name) return col;
+              if (col.dataField !== name) return col;
               return { ...col, hidden: !col.hidden }
             });
           this.setState({ columns: columns });
-
-          //store new columns in browser storage
           this.saveColumnPref(columns);
         }
+        saveColumnVisibility.bind(this);
 
+        const saveColumnSize = (name, size) => {
+          const columns = this.state.columns
+            .map(col => {
+              if (col.dataField !== name) return col;
+              col.headerStyle.width = size;
+              return col;
+            });
+          this.setState({ columns: columns });
+          this.saveColumnPref(columns);
+        }
+        saveColumnSize.bind(this);
 
-        const options = {
-            pageButtonRenderer,
-            sizePerPage: parseInt(this.state.count),
-            sizePerPageOptionRenderer
-        };
+        const updateSelectedRows = (allSelected, rows, data) => {
+          let selectedIds = Object.keys(rows);
+          if (allSelected) {
+            selectedIds = data.map(row => row._id);
+          }
+          this.state.selected = selectedIds;
+        }
+        updateSelectedRows.bind(this);
 
-        const attributes = getSearchableAttributes();
         const data = Array.isArray(this.state.data) ? this.state.data : [];
-        console.log(this.state.columns)
-        // console.log("COLUUUUMMMNN", this.state.columns, data)
-
-        // console.log("DATA", columnsList, data, options)
         
         return (
           <div key={"table" + this.props.name} className="chart">
-              <EventsPage 
-                {...{
-                  columns: columnsList, 
-                  data, 
-                  saveColumnVisibility
-                }} 
+            <h3 className="alignLeft title inline" style={{ float: "inherit" }}>
+              {this.props.id}
+            </h3>
+          {(window.location.pathname === "/calls") && 
+            (
+              <span>
+                <img className="icon" alt="viewIcon" 
+                  onClick={() => displayPcaps()} src={viewIcon} 
+                  title="view merge PCAPs" 
+                />
+                <img className="icon" alt="downloadIcon" src={downloadPcapIcon} 
+                  onClick={() => getPcaps()} title="download merge PCAP" 
+                />
+              </span>
+            )}
+            <button className="noFormatButton" onClick={() => downloadAllCheck()}> 
+              <img className="icon" alt="downloadIcon" src={downloadIcon} 
+                title="download selected" />
+              <span id="downloadAllTooltip" style={{ "display": "none" }}>
+                  Downloading a lot of data, it can take a while. 
+                  Max. 500 events will be download. Use export button for more
+              </span>
+            </button>
+            <button className="noFormatButton" onClick={() => this.shareFilters()}> 
+              <img className="icon" alt="shareIcon" src={shareIcon} 
+                title="share selected"/>
+              <span id="tooltipshareFilters" style={{ display: "none", 
+                position: "absolute", backgroundColor: "white" }}>
+                Copied to clipboard
+              </span>
+            </button>
+            <button className="noFormatButton" onClick={() => this.resetLayout()}>
+              <img className="icon" alt="resetLayoutIcon" src={resetIcon} 
+                title="reset table layout to default" style={{ height: "15px" }}
+              />
+            </button>
+            <span className="smallText"> (total: {" "}
+              {this.state.total > 500 ? 
+                "500/" + this.state.total?.toString() : 
+                this.state.total?.toString()})
+            </span>
+            <EventsPage 
+              {...{
+                columns: columnsList, 
+                data, 
+                saveColumnVisibility,
+                saveColumnSize,
+                renderExpandedRow,
+                updateSelectedRows,
+              }} 
             />
             {this.state.redirect && <Navigate push to={this.state.redirectLink} />}
           </div>

@@ -1,5 +1,5 @@
 import Table from '../Table.js';
-import TableChart from '../../charts/table_chart.jsx';
+import ListChart from '../../charts/table_chart.jsx';
 
 class CallsTable extends Table {
 
@@ -17,7 +17,7 @@ class CallsTable extends Table {
     render() {
         return (
             <div className="row no-gutters" >
-                <TableChart tags={this.props.tags}
+                <ListChart tags={this.props.tags}
                     data={this.state.calls}
                     total={this.state.total}
                     name={"calls"}
