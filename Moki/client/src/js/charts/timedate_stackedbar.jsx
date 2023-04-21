@@ -37,6 +37,13 @@ export default class StackedChart extends Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.data !== this.props.data) {
+            this.setState({ data: this.props.data });
+            this.draw(this.props.data, this.props.id, this.props.width, this.props.name, this.props.units);
+        }
+    }
+
     async draw(data, id, width, name, units, isFirst) {
         width = width < 0 ? 1028 : width;
         units = units ? " (" + units + ")" : "";
