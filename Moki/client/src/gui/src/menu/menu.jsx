@@ -3,7 +3,7 @@ render menu list
 input: array of dashboards to render
 */
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 /**
  * Capitalize first letter
@@ -21,32 +21,36 @@ function capitalizeFirstLetter(string) {
  */
 export const renderNavBar = (dashboards) => {
   var navBar = [];
-  for (var i = 0; i < dashboards.length; i++) {
-    if (dashboards[i] !== "web") {
+  for (const dashboard of dashboards) {
+    if (dashboard !== "web") {
       navBar.push(
-        <Link
-          to={"/" + dashboards[i]}
-          id={"/" + dashboards[i]}
-          className={window.location.pathname === "/" + dashboards[i]
-            ? "activeDashboardDiv list-group-myitem list-group-item-action"
-            : "bg-dark list-group-myitem list-group-item-action"}
-          key={dashboards[i]}
+        <NavLink
+          to={"/" + dashboard}
+          id={"/" + dashboard}
+          className={({ isActive }) => (
+            "list-group-myitem list-group-item-action " +
+            (isActive ? "activeDashboardDiv" : "bg-dark")
+          )}
+          key={dashboard}
         >
-          <div className="d-flex w-100 justify-content-start align-items-center">
-            <img
-              className="marginRight"
-              src={`icons/${dashboards[i]}.png`}
-              alt={dashboards[i]}
-            />
-            <span
-              className={window.location.pathname === "/" + dashboards[i]
-                ? "menu-collapsed menuText activeDashboard"
-                : "menu-collapsed menuText"}
-            >
-              {capitalizeFirstLetter(dashboards[i])}
-            </span>
-          </div>
-        </Link>,
+          {({ isActive }) => {
+            return (
+              <div className="d-flex w-100 justify-content-start align-items-center">
+                <img
+                  className="marginRight"
+                  src={`icons/${dashboard}.png`}
+                  alt={dashboard}
+                />
+                <span
+                  className={"menu-collapsed menuText " +
+                    (isActive ? "activeDashboard" : "")}
+                >
+                  {capitalizeFirstLetter(dashboard)}
+                </span>
+              </div>
+            );
+          }}
+        </NavLink>,
       );
     }
   }

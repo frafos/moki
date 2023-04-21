@@ -38,6 +38,7 @@ class ConnectivityCA extends Component {
   render() {
     return (
       <div className="container-fluid" style={{"paddingRight": "0"}}>
+        <FilterBar tags={this.props.tags} srcRealms={this.state.srcRealms} dstRealms={this.state.dstRealms} />
         <ConnectivityCACharts />
         <ConnectivityCATable />
       </div>

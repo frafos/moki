@@ -10,7 +10,7 @@ import logoutIcon from "/icons/log_out.png";
 import password from "/icons/password.png";
 import collapseIcon from "/icons/collapse.png";
 
-class navBar extends Component {
+class NavBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -203,4 +203,4 @@ class navBar extends Component {
     }
 }
 
-export default navBar;
+export default NavBar;

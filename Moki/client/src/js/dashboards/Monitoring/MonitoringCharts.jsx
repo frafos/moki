@@ -230,7 +230,7 @@ class MonitoringCharts extends Component {
                 <div className="col-auto" style={{ "marginRight": "5px" }}>
                             <span >
                                 <div>
-                                    window.notification.getAllNotifications(true)
+                                    {window.notification.getAllNotifications(true)}
                                 </div>
                             </span>
                 </div>
