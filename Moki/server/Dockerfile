@@ -1,5 +1,5 @@
-ARG img=node:10
-ARG img_prod=node:10-alpine
+ARG img=node:18
+ARG img_prod=node:18-alpine
 FROM ${img} as dev
 
 ENV NODE_ENV=dev
@@ -31,7 +31,7 @@ ENV NODE_ENV=production
 ENV PORT=5000
 
 COPY . .
-RUN npm install --production && npm ci --only=production
+RUN npm install --omit=dev
 
 EXPOSE $PORT
 
