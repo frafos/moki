@@ -20,7 +20,7 @@ import { downloadPcapMerged } from '../helpers/download/downloadPcapMerged';
 import { parseTimestamp } from "../helpers/parseTimestamp";
 import querySrv from '../helpers/querySrv';
 
-import { EventsPage } from "./events_page"
+import { EventsPage } from "./table/events_page"
 
 import shareIcon from "/icons/share_dark.png";
 import downloadPcapIcon from "/icons/downloadPcap.png";
@@ -719,7 +719,6 @@ export default class ListChart extends Component {
         updateSelectedRows.bind(this);
 
         const data = Array.isArray(this.state.data) ? this.state.data : [];
-        
         return (
           <div key={"table" + this.props.name} className="chart">
             <h3 className="alignLeft title inline" style={{ float: "inherit" }}>

@@ -14,7 +14,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@charts": path.resolve(__dirname, "./src/js/charts")
+      "@charts": path.resolve(__dirname, "./src/js/charts"),
+      "@assets": path.resolve(__dirname, "./src/assets")
     }
   },
   server: {
