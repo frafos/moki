@@ -530,7 +530,13 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
             hidden: hidden,
             headerStyle: { width: getColumnWidth("AVG QoS", width) },
             editable: false,
-            classes: function callback(cell, row, rowIndex, colIndex) { if (cell <= 3) { return "red" }; }
+            formatter: (cell, obj) => { 
+                const value = obj?._source?.attrs["rtp-MOScqex-avg"];
+                return <span className="filterToggleActive" 
+                    style={{ color: (cell <= 3) ? "red" : "" }}>
+                    {value && value.toString()}
+                </span>
+            }
         }
         case 'advanced': return {
             dataField: '_source',
