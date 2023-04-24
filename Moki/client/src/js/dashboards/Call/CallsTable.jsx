@@ -1,5 +1,5 @@
 import Table from '../Table.js';
-import ListChart from '../../charts/table_chart.jsx';
+import ListChart from '@charts/table_chart.jsx';
 
 class CallsTable extends Table {
 

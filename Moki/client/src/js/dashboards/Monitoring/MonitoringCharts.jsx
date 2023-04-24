@@ -5,14 +5,14 @@ import React, {
     Component
 } from 'react';
 
-import ValueChart from '../../charts/value_chart.jsx';
-import CircleChart from '../../charts/circle_chart.jsx';
-import GaugeChart from '../../charts/gauge_chart.jsx';
+import ValueChart from '@charts/value_chart.jsx';
+import CircleChart from '@charts/circle_chart.jsx';
+import GaugeChart from '@charts/gauge_chart.jsx';
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
 import store from "../../store/index";
-import MultiListChart from '../../charts/multiple_list_chart.jsx';
-import ListChartMonitoring from '../../charts/list_chart_monitoring.jsx';
-import MonitoringListChart from '../../charts/monitoring_list_chart.jsx';
+import MultiListChart from '@charts/multiple_list_chart.jsx';
+import ListChartMonitoring from '@charts/list_chart_monitoring.jsx';
+import MonitoringListChart from '@charts/monitoring_list_chart.jsx';
 import { parseTimestamp } from "../../helpers/parseTimestamp";
 import { elasticsearchConnection } from '../../../gui';
 // import BootstrapTable from '@moki-client/react-bootstrap-table-next';

@@ -5,7 +5,7 @@ Class to get data for all charts iin Call dashboard
 import React from 'react';
 import Dashboard from '../Dashboard.js';
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
-import MultipleLineChart from '../../charts/multipleLine_chart';
+import MultipleLineChart from '@charts/multipleLine_chart';
 import { parseMultipleLineData } from '../../../es-response-parser';
 
 

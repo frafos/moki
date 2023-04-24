@@ -5,8 +5,8 @@ import React from 'react';
 
 import Dashboard from '../Dashboard.js';
 import store from "../../store/index";
-import BarChart from '../../charts/bar_chart.jsx';
-import TimedateStackedChart from '../../charts/timedate_stackedbar.jsx';
+import BarChart from '@charts/bar_chart.jsx';
+import TimedateStackedChart from '@charts/timedate_stackedbar.jsx';
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
 import {parseHistogramData, parseStackedbarTimeData} from '../../../es-response-parser';
 

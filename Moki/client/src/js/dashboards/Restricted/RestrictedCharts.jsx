@@ -4,12 +4,12 @@ Class to get data for all charts iin Call dashboard
 import React from 'react';
 
 import Dashboard from '../Dashboard.js';
-import ValueChart from '../../charts/value_chart.jsx';
+import ValueChart from '@charts/value_chart.jsx';
 import store from "../../store/index";
-import ListChart from '../../charts/list_chart.jsx';
-import TimedateStackedChart from '../../charts/timedate_stackedbar.jsx';
+import ListChart from '@charts/list_chart.jsx';
+import TimedateStackedChart from '@charts/timedate_stackedbar.jsx';
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
-//import StackedLineChart from '../../charts/timedate_stackedbar_with_line_chart.js';
+//import StackedLineChart from '@charts/timedate_stackedbar_with_line_chart.js';
 import {parseListData , parseQueryStringData , 
     parseAggData , parseAggSumBucketData, 
     parseBucketData , parseStackedbarTimeData} from '../../../es-response-parser';

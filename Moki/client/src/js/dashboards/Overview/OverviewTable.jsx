@@ -1,5 +1,5 @@
 import Table from '../Table.js';
-import TableChart from '../../charts/table_chart.jsx';
+import TableChart from '@charts/table_chart.jsx';
 
 class OverviewTable extends Table {
 

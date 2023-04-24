@@ -4,10 +4,10 @@ Class to get data for all charts iin Call dashboard
 import React from 'react';
 
 import Dashboard from '../Dashboard.js';
-import TimedateStackedChart from '../../charts/timedate_stackedbar.jsx';
-import Geoipchart from '../../charts/geoip_map.jsx';
-import DonutChart from '../../charts/donut_chart.jsx';
-import ListChart from '../../charts/list_chart.jsx';
+import TimedateStackedChart from '@charts/timedate_stackedbar.jsx';
+import Geoipchart from '@charts/geoip_map.jsx';
+import DonutChart from '@charts/donut_chart.jsx';
+import ListChart from '@charts/list_chart.jsx';
 import store from "../../store/index";
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
 import { parseListData, parseAggCities, 

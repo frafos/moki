@@ -4,7 +4,7 @@ Class to get data for all charts iin Call dashboard
 import React from 'react';
 
 import Dashboard from '../Dashboard.js';
-import TimedateStackedChart from '../../charts/timedate_stackedbar.jsx';
+import TimedateStackedChart from '@charts/timedate_stackedbar.jsx';
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
 import store from "../../store/index";
 import { parseStackedbarTimeData } from '../../../es-response-parser';

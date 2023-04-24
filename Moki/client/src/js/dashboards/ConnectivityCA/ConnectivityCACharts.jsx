@@ -4,11 +4,11 @@ Class to get data for all charts iin Call dashboard
 import React from 'react';
 
 import Dashboard from '../Dashboard.js';
-import TopologyChart from '../../charts/topology_chart.jsx';
-import Heatmap from '../../charts/heatmap_chart.jsx';
-import TimedateHeatmap from '../../charts/timedate_heatmap.jsx';
-import ValueChart from '../../charts/value_chart.jsx';
-import MultivalueChart from '../../charts/multivalue_chart.jsx';
+import TopologyChart from '@charts/topology_chart.jsx';
+import Heatmap from '@charts/heatmap_chart.jsx';
+import TimedateHeatmap from '@charts/timedate_heatmap.jsx';
+import ValueChart from '@charts/value_chart.jsx';
+import MultivalueChart from '@charts/multivalue_chart.jsx';
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
 import store from "../../store/index";
 import { parseHeatmapData, parseDateHeatmap, parseDateHeatmapAgg, 

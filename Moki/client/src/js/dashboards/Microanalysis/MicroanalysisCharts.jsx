@@ -4,10 +4,10 @@ Class to get data for all charts iin Call dashboard
 import React from 'react';
 
 import Dashboard from '../Dashboard.js';
-import ListChart from '../../charts/list_chart.jsx';
-import DonutChart from '../../charts/donut_chart.jsx';
+import ListChart from '@charts/list_chart.jsx';
+import DonutChart from '@charts/donut_chart.jsx';
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
-import ValueChart from '../../charts/value_chart.jsx';
+import ValueChart from '@charts/value_chart.jsx';
 import { parseListData, parseBucketData, 
     parseAggDistinct, parseListDataCardinality } from '../../../es-response-parser';
 

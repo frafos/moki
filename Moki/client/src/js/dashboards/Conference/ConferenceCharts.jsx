@@ -4,9 +4,9 @@ Class to get data for all charts in Conference dashboard
 import React from 'react';
 
 import Dashboard from '../Dashboard.js';
-import TimedateStackedChart from '../../charts/timedate_stackedbar.jsx';
-import ListChart from '../../charts/list_chart.jsx';
-import ValueChart from '../../charts/value_chart.jsx';
+import TimedateStackedChart from '@charts/timedate_stackedbar.jsx';
+import ListChart from '@charts/list_chart.jsx';
+import ValueChart from '@charts/value_chart.jsx';
 import store from "../../store/index";
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
 import { parseListData, parseAggAvgCnt, parseStackedbarTimeData, 

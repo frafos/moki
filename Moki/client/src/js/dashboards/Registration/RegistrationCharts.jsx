@@ -3,13 +3,13 @@ Class to get data for all charts iin Call dashboard
 */
 import React from 'react';
 import Dashboard from '../Dashboard.js';
-import ValueChart from '../../charts/value_chart.jsx';
-import MultipleAreaChart from '../../charts/multipleArea_chart';
-import TimedateStackedChart from '../../charts/timedate_stackedbar.jsx';
+import ValueChart from '@charts/value_chart.jsx';
+import MultipleAreaChart from '@charts/multipleArea_chart';
+import TimedateStackedChart from '@charts/timedate_stackedbar.jsx';
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
-import Geoipchart from '../../charts/geoip_map.jsx';
-import DonutChart from '../../charts/donut_chart.jsx';
-import ListChart from '../../charts/list_chart.jsx';
+import Geoipchart from '@charts/geoip_map.jsx';
+import DonutChart from '@charts/donut_chart.jsx';
+import ListChart from '@charts/list_chart.jsx';
 import store from "../../store/index";
 import { parseListData, parseBucketData, 
     parseAggCities, parseMultipleLineDataShareAxis, 

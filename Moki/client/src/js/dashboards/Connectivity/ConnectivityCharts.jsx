@@ -4,8 +4,8 @@ Class to get data for all charts iin Call dashboard
 import React from 'react';
 
 import Dashboard from '../Dashboard.js';
-import TopologyChart from '../../charts/topology_chart.jsx';
-import Heatmap from '../../charts/heatmap_chart.jsx';
+import TopologyChart from '@charts/topology_chart.jsx';
+import Heatmap from '@charts/heatmap_chart.jsx';
 import store from "../../store/index";
 import LoadingScreenCharts from '../../helpers/LoadingScreenCharts';
 import { parseHeatmapData, parseDateHeatmap, parseTopologyData } from '../../../es-response-parser';
