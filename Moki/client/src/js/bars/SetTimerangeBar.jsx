@@ -1,6 +1,5 @@
 
-import ReactDatetimeClass from "react-datetime";
-const Datetime = ReactDatetimeClass.default ?? ReactDatetimeClass;
+import Datetime from "react-datetime";
 
 import React, { Component } from 'react';
 import store from "../store/index";

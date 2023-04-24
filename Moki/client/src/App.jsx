@@ -1,5 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.min.js';
 import React, { Component } from 'react';
 import './App.css';
 import NavBar from './js/bars/NavigationBar';
