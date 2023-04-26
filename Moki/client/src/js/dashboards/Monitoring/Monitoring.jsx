@@ -8,7 +8,7 @@ import MonitoringCharts from './MonitoringCharts';
 class Monitoring extends Component {
     render() {
         return (
-            <div className="container">
+            <div className="container-fluid pr-0 mr-0">
                 <MonitoringCharts />
             </div>
                        

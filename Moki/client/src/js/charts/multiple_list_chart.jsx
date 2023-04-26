@@ -42,8 +42,11 @@ row(list){
     
      //special list for monitoring dahsboard
     if(list.device_name){
-        rows.push(<th key={list.device_name}> {list.device_name}</th>
-             );
+      rows.push(
+          <tr key={list.device_name}>
+            <td>{list.device_name}</td>
+          </tr>
+      );
         
     var keys =Object.keys(list);
          for(var i = 0; i < keys.length; i++){

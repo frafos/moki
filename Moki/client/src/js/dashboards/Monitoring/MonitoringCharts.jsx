@@ -18,6 +18,8 @@ import { elasticsearchConnection } from '../../../gui';
 // import BootstrapTable from '@moki-client/react-bootstrap-table-next';
 // import paginationFactory, { PaginationProvider } from 'react-bootstrap-table2-paginator';
 
+import SimpleTable from "@charts/table/simple_table";
+
 class MonitoringCharts extends Component {
 
     // Initialize the state
@@ -195,46 +197,41 @@ class MonitoringCharts extends Component {
 
     //render GUI
     render() {
-        const paginationOption = {
-            totalSize: 100,
-            sizePerPage: 50,
-            hideSizePerPage: true,
-            paginationSize: 1,
-            prePageText: "<",
-            nextPageText: ">",
-            withFirstAndLast: false
-        };
-
-        var columns = [];
-        columns.push(
+        const columns = [ 
             {
-                dataField: 'timestamp',
-                text: 'Time',
-                formatter: (cell, obj) => {
-                        return parseTimestamp(new Date(parseInt(obj.timestamp )));
-                    }
-            },{
-            dataField: 'text',
-            text: 'Text'
-        },
+                accessorKey: "timestamp",
+                header: "Time",
+                cell: ({ cell }) => {
+                    const value = cell.getValue();
+                    return (
+                      <div>
+                          {value && parseTimestamp(new Date(parseInt(value)))}
+                      </div>
+                    )
+                },
+                minSize: 200,
+            },
             {
-                dataField: 'level',
-                text: 'Level'
+                accessorKey: "level",
+                header: "Level",
+                minSize: 100,
+            },
+            {
+                accessorKey: "text",
+                header: "Text",
+                minSize: 300,
             }
-        );
+        ];
 
-        return (<div > {
+        return (<div> {
             this.state.isLoading && < LoadingScreenCharts />
         }
-            <h4> NOTIFICATIONS </h4> <div className="row no-gutters bottomMargin" >
-                <div className="col-auto" style={{ "marginRight": "5px" }}>
-                            <span >
-                                <div>
-                                    {window.notification.getAllNotifications(true)}
-                                </div>
-                            </span>
-                </div>
-            </div>
+            <h4> NOTIFICATIONS </h4>                     
+                <SimpleTable
+                    columns={columns}
+                    data={window.notification.getAllNotifications(true)} 
+                >
+                </SimpleTable>
             <h4> CPU </h4> <div className="row no-gutters bottomMargin" >
                 <div className="col-auto" style={{ "marginRight": "5px" }}>
                     <GaugeChart data={this.state.cpu}

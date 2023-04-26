@@ -20,7 +20,7 @@ import { downloadPcapMerged } from '../helpers/download/downloadPcapMerged';
 import { parseTimestamp } from "../helpers/parseTimestamp";
 import querySrv from '../helpers/querySrv';
 
-import { EventsPage } from "./table/events_page"
+import EventsTable from "./table/events_table"
 
 import shareIcon from "/icons/share_dark.png";
 import downloadPcapIcon from "/icons/downloadPcap.png";
@@ -762,7 +762,7 @@ export default class ListChart extends Component {
                 "500/" + this.state.total?.toString() : 
                 this.state.total?.toString()})
             </span>
-            <EventsPage 
+            <EventsTable 
               {...{
                 columns: columnsList, 
                 data, 

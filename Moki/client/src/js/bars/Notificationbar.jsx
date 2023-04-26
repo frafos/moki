@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { status } from '../helpers/status'
 import { diskSpace } from '../helpers/status';
-// import { Navigate } from 'react-router';
+import { Navigate } from 'react-router';
 import storePersistent from "../store/indexPersistent";
-//import errorIcon from "../../styles/icons/error.png";
-
 import infoIcon from "/icons/info.png";
 import warningIcon from "/icons/warning.png";
-
 
 /*
 FORMAT   {errno: X, text: Y, level: Z}
