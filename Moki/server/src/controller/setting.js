@@ -1191,7 +1191,7 @@ class SettingController {
         }
       };
       var result = await client.search(filter);
-      return res.json(200, result);
+      return res.status(200).json(result);
     }
     return search().catch((e) => {
       return next(e);

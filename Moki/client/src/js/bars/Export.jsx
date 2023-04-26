@@ -88,7 +88,7 @@ class Export extends Component {
 
                 //if not encrypt mode, download directly
                 if (!(storePersistent.getState().profile && storePersistent.getState().profile[0] && storePersistent.getState().profile[0].userprefs.mode === "encrypt")) {
-                    this.export();
+                    this.export(data);
                 }
 
                 /*
@@ -163,7 +163,7 @@ class Export extends Component {
             return str;
         }
     */
-    async export() {
+    async export(data) {
         /*  const attributesState = this.state.attributes;
           var attributes = [];
           //get rid of uncheck columns
@@ -228,7 +228,7 @@ class Export extends Component {
         
         */
 
-        var result = this.state.data;
+        var result = data;
         //check if should be decrypted
         var isDecrypt = document.getElementById("decryptCheckbox") ? document.getElementById("decryptCheckbox").checked : false;
         if (isDecrypt) {
