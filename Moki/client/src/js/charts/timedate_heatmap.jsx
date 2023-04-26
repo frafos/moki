@@ -26,7 +26,7 @@ export default class timedateHeatmap extends Component {
         else return null;
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.setState({ data: this.props.data });
             this.draw(this.props.data, this.props.id, this.props.field, this.props.width, this.props.name, this.props.units);
@@ -114,15 +114,14 @@ export default class timedateHeatmap extends Component {
                 .attr('transform', 'translate(' + width / 2 + ',25)')
 
         } else {
-            var y_elements = d3.set(data.map(function (item) {
+            const y_elements = new Set(data.map(function (item) {
                 return item.attr2;
-            })).values();
+            }));
 
             var itemHeight = 16 - 3;
-            // var itemSize = (width-marginLeft)/x_elements.length;
             var itemSize = 10;
             var cellSize = itemSize - 3;
-            height = (itemHeight * y_elements.length) + margin.top;
+            height = (itemHeight * y_elements.size) + margin.top;
 
             var xAxis = d3.axisBottom()
                 .scale(xScale)
@@ -166,12 +165,12 @@ export default class timedateHeatmap extends Component {
                     .extent([[0, 0], [width, height]])
                     .on("end", brushended));
 
-            function brushended() {
-                if (!d3.event.sourceEvent) return;
+            function brushended(event) {
+                if (!event.sourceEvent) return;
                 // Only transition after input.
-                if (!d3.event.selection) return;
+                if (!event.selection) return;
                 // Ignore empty selections.
-                var extent = d3.event.selection;
+                var extent = event.selection;
                 var timestamp_gte = Math.round(xScale.invert(extent[0]));
                 var timestamp_lte = Math.round(xScale.invert(extent[1]));
                 var timestamp_readiable = parseTimestamp(new Date(Math.trunc(timestamp_gte))) + " - " + parseTimestamp(new Date(Math.trunc(timestamp_lte)))
@@ -183,7 +182,7 @@ export default class timedateHeatmap extends Component {
             // tooltip
             var tooltip = d3.select('#' + id).append("div")
                 .attr('id', 'tooltip ' + id)
-                .attr("class", "tooltipCharts");
+                .attr("class", "tooltip");
 
             tooltip.append("div");
 
@@ -247,7 +246,9 @@ export default class timedateHeatmap extends Component {
                 .attr("ry", 2)
                 .style("opacity", 1)
                 .attr('transform', 'translate(' + cellSize / 2 + ',0)')
-                .on("mouseover", function (d) {
+                .on("mouseover", function (event, d) {
+                    d3.select(this).style("stroke", "orange")
+                        .style("cursor", "pointer");
 
                     var value = d.value;
 
@@ -261,10 +262,11 @@ export default class timedateHeatmap extends Component {
                     }
 
                     tooltip.select("div").html("<strong>" + d.attr2.charAt(0).toUpperCase() + d.attr2.slice(1) + ": </strong>" + value + units + "<br/><strong>Time: </strong>" + parseTimestampUTC(d.attr1) + " + " + getTimeBucket());
-                    showTooltip(tooltip);
+
+                    showTooltip(event, tooltip);
                 })
-                .on("mousemove", function () {
-                    showTooltip(tooltip);
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip);
                 })
                 .on("mouseout", function () {
                     d3.select(this).style("stroke", "none");
@@ -272,8 +274,8 @@ export default class timedateHeatmap extends Component {
                 })
 
             //filter type onClick
-            rect.on("click", el => {
-                createFilter(field + ": \"" + el.attr2 + "\"");
+            rect.on("click", (_event, d) => {
+                createFilter(field + ": \"" + d.attr2 + "\"");
                 var tooltips = document.getElementById("tooltip" + id);
                 if (tooltips) {
                     tooltips.style.opacity = 0;
@@ -311,8 +313,8 @@ export default class timedateHeatmap extends Component {
                 })
                 .attr('font-weight', 'normal')
                 .style('cursor', 'pointer')
-                .on("click", el => {
-                    createFilter(this.props.field + ": \"" + el + "\"");
+                .on("click", (_event, d) => {
+                    createFilter(this.props.field + ": \"" + d + "\"");
                 })
                 .append("svg:title")
                 .text(function (d) { return d });

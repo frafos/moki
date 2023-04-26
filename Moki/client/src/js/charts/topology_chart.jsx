@@ -4,6 +4,7 @@ import Animation from '../helpers/Animation';
 import { createFilter, Colors } from '../../gui';
 
 import emptyIcon from "/icons/empty_small.png";
+import { showTooltip } from '../helpers/tooltip';
 
 export default class topology extends Component {
     constructor(props) {
@@ -21,7 +22,7 @@ export default class topology extends Component {
         else return null;
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.setState({ data: this.props.data });
             this.draw(this.state.data, this.props.width, this.props.height, this.props.units, this.props.field1, this.props.field2);
@@ -112,17 +113,17 @@ export default class topology extends Component {
             var simulation = d3.forceSimulation()
                 .force("link", d3.forceLink().id(function (d) {
                     return d.id;
-                }).distance(100).strength(1))
+                }).distance(100).strength(0.5))
                 .force("charge", d3.forceManyBody())
                 .force('collide', d3.forceCollide(50))
                 .force("center", d3.forceCenter(width / 2, height / 2))
                 .on('end', function () {
-                    checkVisibility(notVisible);
+                    //checkVisibility(notVisible);
                 })
 
             //Zoom functions 
-            function zoom_actions() {
-                g.attr("transform", d3.event.transform);
+            function zoom_actions(event) {
+                g.attr("transform", event.transform);
             }
 
             // Create the zoom handler
@@ -234,37 +235,25 @@ export default class topology extends Component {
                     .on("drag", dragged)
                     .on("end", dragended))
                 .style("cursor", "pointer")
-                .on('mouseover', (d) => {
+                .on('mouseover', (event, d) => {
                     mouseOverAnimation(d.ip);
 
                     tooltip = d3.select('#topologyChart').append('div')
                         .attr('class', 'tooltip tooltipTopology')
-                        .style("background", "white")
-                        .style("position", "absolute")
-                        .style("box-shadow", "0px 0px 6px black")
-                        .style("padding", "10px")
-                        .style('opacity', 0.9)
                         .html(`<span><strong>${d.ip}</strong>: ${d.value + units}</span>`);
 
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#topologyChart').node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(event, tooltip);
+
                 })
-                .on("mousemove", function (d) {
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#topologyChart').node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip);
                 })
-                .on('mouseout', function (d) {
+                .on('mouseout', function (_event, d) {
                     mouseOutAnimation(d.ip);
                     tooltip.remove()
                 })
-                .on("click", el => {
-                    createFilter(field1 + ":\"" + el.ip + "\" OR " + field2 + ":\"" + el.ip + "\"");
+                .on("click", (_event, d) => {
+                    createFilter(field1 + ":\"" + d.ip + "\" OR " + field2 + ":\"" + d.ip + "\"");
                     //bug fix: if you click but not move out
                     var tooltips = document.getElementsByClassName("tooltipDonut");
                     if (tooltip) {
@@ -354,19 +343,19 @@ export default class topology extends Component {
                 }
             }
 
-            function dragstarted(d) {
-                if (!d3.event.active) simulation.alphaTarget(0.01).restart();
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.01).restart();
                 d.fx = d.x;
                 d.fy = d.y;
             }
 
-            function dragged(d) {
-                d.fx = d3.event.x;
-                d.fy = d3.event.y;
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
             }
 
-            function dragended(d) {
-                if (!d3.event.active) simulation.alphaTarget(0);
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
                 d.fx = null;
                 d.fy = null;
             }
@@ -387,11 +376,11 @@ export default class topology extends Component {
                     var vert = i * height;
                     return 'translate(' + horz + ',' + vert + ')';
                 })
-                .on('mouseover', function (d) {
+                .on('mouseover', function (_event, d) {
                     //selection animation
                     mouseOverAnimation(d);
                 })
-                .on('mouseout', function (d) {
+                .on('mouseout', function (_event, d) {
                     mouseOutAnimation(d);
                 });
 
@@ -402,8 +391,8 @@ export default class topology extends Component {
                 .style("stroke", "white")
                 .attr('fill', function (d, i) {
                     return xScale(d);
-                }).on("click", el => {
-                    createFilter(field1 + ":\"" + el + "\" OR " + field2 + ":\"" + el + "\"");
+                }).on("click", (_event, d) => {
+                    createFilter(field1 + ":\"" + d + "\" OR " + field2 + ":\"" + d + "\"");
                     //bug fix: if you click but not move out
                     var tooltips = document.getElementsByClassName("tooltipDonut");
                     if (tooltip) {
@@ -432,8 +421,8 @@ export default class topology extends Component {
                         return d.substring(0, 20) + "... (" + value + ")";
                     }
                 })
-                .on("click", el => {
-                    createFilter(field1 + ":\"" + el + "\" OR " + field2 + ":\"" + el + "\"");
+                .on("click", (_event, d) => {
+                    createFilter(field1 + ":\"" + d + "\" OR " + field2 + ":\"" + d + "\"");
                     //bug fix: if you click but not move out
                     var tooltips = document.getElementsByClassName("tooltipDonut");
                     if (tooltip) {
@@ -444,8 +433,8 @@ export default class topology extends Component {
                 })
                 .append("svg:title")
                 .text(function (d) { return d})
-                .on("click", el => {
-                    createFilter(field1 + ":\"" + el + "\" OR " + field2 + ":\"" + el + "\"");
+                .on("click", (_event, d) => {
+                    createFilter(field1 + ":\"" + d + "\" OR " + field2 + ":\"" + d + "\"");
                     //bug fix: if you click but not move out
                     var tooltips = document.getElementsByClassName("tooltipDonut");
                     if (tooltip) {

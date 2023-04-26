@@ -127,12 +127,12 @@ export default class StackedChartLine extends Component {
                     .extent([[0, 0], [width, height]])
                     .on("end", brushended));
 
-            function brushended() {
-                if (!d3.event.sourceEvent) return;
+            function brushended(event) {
+                if (!event.sourceEvent) return;
                 // Only transition after input.
-                if (!d3.event.selection) return;
+                if (!event.selection) return;
                 // Ignore empty selections.
-                var extent = d3.event.selection;
+                var extent = event.selection;
                 var timestamp_gte = Math.round(xScale.invert(extent[0]));
                 var timestamp_lte = Math.round(xScale.invert(extent[1]));
 
@@ -183,10 +183,10 @@ export default class StackedChartLine extends Component {
                         return colorScale(d.key);
                     }
                 })
-                .on("mouseover", function (d) {
+                .on("mouseover", function () {
                     d3.select(this).style("stroke", "orange");
                 })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                     d3.select(this).style("stroke", "none");
                 });
 
@@ -256,29 +256,25 @@ export default class StackedChartLine extends Component {
                         return 0;
                     }
                 })
-                .on("mouseover", function (d, i) {
-                    //d3.select(this).style("stroke","orange");
-
+                .on("mouseover", function (event, d) {
                     tooltip.select("div").html("<strong>Time: </strong> " + parseTimestamp(d.data.time) + " + " + getTimeBucket() + "<br/><strong>Value: </strong> " + d3.format(',')(d[1] - d[0]) + units + "<br/><strong>Type: </strong>" + this.parentNode.getAttribute("type") + "<br/> ");
                     d3.select(this).style("cursor", "pointer");
-
-                    showTooltip(tooltip)
+                    showTooltip(event, tooltip)
                 })
                 .on("mouseout", function () {
-                    //  d3.select(this).style("stroke","none");
                     tooltip.style("visibility", "hidden");
                 })
-                .on("mousemove", function (d) {
-                    showTooltip(tooltip)
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip)
                 });
 
             //filter type onClick
-            layer.on("click", el => {
+            layer.on("click", (_event, d) => {
                 if (window.location.pathname === "/exceeded" || window.location.pathname.includes("/alerts")) {
-                    createFilter("exceeded:" + el.key);
+                    createFilter("exceeded:" + d.key);
                 }
                 else {
-                    createFilter("attrs.type:" + el.key);
+                    createFilter("attrs.type:" + d.key);
                 }
 
                 var tooltips = document.getElementById("tooltip" + id);
@@ -317,7 +313,7 @@ export default class StackedChartLine extends Component {
             // tooltip
             var tooltip = d3.select('#' + id).append("div")
                 .attr("id", "tooltip" + id)
-                .attr("class", "tooltipCharts")
+                .attr("class", "tooltip")
                 // .style("background", "white")
                 // .attr('class', 'tooltip tooltip' + id)
                 // .style("opacity", "0.9")
@@ -380,16 +376,16 @@ export default class StackedChartLine extends Component {
                     .attr('value', function (d) {
                         return d.agg.value;
                     })
-                    .on("mouseover", function (d, i) {
+                    .on("mouseover", function (event, d) {
                         tooltip.select("div").html("<strong>Time: </strong> " + parseTimestamp(d.key) + "<br/><strong>ASR value:</strong> " + d3.format(',')(Math.round(d.agg.value)) + "% <br/>");
                         d3.select(this).style("cursor", "pointer");
-                        showTooltip(tooltip)
+                        showTooltip(event, tooltip)
                     })
                     .on("mouseout", function () {
                         tooltip.style("visibility", "hidden");
                     })
-                    .on("mousemove", function (d) {
-                        showTooltip(tooltip)
+                    .on("mousemove", function (event) {
+                        showTooltip(event, tooltip)
                     });
             }
         }

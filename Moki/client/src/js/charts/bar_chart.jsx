@@ -8,7 +8,7 @@ import { Colors, ColorType } from '../../gui';
 
 import emptyIcon from "/icons/empty_small.png";
 
-export default class barChart extends Component {
+export default class BarChart extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -24,7 +24,7 @@ export default class barChart extends Component {
         else return null;
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.setState({ data: this.props.data });
             this.draw(this.props.data, this.props.width, this.props.units, this.props.name);
@@ -203,13 +203,26 @@ export default class barChart extends Component {
             }
 
             var tooltip = "";
+            // if the value is too low, still remain visible
+            // TODO: this kind of things should be factorized in methods
+            const minHeight = 1.5;
             svg.selectAll('.bar').data(data)
                 .enter()
                 .append('rect')
                 .attr('class', 'bar')
                 .attr('x', d => xScale(d.key))
                 .attr('width', xScale.bandwidth())
-                .attr('y', d => yScale(d.doc_count))
+                .attr('y', d => {
+                    const barHeight = height - yScale(d.doc_count);
+                    if (barHeight < minHeight) {
+                        return yScale(d.doc_count) + barHeight - minHeight;
+                    }
+                    return yScale(d.doc_count);
+                })
+                .attr('height', d => {
+                    if (d.doc_count <= 0) return 0;
+                    return Math.max(height - yScale(d.doc_count), minHeight + 0.5)
+                })
                 .attr('value', function (d) {
                     return d.doc_count;
                 })
@@ -228,19 +241,17 @@ export default class barChart extends Component {
                         return colorScale(d.key);
                     }
                 })
-                .attr('height', d => height - yScale(d.doc_count))
-                .on('mouseover', (d) => {
+                .on('mouseover', (event, d) => {
                     tooltip = d3.select('#barChart').append('div')
                         .attr('id', 'tooltip tooltipBar')
-                        .attr("class", "tooltipCharts");
+                        .attr("class", "tooltip");
 
                     tooltip.html(`<strong>Key: </strong>${d.key}<br/><strong>Value: </strong>${d.doc_count + units}`);
-                    showTooltip(tooltip)
-                    // d3.select(this).style("cursor", "pointer");
+                    showTooltip(event, tooltip)
                 })
                 .on('mouseout', () => tooltip.style('visibility', "hidden"))
-                .on("mousemove", function (d) {
-                    showTooltip(tooltip)
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip)
                 });
 
 

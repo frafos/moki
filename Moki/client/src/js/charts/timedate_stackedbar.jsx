@@ -37,7 +37,7 @@ export default class StackedChart extends Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.setState({ data: this.props.data });
             this.draw(this.props.data, this.props.id, this.props.width, this.props.name, this.props.units);
@@ -82,7 +82,6 @@ export default class StackedChart extends Component {
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
             .attr('id', id + "SVG");
-        //  .append('g');
 
         //max and min date
         var maxTime = parseTimeData(store.getState().timerange[1]) + getTimeBucketInt();
@@ -150,12 +149,12 @@ export default class StackedChart extends Component {
                     .extent([[0, 0], [width, height]])
                     .on("end", brushended));
 
-            function brushended() {
-                if (!d3.event.sourceEvent) return;
+            function brushended(event) {
+                if (!event.sourceEvent) return;
                 // Only transition after input.
-                if (!d3.event.selection) return;
+                if (!event.selection) return;
                 // Ignore empty selections.
-                var extent = d3.event.selection;
+                var extent = event.selection;
                 var timestamp_gte = Math.round(xScale.invert(extent[0]));
                 var timestamp_lte = Math.round(xScale.invert(extent[1]));
 
@@ -202,7 +201,6 @@ export default class StackedChart extends Component {
 
             //var id = 0;
             var stack = d3.stack()
-                //.keys(["Register new", "Registration expired", "Register del"])
                 .keys(keys)
                 .order(d3.stackOrderNone)
                 .offset(d3.stackOffsetNone);
@@ -234,10 +232,10 @@ export default class StackedChart extends Component {
                         return colorScale(d.key);
                     }
                 })
-                .on("mouseover", function (d) {
+                .on("mouseover", function () {
                     d3.select(this).style("stroke", "orange");
                 })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                     d3.select(this).style("stroke", "none");
                 });
 
@@ -249,7 +247,7 @@ export default class StackedChart extends Component {
 
 
             layer.selectAll("rect")
-                .data(function (d, i) {
+                .data(function (d) {
                     return d;
                 })
                 .enter().append("rect")
@@ -319,29 +317,26 @@ export default class StackedChart extends Component {
                         return 0;
                     }
                 })
-                .on("mouseover", function (d, i) {
-                    //d3.select(this).style("stroke","orange");
-
+                .on("mouseover", function (event, d) {
                     tooltip.select("div").html("<strong>Time: </strong> " + parseTimestamp(d.data.time) + " + " + getTimeBucket() + "<br/><strong>Value: </strong> " + d3.format(',')(d[1] - d[0]) + units + "<br/><strong>Type: </strong>" + this.parentNode.getAttribute("type") + "<br/> ");
                     d3.select(this).style("cursor", "pointer");
-                    showTooltip(tooltip)
+                    showTooltip(event, tooltip);
                 })
                 .on("mouseout", function () {
-                    //  d3.select(this).style("stroke","none");
                     tooltip.style("visibility", "hidden");
                 })
-                .on("mousemove", function (d) {
-                    showTooltip(tooltip)
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip);
                 });
 
             if (this.props.disableFilter !== true) {
                 //filter type onClick
-                layer.on("click", el => {
+                layer.on("click", (_event, d) => {
                     if (window.location.pathname === "/exceeded" || window.location.pathname.includes("/alerts")) {
-                        createFilter("exceeded:" + el.key);
+                        createFilter("exceeded:" + d.key);
                     }
                     else {
-                        createFilter("attrs.type:" + el.key);
+                        createFilter("attrs.type:" + d.key);
                     }
 
                     var tooltips = document.getElementById("tooltip" + id);
@@ -393,7 +388,7 @@ export default class StackedChart extends Component {
             // tooltip
             var tooltip = d3.select('#' + id).append("div")
                 .attr('id', 'tooltip' + id)
-                .attr("class", "tooltipCharts");
+                .attr("class", "tooltip");
 
 
             tooltip.append("div");

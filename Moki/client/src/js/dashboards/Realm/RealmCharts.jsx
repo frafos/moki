@@ -80,7 +80,7 @@ class RealmCharts extends Dashboard {
         else return null;
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.hostnames !== this.props.hostnames) {
             this.setState({ hostnames: this.props.hostnames });
         }

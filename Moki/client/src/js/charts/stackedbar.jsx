@@ -188,12 +188,13 @@ export default class StackedChart extends Component {
                 }
             }
             var stack = d3.stack()
-                //.keys(["Register new", "Registration expired", "Register del"])
                 .keys(keys)
                 .order(d3.stackOrderNone)
                 .offset(d3.stackOffsetNone);
 
+            console.log(data);
             var layers = stack(data);
+            console.log(layers)
 
             var layer = g.selectAll(".layer")
                 .data(layers)
@@ -216,10 +217,10 @@ export default class StackedChart extends Component {
                         return colorScale(d.key);
                     }
                 })
-                .on("mouseover", function (d) {
+                .on("mouseover", function () {
                     d3.select(this).style("stroke", "orange");
                 })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                     d3.select(this).style("stroke", "none");
                 });
 
@@ -229,6 +230,9 @@ export default class StackedChart extends Component {
                     .ticks(5)
             }
 
+            // if the value is too low, still remain visible
+            // TODO: this kind of things should be factorized in methods
+            const minHeight = 1.5;
             layer.selectAll("rect")
                 .data(function (d) {
                     return d;
@@ -245,48 +249,33 @@ export default class StackedChart extends Component {
                     return d[1] - d[0];
                 })
                 .attr("y", function (d) {
-                    var height = yScale(d[0]) - yScale(d[1]);
-                    if (height) {
-                       if (height < 1.5) {
-                            return yScale(d[1])-1;
-                        }
-                        return yScale(d[1]);
-
+                    const height = yScale(d[0]) - yScale(d[1]);
+                    if (!height) return 0;
+                    if (height < minHeight) {
+                        return yScale(d[1]) + height - minHeight;
                     }
-                    else {
-                        return 0;
-                    }
+                    return yScale(d[1]);
                 })
                 .attr("height", function (d) {
-                    var height = yScale(d[0]) - yScale(d[1]);
-                    if (height) {
-                        if (height < 1.5) {
-                            return 2;
-                        }
-                        return height;
-                    }
-                    else {
-                        return 0;
-                    }
+                    const height = yScale(d[0]) - yScale(d[1]) ?? 0;
+                    return Math.max(height, minHeight + 0.5);
                 })
-                .on("mouseover", function (d, i) {
+                .on("mouseover", function (event, d) {
                     tooltip.select("div").html("<strong>Type: </strong> " + this.parentNode.getAttribute("type") + "<br/><strong>Count:</strong> " + d3.format(',')(d[1] - d[0]) + units + "<br/>");
                     d3.select(this).style("cursor", "pointer");
-                    showTooltip(tooltip)
+                    showTooltip(event, tooltip)
                 })
                 .on("mouseout", function () {
-                    //  d3.select(this).style("stroke","none");
                     tooltip.style("visibility", "hidden");
                 })
-                .on("mousemove", function (d) {
-                    showTooltip(tooltip)
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip)
                 });
 
 
             //filter type onClick
-            layer.on("click", el => {
-                createFilter("attrs.type:" + el.key);
-
+            layer.on("click", (_event, d) => {
+                createFilter("attrs.type:" + d.key);
                 var tooltips = document.getElementById("tooltip" + id);
                 if (tooltip) {
                     tooltips.style.opacity = 0;
@@ -343,7 +332,7 @@ export default class StackedChart extends Component {
             // tooltip
             var tooltip = d3.select('#' + id).append("div")
                 .attr('id', 'tooltip' + id)
-                .attr("class", "tooltipCharts");
+                .attr("class", "tooltip");
 
 
             tooltip.append("div");

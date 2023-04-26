@@ -470,7 +470,7 @@ class SequenceDiagram extends Component {
                        .style("opacity", 0);
                    }
                })*/
-            .on("click", function (d) {
+            .on("click", function (event, d) {
               //set z-index to front when you click on popup
               var allTooltips = document.getElementsByClassName("tooltipDiagram");
               for (var j = 0; j < allTooltips.length; j++) {
@@ -493,7 +493,7 @@ class SequenceDiagram extends Component {
               if (maxY - elTop < 150) elTop = maxY - 200;
 
               d3.select("#tooltip" + i).html("<div class='tooltipDiagramHeader'><span style='cursor: default; margin-right: 10px; margin-left: 3px; font-size: 12px; color: black;' onclick=getElementById('tooltip" + i + "').style.display='none'>X</span>" + m.msg + "</div><div class='tooltipDiagramBody'>" + syntaxHighlight(m) + "</div>")
-                .style("left", (d3.event.pageX + 10) + "px")
+                .style("left", (event.pageX + 10) + "px")
                 .style("top", (elTop) + "px");
             })
 

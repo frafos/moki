@@ -86,17 +86,6 @@ a {
     width: 35px;
 }
 
-.tooltipCharts {
-    background: white;
-    opacity: 0.9;
-    position: fixed;
-    visibility: hidden;
-    box-shadow: 0px 0px 6px black;
-    padding: 10px;
-    z-index: 9999999999;
-    min-width: fit-content;
-}
-
 .rowSplit {
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -854,7 +843,7 @@ text {
     background: white;
     z-index: 200000000;
     opacity: 0.9;
-    position: absolute;
+    position: fixed;
     visibility: hidden;
     box-shadow: 0px 0px 6px black;
     padding: 10px;

@@ -5,7 +5,7 @@ import React from 'react';
 
 import Dashboard from '../Dashboard.js';
 import TimedateStackedChart from '@charts/timedate_stackedbar.jsx';
-import Geoipchart from '@charts/geoip_map.jsx';
+import GeoIpChart from '@charts/geoip_map.jsx';
 import DonutChart from '@charts/donut_chart.jsx';
 import ListChart from '@charts/list_chart.jsx';
 import store from "../../store/index";
@@ -79,7 +79,7 @@ class SecurityCharts extends Dashboard {
                 />  </div>}
             {this.state.charts["SECURITY GEO EVENTS"] && <div className="row no-gutters" >
                 <div className="col-auto" >
-                    <Geoipchart data={this.state.geoipMap}
+                    <GeoIpChart data={this.state.geoipMap}
                         dataNotShown={this.state.geoipHashMap}
                         type={"geoip"}
                         name={"SECURITY GEO EVENTS"}

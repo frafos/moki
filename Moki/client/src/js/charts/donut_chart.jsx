@@ -5,6 +5,7 @@ import { ColorType, getExceededColor, Colors,
     ColorsReds, getExceededName, Types, createFilter } from '../../gui';
 
 import emptyIcon from "/icons/empty_small.png";
+import { showTooltip } from '../helpers/tooltip';
 
 export default class StackedChart extends Component {
     constructor(props) {
@@ -23,7 +24,7 @@ export default class StackedChart extends Component {
         else return null;
     }
 
-    async componentDidUpdate(prevProps, prevState) {
+    async componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.setState({ data: this.props.data });
             await this.draw(this.props.data, this.props.id, this.props.field, this.props.units);
@@ -166,10 +167,10 @@ export default class StackedChart extends Component {
                 .enter()
                 .append('path')
                 .attr('d', arc)
-                .attr('class', function (d, i) {
+                .attr('class', function () {
                     return id;
                 })
-                .attr('id', function (d, i) {
+                .attr('id', function (d) {
                     return thiss.getArcId(d.data.key);
                 })
                 .style("stroke-width", "1px")
@@ -178,7 +179,7 @@ export default class StackedChart extends Component {
                     return color(thiss.getArcId(d.data.key), i);
                 })
                 .style("cursor", "pointer")
-                .on('mouseover', async (d) => {
+                .on('mouseover', async (event, d) => {
                     mouseOverAnimation(d.data.key);
 
                     var key = d.data.key;
@@ -188,34 +189,23 @@ export default class StackedChart extends Component {
 
                     tooltip = d3.select('#' + id).append('div')
                         .style("background", "white")
-                        .attr('class', 'tooltip tooltipDonut')
-                        .style('opacity', 0.9)
-                        .style("position", "absolute")
-                        .style("box-shadow", "0px 0px 6px black")
-                        .style("padding", "10px")
+                        .attr('class', 'tooltip')
                         .html(`<span><strong>${key}</strong>: ${d3.format(',')(d.data.doc_count) + units}</span>`);
 
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                   showTooltip(event, tooltip);
+
                 })
-                .on('mouseout', function (d) {
+                .on('mouseout', function (_event, d) {
                     mouseOutAnimation(d.data.key);
                     tooltip.remove();
                 })
-                .on("mousemove", function (d) {
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#' + id).node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip);
                 })
-                .on("click", el => {
+                .on("click", (_event, d) => {
                     if (this.props.disableFilter !== true) {
 
-                        let key = el.data.key;
+                        let key = d.data.key;
                         if (field === "severity") {
                             key = parseInt(el.data.key)
                         }
@@ -262,11 +252,11 @@ export default class StackedChart extends Component {
                     var vert = i * height;
                     return 'translate(' + horz + ',' + vert + ')';
                 })
-                .on('mouseover', async (d) => {
+                .on('mouseover', async (_event, d) => {
                     //selection animation
                     mouseOverAnimation(d.key);
                 })
-                .on('mouseout', function (d) {
+                .on('mouseout', function (_event, d) {
                     mouseOutAnimation(d.key);
                 });
 
@@ -277,11 +267,11 @@ export default class StackedChart extends Component {
                 .style("stroke", "white")
                 .attr('fill', function (d, i) {
                     return color(thiss.getArcId(d.key), i);
-                }).on("click", el => {
+                }).on("click", (_event, d) => {
                     if (this.props.disableFilter !== true) {
-                        let key = el.key;
+                        let key = d.key;
                         if (field === "severity") {
-                            key = parseInt(el.data.key)
+                            key = parseInt(d.data.key)
                         }
                         createFilter(field + ":\"" + key + "\"");
                         //bug fix: if you click but not move out
@@ -329,9 +319,9 @@ export default class StackedChart extends Component {
                         }
                     }
                 })
-                .on("click", el => {
+                .on("click", (_event, d) => {
                     if (this.props.disableFilter !== true) {
-                        let key = el.key;
+                        let key = d.key;
                         if (field === "severity") {
                             key = parseInt(key)
                         }
@@ -348,10 +338,10 @@ export default class StackedChart extends Component {
                 })
                 .append("svg:title")
                 .text(function (d) { return d.key })
-                .on("click", el => {
-                    let key = el.key;
+                .on("click", (_event, d) => {
+                    let key = d.key;
                     if (field === "severity") {
-                        key = parseInt(el.key)
+                        key = parseInt(d.key)
                     }
                     createFilter(field + ":\"" + key + "\"");
                     //bug fix: if you click but not move out

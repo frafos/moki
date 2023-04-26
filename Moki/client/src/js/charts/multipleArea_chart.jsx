@@ -34,7 +34,7 @@ export default class MultipleAreaChart extends Component {
         else return null;
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.setState({ data: this.props.data });
             this.draw(this.props.data, this.props.id, this.props.units);
@@ -219,12 +219,12 @@ export default class MultipleAreaChart extends Component {
                     .extent([[0, 0], [width, height]])
                     .on("end", brushended));
 
-            function brushended() {
-                if (!d3.event.sourceEvent) return;
+            function brushended(event) {
+                if (!event.sourceEvent) return;
                 // Only transition after input.
-                if (!d3.event.selection) return;
+                if (!event.selection) return;
                 // Ignore empty selections.
-                var extent = d3.event.selection;
+                var extent = event.selection;
                 var timestamp_gte = xScale.invert(extent[0]);
                 var timestamp_lte = xScale.invert(extent[1]);
                 var timestamp_readiable = parseTimestamp(new Date(Math.trunc(timestamp_gte))) + " - " + parseTimestamp(new Date(Math.trunc(timestamp_lte)));
@@ -261,7 +261,7 @@ export default class MultipleAreaChart extends Component {
                 .style('stroke', (d, i) => color(i))
                 .style('fill', (d, i) => color(i))
                 .style('opacity', areaOpacity)
-                .on("mouseover", function (d) {
+                .on("mouseover", function () {
                     d3.selectAll('.area')
                         .style('opacity', otherareasOpacityHover);
                     d3.selectAll('.circle' + id)
@@ -271,7 +271,7 @@ export default class MultipleAreaChart extends Component {
                         .style("stroke-width", areaStrokeHover)
                         .style("cursor", "pointer");
                 })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                     d3.selectAll(".area")
                         .style('opacity', areaOpacity);
                     d3.selectAll('.circle' + id)
@@ -283,7 +283,7 @@ export default class MultipleAreaChart extends Component {
 
             var tooltip = d3.select('#' + id).append('div')
                 .attr('id', 'tooltip ' + id)
-                .attr("class", "tooltipCharts");
+                .attr("class", "tooltip");
 
 
             tooltip.append("div");
@@ -298,28 +298,28 @@ export default class MultipleAreaChart extends Component {
                 .append("g")
                 .attr("class", "circle" + id)
                 .style("cursor", "pointer")
-                .on("mouseover", function (d) {
+                .on("mouseover", function (event, d) {
                     tooltip.select("div").html("<strong>Time: </strong>" + parseTimestamp(d.date) + " + "+getTimeBucket()+"<br/><strong>Value: </strong>" + d3.format(',')(d.value) + units + "<br/> ");
-                    showTooltip(tooltip)
+                    showTooltip(event, tooltip)
                 })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                     tooltip.style("visibility", "hidden")
                 })
-                .on("mousemove", function (d) {
-                    showTooltip(tooltip)
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip)
                 })
                 .append("circle")
                 .attr("cx", d => xScale(d.date))
                 .attr("cy", d => yScale(d.value))
                 .attr("r", circleRadius)
                 .style('opacity', circleOpacity)
-                .on("mouseover", function (d) {
+                .on("mouseover", function () {
                     d3.select(this)
                         .transition()
                         .duration(duration)
                         .attr("r", circleRadiusHover);
                 })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                     d3.select(this)
                         .transition()
                         .duration(duration)

@@ -1,12 +1,11 @@
-import React, {
-    Component
-} from 'react';
+import React, { Component } from 'react';
 import * as d3 from "d3";
 import { Colors, createFilter } from '../../gui';
 
 import emptyIcon from "/icons/empty_small.png";
+import { showTooltip } from '../helpers/tooltip';
 
-export default class sunburst extends Component {
+export default class Sunburst extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -23,7 +22,7 @@ export default class sunburst extends Component {
         else return null;
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.setState({ data: this.props.data });
             this.draw(this.props.data, this.props.width, this.props.units);
@@ -137,36 +136,22 @@ export default class sunburst extends Component {
                     }
                 })
                 .style("cursor", "pointer")
-                .on('mouseover', (d) => {
-
+                .on('mouseover', (event, d) => {
                     tooltip = d3.select('#sunburstChart').append('div')
-                        .style("background", "white")
-                        .attr('class', 'tooltip tooltipSunburst')
-                        .style('opacity', 0.9)
-                        .style("position", "absolute")
-                        .style("box-shadow", "0px 0px 6px black")
-                        .style("padding", "10px")
+                        .attr("class", "tooltip")
                         .html(`<strong><span>${d.data.key}:</strong> ${d3.format(',')(d.data.value) + units}</span></strong>`);
 
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#sunburstChart').node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                    showTooltip(event, tooltip);
                 })
                 .on('mouseout', () => tooltip.remove())
-                .on("mousemove", function (d) {
-                    var tooltipDim = tooltip.node().getBoundingClientRect();
-                    var chartRect = d3.select('#sunburstChart').node().getBoundingClientRect();
-                    tooltip
-                        .style("left", (d3.event.clientX - chartRect.left + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                        .style("top", (d3.event.clientY - chartRect.top + document.body.scrollTop + 30) + "px");
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip);
                 })
-                .on("click", el => {
-                    if (parseInt(el.data.key, 10)) {
-                        createFilter("attrs.sip-code: \"" + el.data.key + "\"");
+                .on("click", (_event, d) => {
+                    if (parseInt(d.data.key, 10)) {
+                        createFilter("attrs.sip-code: \"" + d.data.key + "\"");
                     } else {
-                        createFilter("termination: \"" + el.data.key + "\"");
+                        createFilter("termination: \"" + d.data.key + "\"");
                     }
 
                     //bug fix: if you click but not move out
@@ -285,11 +270,11 @@ export default class sunburst extends Component {
                             return colorScale(d.data.key);
                         }
                     })
-                    .on("click", el => {
-                        if (parseInt(el.data.key, 10)) {
-                            createFilter("attrs.sip-code: \"" + el.data.key + "\"");
+                    .on("click", (_event, d) => {
+                        if (parseInt(d.data.key, 10)) {
+                            createFilter("attrs.sip-code: \"" + d.data.key + "\"");
                         } else {
-                            createFilter("termination: \"" + el.data.key + "\"");
+                            createFilter("termination: \"" + d.data.key + "\"");
                         }
 
                         //bug fix: if you click but not move out
@@ -309,11 +294,11 @@ export default class sunburst extends Component {
                             return d.data.key + " (" + d3.format(',')(d.data.value) + ")";
                         }
                     })
-                    .on("click", el => {
-                        if (parseInt(el.data.key, 10)) {
-                            createFilter("attrs.sip-code: \"" + el.data.key + "\"");
+                    .on("click", (_event, d) => {
+                        if (parseInt(d.data.key, 10)) {
+                            createFilter("attrs.sip-code: \"" + d.data.key + "\"");
                         } else {
-                            createFilter("termination: \"" + el.data.key + "\"");
+                            createFilter("termination: \"" + d.data.key + "\"");
                         }
 
                         //bug fix: if you click but not move out
@@ -347,11 +332,11 @@ export default class sunburst extends Component {
                         }
                         //return colorScale((d.children ? d : d.parent).data.key);
                     })
-                    .on("click", el => {
-                        if (parseInt(el.data.key, 10)) {
-                            createFilter("attrs.sip-code: \"" + el.data.key + "\"");
+                    .on("click", (_event, d) => {
+                        if (parseInt(d.data.key, 10)) {
+                            createFilter("attrs.sip-code: \"" + d.data.key + "\"");
                         } else {
-                            createFilter("termination: \"" + el.data.key + "\"");
+                            createFilter("termination: \"" + d.data.key + "\"");
                         }
 
                         //bug fix: if you click but not move out
@@ -371,11 +356,11 @@ export default class sunburst extends Component {
                             return d.data.key + " (" + d3.format(',')(d.data.value) + ")";
                         }
                     })
-                    .on("click", el => {
+                    .on("click", (_event, d) => {
                         if (parseInt(el.data.key, 10)) {
-                            createFilter("attrs.sip-code: \"" + el.data.key + "\"");
+                            createFilter("attrs.sip-code: \"" + d.data.key + "\"");
                         } else {
-                            createFilter("termination: \"" + el.data.key + "\"");
+                            createFilter("termination: \"" + d.data.key + "\"");
                         }
 
                         //bug fix: if you click but not move out

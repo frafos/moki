@@ -51,7 +51,7 @@ export default class MultipleLineChart extends Component {
         else return null;
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.setState({ data: this.props.data });
             this.draw(this.props.data, this.props.id, this.props.ticks, this.props.hostnames);
@@ -68,16 +68,16 @@ export default class MultipleLineChart extends Component {
             .attr('class', 'legend');
 
         legend.append('rect')
-            .attr('x', function (d, i) {
+            .attr('x', function (_d, i) {
                 if (i < 7) return 0;
             })
-            .attr('y', function (d, i) {
+            .attr('y', function (_d, i) {
                 if (i < 7) return i * 17;
             })
-            .attr('width', function (d, i) {
+            .attr('width', function (_d, i) {
                 if (i < 7) return 10;
             })
-            .attr('height', function (d, i) {
+            .attr('height', function (_d, i) {
                 if (i < 7) return 10;
             })
             .style('fill', function (d, i) {
@@ -85,13 +85,13 @@ export default class MultipleLineChart extends Component {
                     return hostnames && hostnames[d.name] ? hostnames[d.name] : color(i);
                 }
             })
-            .on("click", el => {
-                createFilter(field + ":\"" + el.name + "\"");
+            .on("click", (_event, d) => {
+                createFilter(field + ":\"" + d.name + "\"");
             });
 
         legend.append('text')
             .attr('x', 20)
-            .attr('y', function (d, i) {
+            .attr('y', function (_d, i) {
                 if (i < 7) return (i * 17) + 5;
             })
             .text(function (d, i) {
@@ -102,8 +102,8 @@ export default class MultipleLineChart extends Component {
                     if (i < 7) return d.name.substring(0, 20)+"...";
                 }
             })
-            .on("click", el => {
-                createFilter(field + ":\"" + el.name + "\"");
+            .on("click", (_event, d) => {
+                createFilter(field + ":\"" + d.name + "\"");
             })
             .append("svg:title")
                 .text(function (d) { return d.name });
@@ -302,12 +302,12 @@ export default class MultipleLineChart extends Component {
                     .extent([[0, 0], [width, height]])
                     .on("end", brushended));
 
-            function brushended() {
-                if (!d3.event.sourceEvent) return;
+            function brushended(event) {
+                if (!event.sourceEvent) return;
                 // Only transition after input.
-                if (!d3.event.selection) return;
+                if (!event.selection) return;
                 // Ignore empty selections.
-                var extent = d3.event.selection;
+                var extent = event.selection;
                 var timestamp_gte = xScale.invert(extent[0]);
                 var timestamp_lte = xScale.invert(extent[1]);
                 var timestamp_readiable = parseTimestamp(new Date(Math.trunc(timestamp_gte))) + " - " + parseTimestamp(new Date(Math.trunc(timestamp_lte)));
@@ -343,7 +343,7 @@ export default class MultipleLineChart extends Component {
                 .attr('d', d => d.values ? line(d.values) : 0)
                 .style('stroke', (d, i) => hostnames && hostnames[d.name] ? hostnames[d.name] : color(i))
                 .style('opacity', lineOpacity)
-                .on("mouseover", function (d) {
+                .on("mouseover", function () {
                     d3.selectAll('.line')
                         .style('opacity', otherlinesOpacityHover);
                     d3.selectAll('.circle' + id)
@@ -353,7 +353,7 @@ export default class MultipleLineChart extends Component {
                         .style("stroke-width", lineStrokeHover)
                         .style("cursor", "pointer");
                 })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                     d3.selectAll(".line")
                         .style('opacity', lineOpacity);
                     d3.selectAll('.circle' + id)
@@ -365,7 +365,7 @@ export default class MultipleLineChart extends Component {
 
             var tooltip = d3.select('#' + id).append('div')
                 .attr('id', 'tooltip ' + id)
-                .attr("class", "tooltipCharts");
+                .attr("class", "tooltip");
 
             tooltip.append("div");
 
@@ -379,28 +379,28 @@ export default class MultipleLineChart extends Component {
                 .append("g")
                 .attr("class", "circle" + id)
                 .style("cursor", "pointer")
-                .on("mouseover", function (d) {
+                .on("mouseover", function (event, d) {
                     tooltip.select("div").html("<strong>Time: </strong>" + parseTimestamp(d.date) + " + " + getTimeBucket() + "<strong><br/>Value: </strong>" + d3.format(',')(d.value) + "<br/> ");
-                    showTooltip(tooltip)
+                    showTooltip(event, tooltip)
                 })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                     tooltip.style("visibility", "hidden")
                 })
-                .on("mousemove", function (d) {
-                    showTooltip(tooltip)
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip)
                 })
                 .append("circle")
                 .attr("cx", d => xScale(d.date))
                 .attr("cy", d => yScale(d.value))
                 .attr("r", circleRadius)
                 .style('opacity', circleOpacity)
-                .on("mouseover", function (d) {
+                .on("mouseover", function () {
                     d3.select(this)
                         .transition()
                         .duration(duration)
                         .attr("r", circleRadiusHover);
                 })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                     d3.select(this)
                         .transition()
                         .duration(duration)

@@ -24,7 +24,7 @@ export default class heatmap extends Component {
         else return null;
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (prevProps.data !== this.props.data) {
             this.setState({ data: this.props.data });
             this.draw(this.state.data, this.props.id, this.props.field, this.props.field2, this.props.width, this.props.name, this.props.units);
@@ -55,7 +55,6 @@ export default class heatmap extends Component {
             var maxTextWidthX = d3.max(data.map(n => n.attr1.length));
             var maxTextWidthY = d3.max(data.map(n => n.attr2.length));
             marginBottom = (maxTextWidthX > 23 ? 150 : maxTextWidthX * 5.5) + 20 ;
-           // marginLeft   = (maxTextWidthY > 23 ? 150 : maxTextWidthY > 15 ? maxTextWidthY * 6 : maxTextWidthY * 8) + 15 ;
         }
 
         var margin = {
@@ -81,7 +80,6 @@ export default class heatmap extends Component {
             .append("svg")
             .attr('id', id + "SVG")
             .attr("width", widthSum)
-            //  .attr("style", "margin-bottom: 30px;")
             .attr("height", height + margin.top + margin.bottom);
 
         if (!data || data.length === 0) {
@@ -102,17 +100,15 @@ export default class heatmap extends Component {
                 this.setState({ colorScale: colorScale });
             }
 
-            var x_elements = d3.set(data.map(function (item) {
+            const x_elements = new Set(data.map(function (item) {
                 return item.attr1;
-            })).values();
-            var y_elements = d3.set(data.map(function (item) {
+            }));
+            const y_elements = new Set(data.map(function (item) {
                 return item.attr2;
-            })).values();
+            }));
 
             var itemHeight = 16 - 3;
-            height = (itemHeight * y_elements.length) + margin.top;
-
-
+            height = (itemHeight * y_elements.size) + margin.top;
 
             var xScale = d3.scaleBand()
                 .domain(x_elements)
@@ -147,7 +143,7 @@ export default class heatmap extends Component {
             // tooltip
             var tooltip = d3.select('#' + id).append("div")
                 .attr('id', 'tooltip' + id)
-                .attr("class", "tooltipCharts");
+                .attr("class", "tooltip");
 
             tooltip.append("div");
 
@@ -192,12 +188,13 @@ export default class heatmap extends Component {
                 })
                 .attr("rx", 2)
                 .attr("ry", 2)
-                .on("mouseover", function (d) {
-                    d3.select(this).style("stroke", "orange");
+                .on("mouseover", function (event, d) {
+                    d3.select(this).style("stroke", "orange")
+                        .style("cursor", "pointer");
 
-                    if (d3.mouse(d3.event.target)[0] > window.innerWidth - 600) {
+                    if (d3.pointer(event)[0] > window.innerWidth - 600) {
                         tooltip
-                            .style("left", `${d3.event.layerX - 350}px`)
+                            .style("left", `${event.layerX - 350}px`)
                     }
                     if (name.includes("DURATION")) {
                         var value = durationFormat(d.value);
@@ -210,11 +207,11 @@ export default class heatmap extends Component {
                         tooltip.select("div").html("<strong>SRC:</strong> " + d.attr2 + "<br/> <strong>DST: </strong>" + d.attr1 + "<br/> <strong>Value: </strong>" + (+d.value).toFixed(2) + units);
                     }
 
-                    showTooltip(tooltip)
+                    showTooltip(event, tooltip)
 
                 })
-                .on("mousemove", function () {
-                    showTooltip(tooltip)
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip)
                 })
                 .on("mouseout", function () {
                     d3.select(this).style("stroke", "none");
@@ -231,15 +228,14 @@ export default class heatmap extends Component {
           */
 
             //filter type onClick
-            rect.on("click", el => {
+            rect.on("click", (_event, d) => {
                 // d3.select(this).style("stroke", "none");
                 tooltip.style("visibility", "hidden");
                 if (field2) {
-                    createFilter(field2 + ":\"" + el.attr2+ "\"");
+                    createFilter(field2 + ":\"" + d.attr2+ "\"");
                 }
 
-                createFilter(field + ":\"" + el.attr1+ "\"");
-
+                createFilter(field + ":\"" + d.attr1+ "\"");
 
                 var tooltips = document.getElementById("tooltip" + id);
                 if (tooltip) {

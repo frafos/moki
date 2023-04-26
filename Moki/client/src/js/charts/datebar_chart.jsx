@@ -146,12 +146,12 @@ export default class datebarChart extends Component {
 
 
 
-            function brushended() {
-                if (!d3.event.sourceEvent) return;
+            function brushended(event) {
+                if (!event.sourceEvent) return;
                 // Only transition after input.
-                if (!d3.event.selection) return;
+                if (!event.selection) return;
                 // Ignore empty selections.
-                var extent = d3.event.selection;
+                var extent = event.selection;
                 var timestamp_gte = xScale.invert(extent[0]);
                 var timestamp_lte = xScale.invert(extent[1]);
                 var timestamp_readiable = parseTimestamp(new Date(Math.trunc(timestamp_gte))) + " - " + parseTimestamp(new Date(Math.trunc(timestamp_lte)))
@@ -162,7 +162,7 @@ export default class datebarChart extends Component {
 
             var tooltip = d3.select('#' + id).append('div')
                 .attr('id', 'tooltip ' + id)
-                .attr("class", "tooltipCharts");
+                .attr("class", "tooltip");
             tooltip.append("div");
 
             svg.selectAll('.bar').data(data)
@@ -215,19 +215,20 @@ export default class datebarChart extends Component {
                     if (d.agg) return height - yScale(d.agg.value);
                     return 0;
                 })
-                .on('mouseover', (d) => {
+                .on('mouseover', (event, d) => {
                     var timestamp = new Date(d.key);
                     var value = d3.format(',')(Math.round(d.agg.value));
                     if (name.includes("DURATION")) {
                         value = durationFormat(d.agg.value);
                     }
                     tooltip.select("div").html("<strong>Value:</strong> " + value + units + "</br><strong>Time: </strong>" + parseTimestamp(timestamp) + " + " + getTimeBucket());
-                    showTooltip(tooltip)
+                    showTooltip(event, tooltip)
                 })
-                .on('mouseout', () => //tooltip.transition().style('opacity', 0));
-                    tooltip.style("visibility", "hidden"))
-                .on("mousemove", function (d) {
-                    showTooltip(tooltip)
+                .on('mouseout', () => {
+                    tooltip.style("visibility", "hidden");
+                })
+                .on("mousemove", function (event) {
+                    showTooltip(event, tooltip)
                 });
 
 

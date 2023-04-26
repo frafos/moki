@@ -43,12 +43,12 @@ export default class TimeLineChart extends Component {
                     line.pop();
                     tspan.text(line.join(" "));
                     line = [word];
-                    tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("value", word).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word).on("click", function (el) {
+                    tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("value", word).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word).on("click", function (_event, d) {
                         let value = this.getAttribute("value");
                         value = value.replace(/\//g, '');
 
-                        if (el.docid) {
-                            for (let id of el.docid) {
+                        if (d.docid) {
+                            for (let id of d.docid) {
                                 if (id[value] && id[value] !== null) {
                                     thiss.props.redirect(id[value]);
                                 }
@@ -119,7 +119,7 @@ export default class TimeLineChart extends Component {
 
         var tooltip = d3.select('#' + id).append('div')
             .attr('id', 'tooltip ' + id)
-            .attr("class", "tooltipCharts");
+            .attr("class", "tooltip");
         tooltip.append("div");
 
         svg.selectAll("circles")
@@ -134,7 +134,7 @@ export default class TimeLineChart extends Component {
                 if (d.type === "present") return "var(--main)"
                 else return "#69b3a2"
             })
-            .on('mouseover', (d) => {
+            .on('mouseover', (event, d) => {
                 //show all data 
                 let data = "";
                 for (let hit of d.timestamps) {
@@ -148,16 +148,16 @@ export default class TimeLineChart extends Component {
 
                 var tooltipDim = tooltip.node().getBoundingClientRect();
                 tooltip
-                    .style("left", (d3.event.clientX + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                    .style("top", (d3.event.clientY + document.body.scrollTop) + 10 + "px");
+                    .style("left", (event.clientX + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
+                    .style("top", (event.clientY + document.body.scrollTop) + 10 + "px");
             })
             .on('mouseout', () =>
                 tooltip.style("visibility", "hidden"))
-            .on("mousemove", function (d) {
+            .on("mousemove", function (event) {
                 var tooltipDim = tooltip.node().getBoundingClientRect();
                 tooltip
-                    .style("left", (d3.event.clientX + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                    .style("top", (d3.event.clientY + document.body.scrollTop + 10) + "px");
+                    .style("left", (event.clientX + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
+                    .style("top", (event.clientY + document.body.scrollTop + 10) + "px");
             })
 
         svg.selectAll('text.rotation')
@@ -172,7 +172,7 @@ export default class TimeLineChart extends Component {
                 return 'translate( ' + (xScale(d.timestamp) - 5) + ' , ' + (height - 10) + '),' + 'rotate(272)';
             })
             .call(this.wrap, 20)
-            .on('mouseover', (d) => {
+            .on('mouseover', (event, d) => {
                 //show all data 
                 let data = "";
                 for (let hit of d.timestamps) {
@@ -186,16 +186,16 @@ export default class TimeLineChart extends Component {
 
                 var tooltipDim = tooltip.node().getBoundingClientRect();
                 tooltip
-                    .style("left", (d3.event.clientX + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                    .style("top", (d3.event.clientY + document.body.scrollTop) + 10 + "px");
+                    .style("left", (event.clientX + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
+                    .style("top", (event.clientY + document.body.scrollTop) + 10 + "px");
             })
             .on('mouseout', () =>
                 tooltip.style("visibility", "hidden"))
-            .on("mousemove", function (d) {
+            .on("mousemove", function (event, d) {
                 var tooltipDim = tooltip.node().getBoundingClientRect();
                 tooltip
-                    .style("left", (d3.event.clientX + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
-                    .style("top", (d3.event.clientY + document.body.scrollTop + 10) + "px");
+                    .style("left", (event.clientX + document.body.scrollLeft - (tooltipDim.width / 2)) + "px")
+                    .style("top", (event.clientY + document.body.scrollTop + 10) + "px");
             })
 
         svg.attr("transform", "translate(" + margin.left + "," + margin.right + ")");
