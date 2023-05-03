@@ -94,12 +94,7 @@ class Settings extends Component {
 
     }
 
-    checkboxClick(attribute) {
-        if (attribute === "event_tls_verify_peer") {
-            this.setState({
-                shouldDisplayCAcert: !this.state.shouldDisplayCAcert
-            })
-        }
+    checkboxClick(_attribute) {
     }
 
     /*
@@ -126,9 +121,9 @@ class Settings extends Component {
             //check if ldap is enabled to show ldap option settings
             for (let hit of result) {
                 //special case: check for event_tls_verify_peer bool
-                if (hit.attribute === "event_tls_verify_peer") {
+                if (hit.attribute === "tls_cert_verify_level" && hit.value > 0) {
                     this.setState({
-                        shouldDisplayCAcert: hit.value
+                        shouldDisplayCAcert: true,
                     });
                 }
             }
@@ -253,9 +248,10 @@ class Settings extends Component {
             })
         }
         else {
-            this.setState({
-                [attribute]: ""
-            })
+            if (attribute === "tls_cert_verify_level") {
+              this.setState({ shouldDisplayCAcert: value > 0 });
+            }
+            this.setState({ [attribute]: "", })
         }
     }
 
@@ -278,10 +274,10 @@ class Settings extends Component {
 
                 if (data) {
                     //for event_tls_verify_peer you need to load also cert file  && data.checked
-                    if (data.id === "event_tls_verify_peer" && data.checked) {
+                    if (data.id === "tls_cert_verify_level" && data.value > 0) {
                         let cert = document.getElementById("event_tls_cacert");
                         if (cert.value === "") {
-                            alert("You must load also 'CA cert to check for TLS events input' when 'Enable CA cert check for TLS events input' is on");
+                            alert("You must load also 'CA cert to check for TLS events input' when 'Peer certificate verification level' is not 'ignore peer certificate'");
                             return;
                         }
                     };
