@@ -115,7 +115,7 @@
         }
       },
       {
-        "attribute": "tlc_cert_verify_level",
+        "attribute": "tls_cert_verify_level",
         "label": "Peer certificate verification level",
         "details": "if TLS used (see doc for details)",
         "value": 0,

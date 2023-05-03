@@ -276,7 +276,7 @@ class Settings extends Component {
                     //for event_tls_verify_peer you need to load also cert file  && data.checked
                     if (data.id === "tls_cert_verify_level" && data.value > 0) {
                         let cert = document.getElementById("event_tls_cacert");
-                        if (cert.value === "") {
+                        if (cert?.value === "") {
                             alert("You must load also 'CA cert to check for TLS events input' when 'Peer certificate verification level' is not 'ignore peer certificate'");
                             return;
                         }
