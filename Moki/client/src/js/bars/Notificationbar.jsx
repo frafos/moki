@@ -31,6 +31,7 @@ const NOTIFICATIONS = [
     { errno: 5, text: "Downloading data", level: "info" },
     { errno: 6, text: "Can't connect to monitor server", level: "error" }
 ]
+
 class Notificationbar extends Component {
     constructor(props) {
         super(props);
@@ -48,13 +49,11 @@ class Notificationbar extends Component {
         this.shouldShow = this.shouldShow.bind(this);
         this.update = this.update.bind(this);
         window.notification = this;
-
     }
 
     async componentDidMount() {
         var self = this;
         const user = store.getState().persistent.user;
-        console.log(user);
         if (user && user.user !== "DEFAULT") {
             //ES, logstash status check every 30s
             let statusCheck = setInterval(async function () {
@@ -92,6 +91,13 @@ class Notificationbar extends Component {
         clearTimeout(this.state.diskSpace);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        console.log(prevState.notifications);
+        if (prevState.redirect !== this.state.redirect) {
+            this.setState({ ...this.state, redirect: false });
+        }
+    }
+
     /**
 * display errors in error bar
 * @param {errors}  string
@@ -107,10 +113,9 @@ class Notificationbar extends Component {
         }
         if (!isFound) {
             error.timestamp = Date.now();
-
             this.setState({
-                notifications: this.state.notifications.concat(error),
-                allNotifications: this.state.notifications.concat(error)
+                notifications: [...this.state.notifications, error],
+                allNotifications: [...this.state.notifications, error],
             });
         }
     }
