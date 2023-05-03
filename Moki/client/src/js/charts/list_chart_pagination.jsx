@@ -68,7 +68,7 @@ class TableChart extends Component {
 
   //Create buttons list for paggination
   createPaggination() {
-    var data = this.state.data[0];
+    const data = this.state.data?.at(0);
     if (data) {
       var pageCount = Math.ceil(data.length / 10);
       console.log(data);

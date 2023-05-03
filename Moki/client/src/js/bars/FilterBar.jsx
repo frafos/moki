@@ -1,374 +1,426 @@
-import React, { Component } from "react";
-import { Navbar } from 'react-bootstrap';
+import { useEffect, useState } from "react";
+import { Navbar } from "react-bootstrap";
 import Autocomplete from "./Autocomplete";
-import { getSearchableAttributes } from '../../gui';
-import store from "../store/index";
-import { setFilters } from "../actions/index";
-import { createFilter } from '../../gui';
-import { renderFilters } from '../helpers/renderFilters.jsx';
+import { getSearchableAttributes } from "../../gui";
+import { createFilter } from "../../gui";
+import { renderFilters } from "../helpers/renderFilters.jsx";
 import StoredFilters from "../pages/stored_filters";
 import SaveFilters from "../pages/save_filters";
 import Popup from "reactjs-popup";
 
+import store from "@/js/store";
+import { setFilters } from "@/js/slices";
+
 import saveIcon from "/icons/save_filters.png";
 import loadIcon from "/icons/load_filters.png";
 import search from "/icons/search.png";
+import { useSelector } from "react-redux";
 
-class FilterBar extends Component {
-    constructor(props) {
-        super(props);
-        var oldFilters = store.getState().filters;
-        var newFilters = [];
-        for (var i = 0; i < oldFilters.length; i++) {
-            if (oldFilters[i].pinned !== 'false') {
-                newFilters.push(oldFilters[i]);
-            }
-        }
-        store.dispatch(setFilters(newFilters));
-        //remove unpinned filters
-        this.state = {
-            filterbar: "",
-            filters: newFilters,
-            dstRealms: this.props.dstRealms ? this.props.dstRealms : [],
-            srcRealms: this.props.srcRealms ? this.props.srcRealms : []
-        }
-        this.addFilter = this.addFilter.bind(this);
-        this.addAttrs = this.addAttrs.bind(this);
-        this.deleteFilter = this.deleteFilter.bind(this);
-        this.disableFilter = this.disableFilter.bind(this);
-        this.enableFilter = this.enableFilter.bind(this);
-        this.pinFilter = this.pinFilter.bind(this);
-        this.editFilter = this.editFilter.bind(this);
-        this.unpinFilter = this.unpinFilter.bind(this);
-        this.rerenderFilters = this.rerenderFilters.bind(this);
-        this.negationFilter = this.negationFilter.bind(this);
-        store.subscribe(() => this.rerenderFilters());
+function FilterBar(props) {
 
+  //remove unpinned filters
+  const [filterbar, setFilterbar] = useState("");
+  const [dstRealms, setDstRealms] = useState(props.dstRealms ?? []);
+  const [srcRealms, setSrcRealms] = useState(props.srcRealms ?? []);
+
+  // if store filters changes, render new state
+  let filters = useSelector((state) => state.filter.filters);
+
+  useEffect(() => {
+    pinnedFilters();
+  }, [props.redirect]);
+
+  useEffect(() => {
+    if (!props.dstRealms) return;
+    setDstRealms(props.dstRealms);
+  }, [props.dstRealms]);
+
+  useEffect(() => {
+    if (!props.srcRealms) return;
+    setSrcRealms(props.srcRealms);
+  }, [props.srcRealms]);
+
+  // check if attribute prefix is correct
+  const addAttrs = (value) => {
+    if (value.indexOf("." !== -1)) return "";
+    const searchable = getSearchableAttributes();
+    value = value.substring(0, value.indexOf(":"));
+    // remove spaces
+    value.replace(/\s+/g, "");
+    for (const attr of searchable) {
+      if (attr.substring(attr.indexOf(".") + 1) === value) {
+        return attr.substring(0, attr.indexOf(".") + 1);
+      }
     }
+    return "attrs.";
+  };
 
-
-    //after redirect delete unpinned filters
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (this.props.redirect !== nextProps.redirect) {
-            this.pinnedFilters();
-        }
-
-        if (nextProps.dstRealms !== this.props.dstRealms) {
-            this.setState({ dstRealms: nextProps.dstRealms });
-        }
-
-        if (nextProps.srcRealms !== this.props.srcRealms) {
-            this.setState({ srcRealms: nextProps.srcRealms });
-        }
+  //check input
+  const check = (input) => {
+    // check for <script>
+    if (input.includes("<script>")) {
+      alert("Filter can't contain <script>");
+      return false;
+    } //or special characters {}
+    else if (input.includes("{") || input.includes("}")) {
+      alert("Filter can't contain { or }");
+      return false;
     }
+    return input;
+  };
 
-    
-    componentWillUnmount() {
-        // fix Warning: Can't perform a React state update on an unmounted component
-        this.setState = (state, callback) => {
-           return;
-       };
-   }
+  //add new filrer, generate id, status enable, pinned
+  const addFilter = () => {
+    let searchBar = document.getElementById("searchBar");
+    let searchValue = searchBar.value;
 
-    //if store filters changes, render new state
-    rerenderFilters() {
-        //if (store.getState().filters !== this.state.filters) {
-        console.info("Filters are changed: " + JSON.stringify(store.getState().filters));
-        this.setState({ filters: store.getState().filters });
-        // }
+    let checked = check(searchValue);
+    if (checked) {
+      searchValue = checked;
+      let includeChar;
+      let operators;
+
+      //with attribute name or "sip:"
+      if (searchValue.includes(":")) {
+        operators = searchValue.indexOf(":");
+        //if it include \: don't put attrs
+        if (searchValue.substring(operators - 1, operators) !== "\\") {
+          includeChar = addAttrs(searchValue);
+          searchValue = includeChar + searchValue;
+        }
+
+        //it can contains OR so put attrs also there type:reg-del OR type:reg-new
+        operators = searchValue.indexOf("OR ");
+        while (operators !== -1) {
+          operators = operators + 3;
+          includeChar = addAttrs(searchValue.slice(operators));
+          searchValue = [
+            searchValue.slice(0, operators),
+            includeChar,
+            searchValue.slice(operators),
+          ].join("");
+          operators = searchValue.indexOf("OR ", operators);
+        }
+
+        //the same for AND
+        operators = searchValue.indexOf("AND ");
+        while (operators !== -1) {
+          operators = operators + 4;
+          includeChar = addAttrs(searchValue.slice(operators));
+          searchValue = [
+            searchValue.slice(0, operators),
+            includeChar,
+            searchValue.slice(operators),
+          ].join("");
+          operators = searchValue.indexOf("AND ", operators);
+        }
+      }
+      if (searchBar.value !== "") {
+        let filters = createFilter(searchValue);
+        searchBar.setAttribute("value", "");
+
+        console.info("Filters are changed: " + JSON.stringify(filters));
+        setFilterbar("");
+      }
+      if (document.getElementById("filterRoom")) {
+        var room = document.getElementById("filterRoom").value;
+        if (room && room !== "") {
+          createFilter("attrs.conf_id: " + room);
+          document.getElementById("filterRoom").value = "";
+        }
+      }
     }
+  };
 
-    //check if attribute prefix is correct
-    addAttrs(value) {
-        if (value.indexOf(".") === -1) {
-            var searchable = getSearchableAttributes();
-            value = value.substring(0, value.indexOf(":"));
-            //remove spaces
-            value.replace(/\s+/g, '');
-            for (var i = 0; i < searchable.length; i++) {
-                if (searchable[i].substring(searchable[i].indexOf(".") + 1) === value) {
-                    return searchable[i].substring(0, searchable[i].indexOf(".") + 1);
-                }
-            }
-            return "attrs.";
+  //negation filter
+  const negationFilter = (selectedFilter) => {
+    const newFilters = filters.map((filter) => {
+      if ("filter" + filter.id === selectedFilter) {
+        if (filter.title.substring(0, 3) === "NOT") {
+          return { ...filter, title: filter.title.substring(4) };
+        } else {
+          return { ...filter, title: "NOT " + filter.title };
         }
-        else {
-            return "";
-        }
+      }
+      return filter;
+    });
+    store.dispatch(setFilters(newFilters));
+  };
+
+  //delete filter according filter id
+  const deleteFilter = (selectedFilter) => {
+    const newFilters = filters.filter((
+      filter,
+    ) => ("filter" + filter.id !== selectedFilter));
+    store.dispatch(setFilters(newFilters));
+  };
+
+  //disable filter according filter id
+  const disableFilter = (selectedFilter) => {
+    const newFilters = filters.map((filter) => {
+      if ("filter" + filter.id === selectedFilter) {
+        return {
+          ...filter,
+          state: "disable",
+          previousState: "enable",
+        };
+      }
+      return filter;
+    });
+    console.info("Filter is disabled: " + JSON.stringify(newFilters));
+    store.dispatch(setFilters(newFilters));
+  };
+
+  //change state of filter to enable
+  const enableFilter = (selectedFilter) => {
+    const newFilters = filters.map((filter) => {
+      if ("filter" + filter.id === selectedFilter) {
+        return {
+          ...filter,
+          state: "enable",
+          previousState: "disable",
+        };
+      }
+      return filter;
+    });
+    console.info("Filter is enabled: " + JSON.stringify(newFilters));
+    store.dispatch(setFilters(newFilters));
+  };
+
+  //change state of filter to unpinned
+  const unpinFilter = (selectedFilter) => {
+    const newFilters = filters.map((filter) => {
+      if ("filter" + filter.id === selectedFilter) {
+        return {
+          ...filter,
+          pinned: "false",
+        };
+      }
+      return filter;
+    });
+    console.info("Filter is unpinned " + JSON.stringify(newFilters));
+    store.dispatch(setFilters(newFilters));
+  };
+
+  //change state of filter to pinned
+  const pinFilter = (selectedFilter) => {
+    const newFilters = filters.map((filter) => {
+      if ("filter" + filter.id === selectedFilter) {
+        return {
+          ...filter,
+          pinned: "true",
+        };
+      }
+      return filter;
+    });
+    console.info("Filter is pinned " + JSON.stringify(newFilters));
+    store.dispatch(setFilters(newFilters));
+  };
+
+  //edit filter
+  const editFilter = (selectedFilter, value) => {
+    let checked = false;
+    const newFilters = filters.map((filter) => {
+      if ("filter" + filter.id === selectedFilter) {
+        checked = check(value);
+        if (checked) {
+          return { ...filter, title: value }
+        } 
+      }
+      return filter;
+    });
+    if (checked) {
+      console.info("Filter was edited: " + value);
+      store.dispatch(setFilters(newFilters));
     }
+  };
 
-    //check input
-    check(input) {
-        // check for <script>
-        if (input.includes("<script>")) {
-            alert("Filter can't contain <script>");
-            return false;
+  // redirection - show only pinned filters
+  const pinnedFilters = () => {
+    const newFilters = filters.filter((filter) => (
+      (filter.pinned === "true")
+    ));
+    store.dispatch(setFilters(newFilters));
+  };
+
+  const specFilter = (e) => {
+    if (e.key === "Enter") {
+      if (window.location.pathname === "/conference") {
+        var room = document.getElementById("filterRoom").value;
+        if (room && room !== "") {
+          createFilter("attrs.conf_id: " + room);
+          document.getElementById("filterRoom").value = "";
         }
-        //or special characters {}
-        else if (input.includes("{") || input.includes("}")) {
-            alert("Filter can't contain { or }");
-            return false;
-        }
-        return input;
+      }
     }
-
-    //add new filrer, generate id, status enable, pinned
-    addFilter() {
-        var searchBar = document.getElementById("searchBar");
-        var searchValue = searchBar.value;
-
-        let check = this.check(searchValue);
-        if (check !== false) {
-            searchValue = check;
-
-            //with attribute name or "sip:"
-            if (searchValue.includes(":")) {
-                var operators = searchValue.indexOf(":");
-                //if it include \: don't put attrs 
-                if (searchValue.substring(operators - 1, operators) !== "\\") {
-                    var includeChar = this.addAttrs(searchValue);
-                    searchValue = includeChar + searchValue;
-                }
-
-                //it can contains OR so put attrs also there type:reg-del OR type:reg-new
-                operators = searchValue.indexOf("OR ");
-                while (operators !== -1) {
-                    operators = operators + 3;
-                    includeChar = this.addAttrs(searchValue.slice(operators));
-                    searchValue = [searchValue.slice(0, operators), includeChar, searchValue.slice(operators)].join('');
-                    operators = searchValue.indexOf("OR ", operators);
-                }
-
-                //the same for AND
-                operators = searchValue.indexOf("AND ");
-                while (operators !== -1) {
-                    operators = operators + 4;
-                    includeChar = this.addAttrs(searchValue.slice(operators));
-                    searchValue = [searchValue.slice(0, operators), includeChar, searchValue.slice(operators)].join('');
-                    operators = searchValue.indexOf("AND ", operators);
-                }
-            }
-            if (searchBar.value !== "") {
-                var filters = createFilter(searchValue);
-                searchBar.setAttribute("value", "");
-
-                console.info("Filters are changed: " + JSON.stringify(filters));
-                this.setState({
-                    filterbar: ""
-                });
-            }
-            if (document.getElementById("filterRoom")) {
-                var room = document.getElementById("filterRoom").value;
-                if (room && room !== "") {
-                    createFilter("attrs.conf_id: " + room);
-                    document.getElementById("filterRoom").value = "";
-                }
-            }
-        }
+    if (window.location.pathname === "/connectivityCA") {
+      if (e.currentTarget.getAttribute("id") === "dstRealms") {
+        createFilter("attrs.dst_rlm_name: " + e.currentTarget.value);
+        e.currentTarget.value = "";
+      }
+      if (e.currentTarget.getAttribute("id") === "srcRealms") {
+        createFilter("attrs.src_rlm_name: " + e.currentTarget.value);
+        e.currentTarget.value = "";
+      }
     }
-    //negation filter 
-    negationFilter(filter) {
-        var oldFilters = store.getState().filters;
-        for (var i = 0; i < oldFilters.length; i++) {
-            if ('filter' + oldFilters[i].id === filter) {
-                if (oldFilters[i].title.substring(0, 3) === "NOT") {
-                    oldFilters[i].title = oldFilters[i].title.substring(4);
-                }
-                else {
-                    oldFilters[i].title = "NOT " + oldFilters[i].title;
-                }
-            }
-        }
-        this.setState({ filters: oldFilters });
-        store.dispatch(setFilters(oldFilters));
+  };
 
-    }
-
-    //delete filter according filter id
-    deleteFilter(filter) {
-        var oldFilters = store.getState().filters;
-        var newFilters = [];
-        for (var i = 0; i < oldFilters.length; i++) {
-            if ('filter' + oldFilters[i].id !== filter) {
-                newFilters.push(oldFilters[i]);
-            }
-        }
-        this.setState({ filters: newFilters });
-        store.dispatch(setFilters(newFilters));
-    }
-
-    //disable filter according filter id
-    disableFilter(filter) {
-        var oldFilters = JSON.parse(JSON.stringify(store.getState().filters));
-        for (var i = 0; i < oldFilters.length; i++) {
-            if ('filter' + oldFilters[i].id === filter) {
-                oldFilters[i].state = 'disable';
-                oldFilters[i].previousState = 'enable';
-            }
-        }
-        console.info("Filter is disabled: " + JSON.stringify(oldFilters));
-        store.dispatch(setFilters(oldFilters));
-    }
-
-    //change state of filter to enable
-    enableFilter(filter) {
-        var oldFilters = store.getState().filters;
-        for (var i = 0; i < oldFilters.length; i++) {
-            if ('filter' + oldFilters[i].id === filter) {
-                oldFilters[i].state = 'enable';
-                oldFilters[i].previousState = 'disable';
-            }
-        }
-        console.info("Filter is enabled: " + JSON.stringify(oldFilters));
-        store.dispatch(setFilters(oldFilters));
-    }
-
-    //change state of filter to unpinned
-    unpinFilter(filter) {
-        var oldFilters = store.getState().filters;
-        for (var i = 0; i < oldFilters.length; i++) {
-            if ('filter' + oldFilters[i].id === filter) {
-                oldFilters[i].pinned = 'false';
-            }
-        }
-        console.info("Filter is unpinned " + oldFilters);
-        store.dispatch(setFilters(oldFilters));
-
-    }
-
-    //edit filter
-    editFilter(filter, value) {
-        var oldFilters = store.getState().filters;
-        for (var i = 0; i < oldFilters.length; i++) {
-            if ('filter' + oldFilters[i].id === filter) {
-                var check = this.check(value);
-                if (check !== false) {
-                    oldFilters[i].title = value;
-                }
-                else {
-                    continue;
-                }
-            }
-        }
-        if (check) {
-            console.info("Filter was edited: " + value);
-            store.dispatch(setFilters(oldFilters));
-            this.setState({ filters: store.getState().filters });
-        }
-    }
-
-    //change state of filter to pinned
-    pinFilter(filter) {
-        var oldFilters = store.getState().filters;
-        for (var i = 0; i < oldFilters.length; i++) {
-            if ('filter' + oldFilters[i].id === filter) {
-                oldFilters[i].pinned = 'true';
-            }
-        }
-        console.info("Filter is pinned " + oldFilters);
-        store.dispatch(setFilters(oldFilters));
-    }
-
-    //redirection - show only pinned filters
-    pinnedFilters() {
-        var filters = store.getState().filters;
-        var filtersResult = [];
-        for (var i = 0; i < filters.length; i++) {
-            if (filters[i].pinned === 'true') {
-                filtersResult.push(filters[i]);
-            }
-        }
-
-        store.dispatch(setFilters(filtersResult));
-    }
-
-    specFilter(e) {
-        if (e.key === "Enter") {
-            if (window.location.pathname === "/conference") {
-                var room = document.getElementById("filterRoom").value;
-                if (room && room !== "") {
-                    createFilter("attrs.conf_id: " + room);
-                    document.getElementById("filterRoom").value = "";
-                }
-            }
-        }
-        if (window.location.pathname === "/connectivityCA") {
-            if (e.currentTarget.getAttribute("id") === "dstRealms") {
-                createFilter("attrs.dst_rlm_name: " + e.currentTarget.value);
-                e.currentTarget.value = "";
-            }
-
-            if (e.currentTarget.getAttribute("id") === "srcRealms") {
-                createFilter("attrs.src_rlm_name: " + e.currentTarget.value);
-                e.currentTarget.value = "";
-            }
-        }
-    }
-
-
-    render() {
-        let filters = null;
-        var url = window.location.pathname;
-        filters = renderFilters(this.state.filters, this.deleteFilter, this.disableFilter, this.enableFilter, this.pinFilter, this.editFilter, this.negationFilter, this.unpinFilter);
-        var srcRealms = (<select className="text-left form-control form-check-input filter-right" id="srcRealms" placeholder="SRC REALMS" onChange={this.specFilter}> <option value="" disabled selected>SRC REALM</option>
-            {this.state.srcRealms.map((realm) => {
-                return <option value={realm.key} key={realm.key + "src"}>{realm.key}</option>
-            })} </select>
-        )
-        var dstRealms = (<select className="text-left form-control form-check-input filter-right" id="dstRealms" placeholder="DST REALMS" onChange={this.specFilter}> <option value="" disabled selected>DST REALM</option>
-            {this.state.dstRealms.map((realm) => {
-                return <option value={realm.key} key={realm.key + "dst"}>{realm.key}</option>
-            })} </select>
-        )
-
+  let url = window.location.pathname;
+  const renderedFilters = renderFilters(
+    filters,
+    deleteFilter,
+    disableFilter,
+    enableFilter,
+    pinFilter,
+    editFilter,
+    negationFilter,
+    unpinFilter,
+  );
+  const renderedSrcRealms = (
+    <select
+      className="text-left form-control form-check-input filter-right"
+      id="srcRealms"
+      placeholder="SRC REALMS"
+      onChange={specFilter}
+    >
+      <option value="" disabled selected>SRC REALM</option>
+      {srcRealms.map((realm) => {
         return (
-            <div className="row" style={{ "marginLeft": "0px", "marginTop": "35px" }}>
-                <div className="FilterSearchBar">
-                    <div className="text-nowrap row">
-                        <Navbar variant="light">
-                            <div className="row" style={{ "width": "100%", "display": "inline-flex" }}>
-                                <Autocomplete
-                                    suggestions={getSearchableAttributes()} enter={this.state.filterbar} tags={this.props.tags} type="main" />
-                                <div className="row" style={{ "marginLeft": "5px", "marginTop": "6px", "display": "table-cell", "width": "1px", "verticalAlign": "bottom" }}>
-                                    <div className="row" style={{ "width": "max-content" }}>
-                                        {url === "/conference" && <input className="text-left form-control form-check-input filter-right" type="text" id="filterRoom" placeholder="CONF ID" onKeyUp={this.specFilter} />}
-                                        {url === "/connectivityCA" && srcRealms}
-                                        {url === "/connectivityCA" && dstRealms}
-                                        <img className="icon iconMain" alt="search" src={search} title="search" onClick={this.addFilter} id="filterButton" />
-                                        {<Popup trigger={<img className="icon iconMain" alt="storeIcon" src={loadIcon} title="stored filters" />} modal>
-                                            {close => (
-                                                <div className="Advanced">
-                                                    <button className="close" id="storedFiltersClose" onClick={close}> &times; </button>
-                                                    <div className="contentAdvanced">
-                                                        <StoredFilters />
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </Popup>}
-                                        {<Popup trigger={<img className="icon iconMain" alt="storeIcon" src={saveIcon} title="save filters" />} modal>
-                                            {close => (
-                                                <div className="Advanced">
-                                                    <button className="close" id="saveFiltersClose" onClick={close}> &times; </button>
-                                                    <div className="contentAdvanced">
-                                                        <SaveFilters />
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </Popup>}
-                                    </div>
-                                </div>
-                            </div>
-                        </Navbar>
-                    </div>
-                </div>
-                <div className="row" style={{ "marginLeft": "0" }}>
-                    <div className="filterBar" id="filterBar">
-                        {filters}
-                    </div>
-                </div>
-            </div>
+          <option value={realm.key} key={realm.key + "src"}>{realm.key}</option>
         );
-    }
+      })}
+    </select>
+  );
+  const renderedDstRealms = (
+    <select
+      className="text-left form-control form-check-input filter-right"
+      id="dstRealms"
+      placeholder="DST REALMS"
+      onChange={specFilter}
+    >
+      <option value="" disabled selected>DST REALM</option>
+      {dstRealms.map((realm) => {
+        return (
+          <option value={realm.key} key={realm.key + "dst"}>{realm.key}</option>
+        );
+      })}
+    </select>
+  );
+
+  return (
+    <div className="row" style={{ "marginLeft": "0px", "marginTop": "35px" }}>
+      <div className="FilterSearchBar">
+        <div className="text-nowrap row">
+          <Navbar variant="light">
+            <div
+              className="row"
+              style={{ "width": "100%", "display": "inline-flex" }}
+            >
+              <Autocomplete
+                suggestions={getSearchableAttributes()}
+                enter={filterbar}
+                tags={props.tags}
+                type="main"
+              />
+              <div
+                className="row"
+                style={{
+                  "marginLeft": "5px",
+                  "marginTop": "6px",
+                  "display": "table-cell",
+                  "width": "1px",
+                  "verticalAlign": "bottom",
+                }}
+              >
+                <div className="row" style={{ "width": "max-content" }}>
+                  {url === "/conference" && (
+                    <input
+                      className="text-left form-control form-check-input filter-right"
+                      type="text"
+                      id="filterRoom"
+                      placeholder="CONF ID"
+                      onKeyUp={specFilter}
+                    />
+                  )}
+                  {url === "/connectivityCA" && renderedSrcRealms}
+                  {url === "/connectivityCA" && renderedDstRealms}
+                  <img
+                    className="icon iconMain"
+                    alt="search"
+                    src={search}
+                    title="search"
+                    onClick={addFilter}
+                    id="filterButton"
+                  />
+                  {
+                    <Popup
+                      trigger={
+                        <img
+                          className="icon iconMain"
+                          alt="storeIcon"
+                          src={loadIcon}
+                          title="stored filters"
+                        />
+                      }
+                      modal
+                    >
+                      {(close) => (
+                        <div className="Advanced">
+                          <button
+                            className="close"
+                            id="storedFiltersClose"
+                            onClick={close}
+                          >
+                            &times;
+                          </button>
+                          <div className="contentAdvanced">
+                            <StoredFilters />
+                          </div>
+                        </div>
+                      )}
+                    </Popup>
+                  }
+                  {
+                    <Popup
+                      trigger={
+                        <img
+                          className="icon iconMain"
+                          alt="storeIcon"
+                          src={saveIcon}
+                          title="save filters"
+                        />
+                      }
+                      modal
+                    >
+                      {(close) => (
+                        <div className="Advanced">
+                          <button
+                            className="close"
+                            id="saveFiltersClose"
+                            onClick={close}
+                          >
+                            &times;
+                          </button>
+                          <div className="contentAdvanced">
+                            <SaveFilters />
+                          </div>
+                        </div>
+                      )}
+                    </Popup>
+                  }
+                </div>
+              </div>
+            </div>
+          </Navbar>
+        </div>
+      </div>
+      <div className="row" style={{ "marginLeft": "0" }}>
+        <div className="filterBar" id="filterBar">
+          {renderedFilters}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default FilterBar;
