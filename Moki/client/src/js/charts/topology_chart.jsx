@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useEffect, useState } from 'react';
 import * as d3 from "d3";
 import Animation from '../helpers/Animation';
 import { createFilter, Colors } from '../../gui';
@@ -6,35 +6,20 @@ import { createFilter, Colors } from '../../gui';
 import emptyIcon from "/icons/empty_small.png";
 import { showTooltip } from '../helpers/tooltip';
 
-export default class topology extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            data: this.props.data
-        }
-        this.setData = this.setData.bind(this);
+export default function TopologyChart(props) {
+
+    const [currentData, setCurrentData] = useState(props.data);
+
+    useEffect(() => {
+        if (props.data == undefined) return;
+        draw(props.data, props.width, props.height, props.units, props.field1, props.field2);
+    }, [props.data, props.width])
+
+    const setData = (data) => {
+        setCurrentData(data);
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.data !== prevState.data) {
-            return { data: nextProps.data };
-        }
-        else return null;
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.data !== this.props.data) {
-            this.setState({ data: this.props.data });
-            this.draw(this.state.data, this.props.width, this.props.height, this.props.units, this.props.field1, this.props.field2);
-        }
-    }
-
-
-    setData(data) {
-        this.setState({ data: data });
-    }
-
-    draw(data, width, height, units, field1, field2) {
+    const draw = (data, width, height, units, field1, field2) => {
         units = units ? " (" + units + ")" : "";
         //FOR UPDATE: remove chart if it's already there
         var chart = document.getElementById("topologyChartSVG");
@@ -42,7 +27,7 @@ export default class topology extends Component {
             chart.remove();
         }
 
-        var legendSVG = document.getElementById("legendSVG" + this.props.id);
+        var legendSVG = document.getElementById("legendSVG" + props.id);
         if (legendSVG) {
             legendSVG.remove();
         }
@@ -54,7 +39,6 @@ export default class topology extends Component {
         var legendSpacing = 3;
         var legendWidth = "200px";
         width = width - 300;//legend width
-
 
         if (!data || data.length === 0 || links.length === 0 || nodes.length === 0) {
             var g = d3.select('#topologyChart')
@@ -68,14 +52,14 @@ export default class topology extends Component {
                 .attr("class", "noData")
                 .attr('transform', 'translate(' + width / 2 + ',100)')
 
-            legendSVG = document.getElementById("divLegend" + this.props.id);
+            legendSVG = document.getElementById("divLegend" + props.id);
             if (legendSVG) {
                 legendSVG.style.height = 0;
             }
 
         } else {
 
-            legendSVG = document.getElementById("divLegend" + this.props.id);
+            legendSVG = document.getElementById("divLegend" + props.id);
             if (legendSVG) {
                 legendSVG.style.height = "250px";
             }
@@ -360,10 +344,10 @@ export default class topology extends Component {
                 d.fy = null;
             }
 
-            var divLegend = d3.select("#divLegend" + this.props.id);
+            var divLegend = d3.select("#divLegend" + props.id);
             var legendHeight = data[1].length * 16;
 
-            divLegend = divLegend.append("svg").attr('height', legendHeight).attr('width', legendWidth).attr('id', "legendSVG" + this.props.id)
+            divLegend = divLegend.append("svg").attr('height', legendHeight).attr('width', legendWidth).attr('id', "legendSVG" + props.id)
 
             var legend = divLegend.selectAll('.legend')
                 .data(data[1])
@@ -503,17 +487,15 @@ export default class topology extends Component {
 
     }
 
-    render() {
         return (<div className="chart">
-            <h3 className="alignLeft title" > {this.props.name} </h3>  {window.location.pathname !== "/connectivity" && <Animation name={this.props.name} type={this.props.type} setData={this.setData} dataAll={this.state.data} />}
+            <h3 className="alignLeft title" > {props.name} </h3>  {window.location.pathname !== "/connectivity" && <Animation name={props.name} type={props.type} setData={setData} dataAll={currentData} />}
             <div className="row" style={{ "width": "max-content", "marginTop": "10px" }}>
                 <div className="col-auto" >
                     <div id="topologyChart" />
                 </div >
                 <div className="col-auto">
-                    <div id={"divLegend" + this.props.id} style={{ "height": "250px", "width": "250px", "overflowX": "auto", "marginTop": "15px" }} />
+                    <div id={"divLegend" + props.id} style={{ "height": "250px", "width": "250px", "overflowX": "auto", "marginTop": "15px" }} />
                 </div>
             </div>
         </div >)
-    }
 }
