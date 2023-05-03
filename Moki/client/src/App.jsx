@@ -9,20 +9,20 @@ import { getSettings } from './js/helpers/getSettings';
 import FilterBar from './js/bars/FilterBar.jsx';
 import Restricted from './js/dashboards/Restricted/Restricted';
 import Sequence from './js/pages/sequenceDiagram';
-import store from "./js/store/index";
-import storePersistent from "./js/store/indexPersistent";
-import { setUser, setWidthChart, setLayout, setSettings } from "./js/actions/index";
 import { Navigate } from 'react-router';
 import { paths } from "./js/controllers/paths.jsx";
 import Popup from "./js/helpers/Popup";
 import Notificationbar from './js/bars/Notificationbar';
 import { parseTimestamp } from "./js/helpers/parseTimestamp";
-import { setTimerange } from "./js/actions/index";
-import { setFilters } from "./js/actions/index";
 import { getUsername } from "./js/helpers/getUsername";
 import querySrv from './js/helpers/querySrv';
 import { createFilter, getProfile } from './gui';
 import DecryptPasswordPopup from './gui/src/menu/decryptPasswordPopup';
+
+import store from "@/js/store";
+import { setTimerange, setUser, setChartsWidth, 
+    setLayout, setSettings, setFilters } from "@/js/slices";
+
 const BASE_NAME = import.meta.env.BASE_URL;
 
 
@@ -63,7 +63,7 @@ class App extends Component {
         this.startAutomaticLogout = this.startAutomaticLogout.bind(this);
         this.setAutomaticLogout = this.setAutomaticLogout.bind(this);
         this.getSipUser();
-        storePersistent.subscribe(() => this.rerenderUsername());
+        store.subscribe(() => this.rerenderUsername());
     }
 
     componentDidMount() {
@@ -114,7 +114,7 @@ class App extends Component {
 
     //when user has changed, rerender it in GUI
     rerenderUsername() {
-        var sipUser = { ...storePersistent.getState().user };
+        var sipUser = { ...store.getState().persistent.user };
         if (sipUser) {
             if (sipUser.aws === false) {
                 sipUser.account = "Account: " + sipUser.username;
@@ -196,9 +196,9 @@ class App extends Component {
         var aws = this.state.user.aws;
 
         //set automatic logout for aws
-        if (aws === true && storePersistent.getState().profile[0] && storePersistent.getState().profile[0].userprefs.autologout !== "never") {
+        if (aws === true && store.getState().persistent.profile[0] && store.getState().persistent.profile[0].userprefs.autologout !== "never") {
             this.setState({
-                automaticLogoutTime: storePersistent.getState().profile[0].userprefs.autologout
+                automaticLogoutTime: store.getState().persistent.profile[0].userprefs.autologout
             }, () =>  {
                 this.setAutomaticLogout();
                 this.startAutomaticLogout();
@@ -211,14 +211,14 @@ class App extends Component {
 
         //store layout
         var jsonData = await getLayoutSettings();
-        storePersistent.dispatch(setLayout(jsonData));
+        store.dispatch(setLayout(jsonData));
         console.info(jsonData);
         console.info("Storing layout");
 
         //get settings if exists
         if (aws !== true) {
             var jsonSettings = await getSettings();
-            storePersistent.dispatch(setSettings(jsonSettings));
+            store.dispatch(setSettings(jsonSettings));
 
             //check if first time login
             const response = await querySrv(BASE_NAME + "api/firsttimelogin/check", {
@@ -466,7 +466,7 @@ class App extends Component {
 
     //change charts width if windows width changes
     windowResize() {
-        if (window.innerWidth !== store.getState().width) store.dispatch(setWidthChart(window.innerWidth));
+        if (window.innerWidth !== store.getState().persistent.width) store.dispatch(setChartsWidth(window.innerWidth));
     }
 
     /**
@@ -515,7 +515,7 @@ class App extends Component {
                     sip.username = await getUsername();
 
                     //set user info :  email:email, domainID:domainID, jwt: jwtbit
-                    storePersistent.dispatch(setUser(sip));
+                    store.dispatch(setUser(sip));
                     this.setState({
                         user: sip
                     })
@@ -545,7 +545,7 @@ class App extends Component {
                     else {
                         //store layout
                         var jsonData = await getLayoutSettings();
-                        storePersistent.dispatch(setLayout(jsonData));
+                        store.dispatch(setLayout(jsonData));
                         this.setState({
                             dashboards: ["web"],
                             isLoading: false
@@ -603,8 +603,8 @@ class App extends Component {
         var url = window.location.pathname;
         var styleAws = { "paddingLeft": "7px", "paddingBottom": "5px" };
 
-        if (storePersistent.getState().user) {
-            var style = storePersistent.getState().user.aws === false ? { "paddingBottom": "0px", "paddingLeft": "7px" } : styleAws;
+        if (store.getState().persistent.user) {
+            var style = store.getState().persistent.user.aws === false ? { "paddingBottom": "0px", "paddingLeft": "7px" } : styleAws;
         }
         //show just diagram
         if (this.state.dashboards.length > 0) {
@@ -627,7 +627,7 @@ class App extends Component {
                 }
 
                 var styleUser = { "display": "inline", "paddingTop": "7px", "position": "absolute" };
-                if (storePersistent.getState().user && storePersistent.getState().user.jwt === 0) {
+                if (store.getState().persistent.user && store.getState().persistent.user.jwt === 0) {
                     styleUser = { "display": "inline" };
                 }
 
