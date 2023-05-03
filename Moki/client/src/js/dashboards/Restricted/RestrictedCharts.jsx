@@ -50,7 +50,7 @@ function RestrictedCharts() {
       //AVG MoS
       [{ result: "avgMoS", func: parseAggData }],
     ],
-  });
+  }, false);
 
   const width = useSelector((state) => state.persistent.width);
 

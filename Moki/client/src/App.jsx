@@ -36,7 +36,7 @@ class App extends Component {
             redirect: false,
             firstTimeLogin: false,
             isLoading: true,
-            aws: false,
+            aws: true,
             monitorName: "",
             admin: false,
             siteAdmin: false,
@@ -680,12 +680,12 @@ class App extends Component {
                         <Notificationbar className="errorBarLoading" ></Notificationbar>
                         <div>
                             <Routes>
-                                <Route exact path='/index' element={() => < Restricted name="restricted" tags={this.state.tags} />} />
-                                <Route exact path='/' element={() => < Restricted name="restricted" />} />
+                                <Route exact path='/index' element={<Restricted name="restricted" tags={this.state.tags} />} />
+                                <Route exact path='/' element={<Restricted name="restricted" />} />
                                 <Route path='/logout' />
                                 <Route path='/no-sip-identity/' />
-                                <Route path='/sequenceDiagram/:id' element={() => < Sequence />} />
-                                <Route path='/sequenceDiagram/' element={() => <Sequence />} />
+                                <Route path='/sequenceDiagram/:id' element={<Sequence />} />
+                                <Route path='/sequenceDiagram/' element={<Sequence />} />
                                 <Route path="*" element={<Navigate to="/" />} />
                             </Routes>
                             <span className="footer" style={{ "float": "right" }}>
