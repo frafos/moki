@@ -14,6 +14,186 @@
           {
             "attribute": "ccmAddr",
             "value": "foo.bar"
+          },
+          {
+            "attribute": "ccmProxied",
+            "value": false
+          },
+          {
+            "attribute": "ccmPublicKey",
+            "value": ""
+          },
+          {
+            "attribute": "input_tls_only",
+            "value": false
+          },
+          {
+            "attribute": "event_tls_cert",
+            "value": ""
+          },
+          {
+            "attribute": "event_tls_key",
+            "value": ""
+          },
+          {
+            "attribute": "alarms_redis",
+            "value": false
+          },
+          {
+            "attribute": "alarms_redis_addr",
+            "value": "127.0.0.1"
+          },
+          {
+            "attribute": "alarms_redis_port",
+            "value": "6379"
+          },
+          {
+            "attribute": "gui_tls_cert",
+            "value": ""
+          },
+          {
+            "attribute": "gui_tls_key",
+            "value": ""
+          },
+          {
+            "attribute": "tls_cert_verify_level",
+            "value": "0"
+          },
+          {
+            "attribute": "event_tls_cacert",
+            "value": ""
+          },
+          {
+            "attribute": "eventTableCount",
+            "value": "10"
+          },
+          {
+            "attribute": "timeFormat",
+            "value": "hh:mm:ss A"
+          },
+          {
+            "attribute": "dateFormat",
+            "value": "DD MMM, YYYY"
+          },
+          {
+            "attribute": "gui_port",
+            "value": "445"
+          },
+          {
+            "attribute": "events_cleanup_days",
+            "value": "30"
+          },
+          {
+            "attribute": "events_cleanup_percentage",
+            "value": "20"
+          },
+          {
+            "attribute": "events_warning_percentage",
+            "value": "25"
+          },
+          {
+            "attribute": "pcap_cleanup_minutes",
+            "value": "720"
+          },
+          {
+            "attribute": "recordings_cleanup_minutes",
+            "value": "720"
+          },
+          {
+            "attribute": "monitor_name",
+            "value": "Monitor"
+          },
+          {
+            "attribute": "bl_email_from",
+            "value": "console@localhost.localdomain"
+          },
+          {
+            "attribute": "bl_email_to",
+            "value": ""
+          },
+          {
+            "attribute": "email_address",
+            "value": "localhost"
+          },
+          {
+            "attribute": "email_port",
+            "value": "25"
+          },
+          {
+            "attribute": "email_use_tls",
+            "value": false
+          },
+          {
+            "attribute": "email_authentication",
+            "value": ""
+          },
+          {
+            "attribute": "email_username",
+            "value": ""
+          },
+          {
+            "attribute": "email_password",
+            "value": ""
+          },
+          {
+            "attribute": "logstash_heap_mem_perc",
+            "value": "20"
+          },
+          {
+            "attribute": "logstash_workers",
+            "value": "4"
+          },
+          {
+            "attribute": "disable_alarms",
+            "value": true
+          },
+          {
+            "attribute": "elasticsearch_heap_mem_perc",
+            "value": "40"
+          },
+          {
+            "attribute": "slowlog_query_warn",
+            "value": "10s"
+          },
+          {
+            "attribute": "slowlog_query_info",
+            "value": "4s"
+          },
+          {
+            "attribute": "slowlog_fetch_warn",
+            "value": "8s"
+          },
+          {
+            "attribute": "slowlog_fetch_info",
+            "value": "4s"
+          },
+          {
+            "attribute": "slowlog_indexing_info",
+            "value": "4s"
+          },
+          {
+            "attribute": "slowlog_indexing_warn",
+            "value": "4s"
+          },
+          {
+            "attribute": "slowlog_search_level",
+            "value": "warn"
+          },
+          {
+            "attribute": "slowlog_indexing_level",
+            "value": "warn"
+          },
+          {
+            "attribute": "refresh_interval_logstash",
+            "value": "5s"
+          },
+          {
+            "attribute": "refresh_interval_collectd",
+            "value": "10s"
+          },
+          {
+            "attribute": "refresh_interval_exceeded",
+            "value": "10s"
           }
         ]
       }
