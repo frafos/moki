@@ -1,35 +1,20 @@
-import Table from '../Table.js';
-import TableChart from '@charts/table_chart.jsx';
+import TableChart from "@charts/table_chart.jsx";
+import { useTableData } from "@hooks/useTableData";
 
-class ExceededTable extends Table {
+function ExceededTable({ tags }) {
+  const { calls, total } = useTableData("exceeded/table");
 
-    // Initialize the state
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.state,
-            dashboardName: "exceeded/table",
-            calls: [],
-            total: 0
-        }
-    }
-
-    render() {
-        return (
-            <div className="row no-gutters" >
-                <TableChart data={
-                    this.state.calls
-                } total={this.state.total}
-                    name={
-                        "exceeded"
-                    }
-                    id={
-                        "EXCEEDED EVENTS"
-                    }
-                    tags={this.props.tags}
-                />  </div>
-        );
-    }
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        total={total}
+        name={"exceeded"}
+        id={"EXCEEDED EVENTS"}
+        tags={tags}
+      />
+    </div>
+  );
 }
 
 export default ExceededTable;

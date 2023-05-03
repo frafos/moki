@@ -1,34 +1,20 @@
-import Table from '../Table.js'
-import TableChart from '@charts/table_chart.jsx';
+import { useTableData } from "@hooks/useTableData";
+import TableChart from "@charts/table_chart.jsx";
 
-class RestrictedTable extends Table {
+function RestrictedTable({ tags }) {
+  const { calls, total } = useTableData("restricted/overview");
 
-    // Initialize the state
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.state,
-            dashboardName: "restricted/overview",
-            calls: [],
-            total: 0
-        }
-
-    }
-
-
-
-    render() {
-        return (
-            <div className="row no-gutters" >
-                <TableChart
-                    data={this.state.calls}
-                    total={this.state.total}
-                    name={"homeLoginCalls"}
-                    id={"OVERVIEW EVENTS"}
-                    tags={this.props.tags}
-                />  </div>
-        );
-    }
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        total={total}
+        name={"homeLoginCalls"}
+        id={"OVERVIEW EVENTS"}
+        tags={tags}
+      />
+    </div>
+  );
 }
 
 export default RestrictedTable;

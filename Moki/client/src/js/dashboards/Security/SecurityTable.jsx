@@ -1,35 +1,20 @@
-import Table from '../Table.js';
-import TableChart from '@charts/table_chart.jsx';
+import TableChart from "@charts/table_chart.jsx";
+import { useTableData } from "@hooks/useTableData";
 
-class SecurityTable extends Table {
+function SecurityTable({ tags }) {
+  const { calls, total } = useTableData("security/table");
 
-    // Initialize the state
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.state,
-            dashboardName: "security/table",
-            calls: [],
-            total: 0
-        }
-    }
-
-    render() {
-        return (
-            <div className="row no-gutters" >
-                <TableChart data={
-                        this.state.calls
-                    } total={this.state.total}
-                    name={
-                        "security"
-                    }
-                    id={
-                        "SECURITY EVENTS"
-                    }
-                    tags={this.props.tags}
-                />  </div>
-        );
-    }
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        total={total}
+        name={"security"}
+        id={"SECURITY EVENTS"}
+        tags={tags}
+      />
+    </div>
+  );
 }
 
 export default SecurityTable;

@@ -1,28 +1,20 @@
-import Table from '../Table.js';
-import TableChart from '@charts/table_chart.jsx';
+import TableChart from "@charts/table_chart.jsx";
+import { useTableData } from "@hooks/useTableData";
 
-class OverviewTable extends Table {
+function OverviewTable({ tags }) {
+  const { calls, total } = useTableData("overview/table");
 
-  // Initialize the state
-  constructor(props) {
-    super(props);
-      this.state = {
-        ...this.state,
-        dashboardName: "overview/table",
-        calls: [],
-        total: 0
-    }
-  }
- 
-  render() {
-    return (
-      <div className="row no-gutters">
-        <TableChart data={
-          this.state.calls
-        } total={this.state.total} tags={this.props.tags} name={"overview"} id={"OVERVIEW EVENTS"} />
-      </div>
-    );
-  }
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        total={total}
+        tags={tags}
+        name={"overview"}
+        id={"OVERVIEW EVENTS"}
+      />
+    </div>
+  );
 }
 
 export default OverviewTable;

@@ -1,35 +1,20 @@
-import Table from '../Table.js';
-import TableChart from '@charts/table_chart.jsx';
+import TableChart from "@charts/table_chart.jsx";
+import { useTableData } from "@hooks/useTableData";
 
-class DiagnosticsTable extends Table {
+function DiagnosticsTable({ tags }) {
+  const { calls, total } = useTableData("diagnostics/table");
 
-    // Initialize the state
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.state,
-            dashboardName: "diagnostics/table",
-            calls: [],
-            total: 0
-        }
-    }
-
-    render() {
-        return (
-            <div className="row no-gutters" >
-                <TableChart data={
-                    this.state.calls
-                }
-                    name={
-                        "diagnostics"
-                    } total={this.state.total}
-                    id={
-                        "DIAGNOSTICS EVENTS"
-                    }
-                    tags={this.props.tags}
-                />  </div>
-        );
-    }
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        name={"diagnostics"}
+        total={total}
+        id={"DIAGNOSTICS EVENTS"}
+        tags={tags}
+      />
+    </div>
+  );
 }
 
 export default DiagnosticsTable;

@@ -3,7 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@charts/*": ["./src/js/charts/*"]
+      "@charts/*": ["./src/js/charts/*"],
+      "@hooks/*": ["./src/js/hooks/*"]
     }
   },
 }

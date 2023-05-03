@@ -1,37 +1,20 @@
-import Table from '../Table.js';
-import TableChart from '@charts/table_chart.jsx';
+import TableChart from "@charts/table_chart.jsx";
+import { useTableData } from "@hooks/useTableData";
 
-class RealmTable extends Table {
+function RealmTable({ tags }) {
+  const { calls, total } = useTableData("realm/table", false);
 
-    // Initialize the state
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.state,
-            dashboardName: "realm/table",
-            calls: [],
-            total: 0
-        }
-
-    }
-
-
-    render() {
-        return (
-            <div className="row no-gutters" >
-                <TableChart data={
-                    this.state.calls
-                } total={this.state.total}
-                    name={
-                        "realm"
-                    }
-                    id={
-                        "REALM EVENTS"
-                    }
-                    tags={this.props.tags}
-                />  </div>
-        );
-    }
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        total={total}
+        name={"realm"}
+        id={"REALM EVENTS"}
+        tags={tags}
+      />
+    </div>
+  );
 }
 
 export default RealmTable;

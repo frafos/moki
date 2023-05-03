@@ -1,35 +1,19 @@
-import Table from '../Table.js';
-import TableChart from '@charts/table_chart.jsx';
+import TableChart from "@charts/table_chart.jsx";
+import { useTableData } from "@hooks/useTableData";
 
-class ConnectivityCATable extends Table {
-
-    // Initialize the state
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.state,
-            dashboardName: "connectivityCA/table",
-            calls: [],
-            total: 0
-        }
-    }
-
-    render() {
-        return (
-            <div className="row no-gutters" >
-                <TableChart data={
-                    this.state.calls
-                }
-                    name={
-                        "connectivityCA"
-                    } total={this.state.total}
-                    id={
-                        "STATES CA EVENTS"
-                    }
-                    tags={this.props.tags}
-                />  </div>
-        );
-    }
+function ConnectivityCATable({ tags }) {
+  const { calls, total } = useTableData("connectivityCA/table", false);
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        name={"connectivityCA"}
+        total={total}
+        id={"STATES CA EVENTS"}
+        tags={tags}
+      />
+    </div>
+  );
 }
 
 export default ConnectivityCATable;

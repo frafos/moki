@@ -1,35 +1,20 @@
-import Table from '../Table.js';
-import TableChart from '@charts/table_chart.jsx';
+import TableChart from "@charts/table_chart.jsx";
+import { useTableData } from "@hooks/useTableData";
 
-class ConferenceTable extends Table {
+function ConferenceTable({ tags }) {
+  const { calls, total } = useTableData("conference/table");
 
-    // Initialize the state
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.state,
-            dashboardName: "conference/table",
-            calls: [],
-            total: 0
-        }
-    }
-
-    render() {
-        return (
-            <div className="row no-gutters" >
-                <TableChart data={
-                    this.state.calls
-                } total={this.state.total}
-                    name={
-                        "conference"
-                    }
-                    tags={this.props.tags}
-                    id={
-                        "CONFERENCE EVENTS"
-                    }
-                />  </div >
-        );
-    }
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        total={total}
+        name={"conference"}
+        tags={tags}
+        id={"CONFERENCE EVENTS"}
+      />
+    </div>
+  );
 }
 
 export default ConferenceTable;

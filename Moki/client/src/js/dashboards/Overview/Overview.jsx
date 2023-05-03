@@ -1,25 +1,17 @@
-import React, {
-    Component
-} from 'react';
+import OverviewTable from "./OverviewTable";
+import OverviewCharts from "./OverviewCharts";
+import TypeBar, { loadTypes } from "../../bars/Typebar";
+import FilterBar from "../../bars/FilterBar.jsx";
 
-
-import OverviewTable from './OverviewTable';
-import OverviewCharts from './OverviewCharts';
-import TypeBar from '../../bars/Typebar';
-import FilterBar from '../../bars/FilterBar.jsx';
-
-class Overview extends Component {
-    render() {
-        return (
-            <div className="container-fluid" style={{"paddingRight": "0"}}>
-                    <FilterBar tags={this.props.tags} />
-                    <TypeBar/>
-                    <OverviewCharts  />
-                    <OverviewTable tags={this.props.tags}  />
-            </div>
-                       
-        );
-    }
+function Overview({ tags }) {
+  return (
+    <div className="container-fluid" style={{ "paddingRight": "0" }}>
+      <FilterBar tags={tags} />
+      <TypeBar />
+      <OverviewCharts />
+      <OverviewTable tags={tags} />
+    </div>
+  );
 }
 
 export default Overview;

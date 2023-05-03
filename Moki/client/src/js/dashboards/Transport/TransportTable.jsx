@@ -1,39 +1,23 @@
-import Table from '../Table.js';
-import TableChart from '@charts/table_chart.jsx';
-import store from "../../store/index";
+import TableChart from "@charts/table_chart.jsx";
+import { useTableData } from "@hooks/useTableData";
+import { useSelector } from "react-redux";
 
-class TransportTable extends Table {
+function TransportTable({ tags }) {
+  const { calls, total } = useTableData("transport/table");
 
-    // Initialize the state
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.state,
-            dashboardName: "transport/table",
-            calls: [],
-            total: 0
-        }
-
-    }
-    render() {
-        return (
-            <div className="row no-gutters" >
-                <TableChart data={
-                        this.state.calls
-                    } total={this.state.total}
-                    name={
-                        "transport"
-                    }
-                    id={
-                        "TRANSPORT EVENTS"
-                    }
-                    width={
-                        store.getState().width - 300
-                    }
-                    tags={this.props.tags}
-                />  </div> 
-        );
-    }
+  const width = useSelector((state) => state.persistent.width);
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        total={total}
+        name={"transport"}
+        id={"TRANSPORT EVENTS"}
+        width={width - 300}
+        tags={tags}
+      />
+    </div>
+  );
 }
 
 export default TransportTable;

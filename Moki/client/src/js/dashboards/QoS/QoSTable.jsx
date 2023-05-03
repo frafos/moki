@@ -1,36 +1,20 @@
-import Table from '../Table.js';
-import TableChart from '@charts/table_chart.jsx';
+import TableChart from "@charts/table_chart.jsx";
+import { useTableData } from "@hooks/useTableData";
 
-class QoSTable extends Table {
+function QoSTable({ tags }) {
+  const { calls, total } = useTableData("qos/table", false);
 
-    // Initialize the state
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.state,
-            dashboardName: "qos/table",
-            calls: [],
-            total: 0
-        }
-
-    }
-
-    render() {
-        return (
-            <div className="row no-gutters" >
-                <TableChart data={
-                    this.state.calls
-                } total={this.state.total}
-                    name={
-                        "qos"
-                    }
-                    tags={this.props.tags}
-                    id={
-                        "LOW QoS EVENTS"
-                    }
-                />  </div>
-        );
-    }
+  return (
+    <div className="row no-gutters">
+      <TableChart
+        data={calls}
+        total={total}
+        name={"qos"}
+        tags={tags}
+        id={"LOW QoS EVENTS"}
+      />
+    </div>
+  );
 }
 
 export default QoSTable;
