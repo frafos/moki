@@ -1,8 +1,8 @@
 import querySrv from "../../../js/helpers/querySrv";
 import { getTypes } from "../../../js/helpers/getTypes.js";
 import { getFilters } from "../filter/getFilters.js";
-import store from "../../../js/store/index";
 
+import store from "@/js/store";
 
 /**
 *ES request API
@@ -24,15 +24,16 @@ export async function elasticsearchConnection(query,  params = false) {
   }
 
   pathname = pathname.substring(import.meta.env.BASE_URL, pathname.length);
+  const { timerange } = store.getState().filter;
 
   if (query.includes(pathname)  || query.includes("table") ) {
     //get all necessarily parameters (filters, types, timerange)
     var filters = getFilters();
     var types = getTypes();
     console.info("MOKI: send fetch: " + query);
-    console.info("MOKI: send fetch with filters: " + JSON.stringify(filters));
-    console.info("MOKI: send fetch with types: " + JSON.stringify(types));
-    console.info("MOKI: send fetch with timerange: " + store.getState().timerange[0] + " - " + store.getState().timerange[1]);
+    console.info("MOKI: with filters: " + JSON.stringify(filters));
+    console.info("MOKI: with types: " + JSON.stringify(types));
+    console.info("MOKI: with timerange: " + timerange[0] + " - " + timerange[1]);
     console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
     var data;
     var response;
@@ -45,8 +46,8 @@ export async function elasticsearchConnection(query,  params = false) {
         body: JSON.stringify({
           filters: filters,
           types: types,
-          timerange_gte: store.getState().timerange[0],
-          timerange_lte: store.getState().timerange[1],
+          timerange_gte: timerange[0],
+          timerange_lte: timerange[1],
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           params: params
         }),

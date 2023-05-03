@@ -3,9 +3,9 @@
 share filters - add filters, timerange, types to url
 */
 
-export async function shareFilters(store, storePersistent) {
-  let href = window.location.origin + window.location.pathname + "?from=" + store.getState().timerange[0] + "&to=" + store.getState().timerange[1];
-  let filters = store.getState().filters;
+export async function shareFilters(store ) {
+  let href = window.location.origin + window.location.pathname + "?from=" + store.getState().filter.timerange[0] + "&to=" + store.getState().filter.timerange[1];
+  let filters = store.getState().filter.filters;
 
   if (filters) {
     for (const filter of filters) {
@@ -15,7 +15,7 @@ export async function shareFilters(store, storePersistent) {
     }
   }
 
-  let types = store.getState().types;
+  let types = store.getState().filter.types;
 
   if (types) {
     for (const type of types) {

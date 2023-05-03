@@ -1,13 +1,13 @@
-import store from "../../../js/store/index";
-import { setFilters } from "../../../js/actions/index";
+import store from "@/js/store";
+import { setFilters } from "@/js/slices";
 
-    /**
+/**
 * Create new filter and store it in redux
 * @param {string}  searchValue filter to store
 * @return {array} Array of all filters
 * */
 export async function createFilter(searchValue, filter_id = null, dispatch = true, decrypt = false) {
-  var oldFilters = store.getState().filters;
+  var oldFilters = store.getState().filter.filters;
   var colonFirst = searchValue.indexOf(':'); 
 
   //check if it's avg MoS - bug round up value

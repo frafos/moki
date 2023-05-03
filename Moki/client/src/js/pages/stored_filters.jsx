@@ -2,12 +2,10 @@ import React, {
     Component
 } from 'react';
 import { createFilter } from '../../gui';
-import store from "../store/index";
-import storePersistent from "../store/indexPersistent";
-import { setTimerange } from "../actions/index";
-import { assignType } from "../actions/index";
-import { setFilters } from "../actions/index";
 import querySrv from '../helpers/querySrv';
+
+import store from "@/js/store";
+import { setTimerange, assignTypes, setFilters } from "@/js/slices";
 
 import disableIcon from "/icons/disable.png";
 import enableIcon from "/icons/enable.png";
@@ -31,7 +29,7 @@ class StoredFilters extends Component {
        Load data
        */
     async load() {
-        var checksum = storePersistent.getState().profile[0] ? storePersistent.getState().profile[0].userprefs.validation_code : "";
+        var checksum = store.getState().persistent.profile[0] ? store.getState().persistent.profile[0].userprefs.validation_code : "";
         var Url = "api/filters";
         var jsonData;
         try {
@@ -97,7 +95,7 @@ class StoredFilters extends Component {
 
         //types
         if (filters.attribute[2].types) {
-            store.dispatch(assignType(filters.attribute[2].types));
+            store.dispatch(assignTypes(filters.attribute[2].types));
         }
 
         //timerange

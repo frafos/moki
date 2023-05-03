@@ -1,5 +1,5 @@
-import storePersistent from "../../../js/store/indexPersistent";
-import { setProfile } from "../../../js/actions/index";
+import store from "@/js/store";
+import { setProfile } from "@/js/slices";
 
 
 /**
@@ -7,7 +7,7 @@ import { setProfile } from "../../../js/actions/index";
 * @return {string}  error or "ok"
 * */
 export async function getProfile() {
-  storePersistent.dispatch(setProfile(
+  store.dispatch(setProfile(
     [{ "tls-cn": "default", "userprefs": {} },
     { "domain": "default", "userprefs": {} }]
   ));

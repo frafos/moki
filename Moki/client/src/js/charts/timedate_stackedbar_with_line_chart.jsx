@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import * as d3 from "d3";
-import store from "../store/index";
-import storePersistent from "../store/indexPersistent";
-import { setTimerange } from "../actions/index";
 import { getTimeBucket, getTimeBucketInt } from "../helpers/getTimeBucket";
 import { parseTimestamp, parseTimestampD3js, parseTimeData } from "../helpers/parseTimestamp";
 import { setTickNrForTimeXAxis } from "../helpers/chart";
 import { showTooltip } from '../helpers/tooltip';
 import { ColorType, Colors, createFilter } from '../../gui';
+
+import store from "@/js/store";
+import { setTimerange } from "@/js/slices";
 
 import emptyIcon from "/icons/empty_small.png";
 
@@ -19,7 +19,7 @@ key
 */ 
 export default class StackedChartLine extends Component {
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate() {
         this.draw(this.props.data, this.props.id, this.props.data2, this.props.width, this.props.units, this.props.name);
     }
 
@@ -49,9 +49,9 @@ export default class StackedChartLine extends Component {
         var height = 200 - margin.top - margin.bottom;
 
         var colorScale = d3.scaleOrdinal(Colors);
-        var parseDate = parseTimestampD3js(store.getState().timerange[0], store.getState().timerange[1]);
+        const { timerange } = store.getState().filter;
 
-        // var bucketSize = d3.timeFormat(timestampBucketSizeWidth(store.getState().timerange[0], store.getState().timerange[1]));
+        var parseDate = parseTimestampD3js(timerange[0], timerange[1]);
 
         var rootsvg = svg.append("svg")
             .attr('width', width)
@@ -59,8 +59,8 @@ export default class StackedChartLine extends Component {
             .attr('id', id + "SVG");
         //  .append('g');
         //max and min date
-        var maxTime = parseTimeData(store.getState().timerange[1]) + getTimeBucketInt();
-        var minTime = parseTimeData(store.getState().timerange[0]) - (60 * 1000); //minus one minute fix for round up
+        var maxTime = parseTimeData(timerange[1]) + getTimeBucketInt();
+        var minTime = parseTimeData(timerange[0]) - (60 * 1000); //minus one minute fix for round up
 
         var x = d3.scaleBand().range([0, widthChart]).padding(0.1);
 
@@ -149,7 +149,8 @@ export default class StackedChartLine extends Component {
                 return d.keys;
             }));
 
-            var keys = this.props.keys ? storePersistent.getState().layout.types[this.props.keys] ? storePersistent.getState().layout.types[this.props.keys] : this.props.keys : storePersistent.getState().layout.types["overview"];
+            const { layout } = store.getState().persistent;
+            var keys = this.props.keys ? layout.types[this.props.keys] ? layout.types[this.props.keys] : this.props.keys : layout.types["overview"];
 
 
             //var id = 0;

@@ -2,8 +2,9 @@ import querySrv from './querySrv';
 
 //get username from server, store in redux and also return it
 
-import storePersistent from "../store/indexPersistent";
-import { setUser } from "../actions/index";
+import store from "@/js/store";
+import { setUser } from "@/js/slices";
+
 const BASE_URL = import.meta.env.BASE_URL;
 
 export async function getUsername() {
@@ -18,10 +19,9 @@ export async function getUsername() {
             }
         });
         let username = await response.json();
-        if (storePersistent.getState().user) {
-            let user = storePersistent.getState().user;
-            user.username = username.username;
-            storePersistent.dispatch(setUser(user));
+        if (store.getState().persistent.user) {
+            let user = store.getState().persistent.user;
+            store.dispatch(setUser({ ...user, username: username.username }));
         }
         return username.username;
     } catch (error) {

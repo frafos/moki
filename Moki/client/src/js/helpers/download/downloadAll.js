@@ -4,7 +4,7 @@ Input: event with attributes
 */
 import { downloadPcap } from './downloadPcap';
 import { downloadSD } from './downloadSD';
-import storePersistent from "../../store/indexPersistent";
+import store from "@/js/store";
 
 import FileSaver from "file-saver"
 import JSZip from "jszip"
@@ -16,9 +16,11 @@ export async function downloadAll(obj) {
 
     var zip = new JSZip();
 
+    const { profile } = store.getState().persistent;
+
     //export json (always exists)
     var json = new Blob([JSON.stringify(obj)], { type: 'text/plain' });
-    if (storePersistent.getState().profile[0] && storePersistent.getState().profile[0].userprefs.mode === "encrypt") {
+    if (profile[0] && profile[0].userprefs.mode === "encrypt") {
         fileName = fileName + "_decrypted";
     }
     zip.file(fileName + ".json", json);
@@ -45,7 +47,7 @@ export async function downloadAll(obj) {
     zip.generateAsync({ type: "blob" })
         .then(function (blob) {
             var name = "export.zip";
-            if (storePersistent.getState().profile[0] && storePersistent.getState().profile[0].userprefs.mode === "encrypt") {
+            if (profile[0] && profile[0].userprefs.mode === "encrypt") {
                 name = "export_decrypted.zip";
             }
             console.log(name);

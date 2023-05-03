@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { parseTimestamp } from "./parseTimestamp";
-import storePersistent from "../store/indexPersistent";
+import store from "@/js/store";
 import querySrv from './querySrv';
 import { cipherAttr } from '../../gui';
 
@@ -81,7 +81,7 @@ class AlertProfile extends Component {
 
     async load() {
         let result = null;
-        let profile = storePersistent.getState().profile;
+        let profile = store.getState().persistent.profile;
         let mode = profile[0].userprefs.mode;
         let storedProfile = localStorage.getItem('profile');
         if (storedProfile) {
@@ -120,9 +120,11 @@ class AlertProfile extends Component {
         }
         else {
 
-            if (storePersistent.getState().layout.types.exceeded) {
+            const { layout } = store.getState().persistent;
+
+            if (layout.types.exceeded) {
                 for (let item of Object.keys(result.Item)) {
-                    for (let template of storePersistent.getState().layout.types.exceeded) {
+                    for (let template of layout.types.exceeded) {
                         if (template.id === item) {
                             result.Item[item + " - " + template.name] = result.Item[item];
                             delete result.Item[item];
@@ -236,7 +238,7 @@ export async function checkBLip(ob, type = "ipblack", shouldCipherAttr = true, s
     try {
         let hmac = ob.encrypt;
         if (hmac && hmac !== "plain") hmac = hmac.substring(0, hmac.indexOf(":"));
-        let profile = storePersistent.getState().profile;
+        let profile = store.getState().persistent.profile;
         let key = ob.attrs.source;
         if (shouldCipherAttr) {
             key = await cipherAttr("attrs.source", ob.attrs.source, profile, "encrypt");

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { status } from '../helpers/status'
 import { diskSpace } from '../helpers/status';
 import { Navigate } from 'react-router';
-import storePersistent from "../store/indexPersistent";
+
+import store from "@/js/store";
+
 import infoIcon from "/icons/info.png";
 import warningIcon from "/icons/warning.png";
 
@@ -51,7 +53,7 @@ class Notificationbar extends Component {
 
     async componentDidMount() {
         var self = this;
-        var user = storePersistent.getState().user;
+        const user = store.getState().persistent.user;
         console.log(user);
         if (user && user.user !== "DEFAULT") {
             //ES, logstash status check every 30s
@@ -240,7 +242,6 @@ class Notificationbar extends Component {
         if (notifications.length === 0) {
             return (<div></div>)
         } else {
-
             return (
                 <div className="row" >
                     {window.location.pathname !== "/monitoring" && <div className={this.props.className}>  {this.state.notifications.map((notification, i) => {
@@ -254,7 +255,6 @@ class Notificationbar extends Component {
                     {this.state.redirect && <Navigate push to="/monitoring" />}
                 </div>)
         }
-
     }
 }
 

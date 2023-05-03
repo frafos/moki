@@ -6,8 +6,6 @@ import { downloadAll } from "./download/downloadAll";
 import { exportJSON } from "./export";
 import { getPcap } from './getPcap';
 import { exclude } from './exclude';
-import storePersistent from "../store/indexPersistent";
-import store from "../store/index";
 import { parseTimestamp } from "../helpers/parseTimestamp";
 import SimpleSequenceDiagram from "../charts/simpleSequenceDiagram";
 import { checkBLip } from "../helpers/alertProfile";
@@ -15,6 +13,7 @@ import { getSearchableAttributes, getExceededName,
 isEncryptedAttr, createFilter } from "../../gui";
 import querySrv from './querySrv';
 
+import store from "@/js/store";
 
 import detailsIcon from "/icons/details.png";
 import filterIcon from "/icons/filter.png";
@@ -286,7 +285,9 @@ function clickHandlerHTML(e) {
 
 
 const shareEvent = (id) => {
-    let href = window.location.origin + window.location.pathname + "?from=" + store.getState().timerange[0] + "&to=" + store.getState().timerange[1];
+    const { timerange } = store.getState().filter;
+
+    let href = window.location.origin + window.location.pathname + "?from=" + timerange[0] + "&to=" + timerange[1];
 
     //put it into clipboard
     let dummy = document.createElement("textarea");
@@ -370,6 +371,9 @@ function copyToclipboard(value, id = null) {
 }
 
 function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard) {
+
+    const { user, profile } = store.getState().persistent;
+
     switch (column_name.source) {
         case '_id': return {
             dataField: '_source._id',
@@ -564,6 +568,7 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
                 }
                 ob = iterate(JSON.parse(JSON.stringify(ob)));
 
+
                 return <span>
                     {(ob.attrs && ob.attrs.filenameDownload && column_name.icons.includes("download")) &&
                         <button className="noFormatButton" onClick={getPcap} file={ob.attrs.filenameDownload}>  <img className="icon" alt="downloadIcon" src={downloadPcapIcon} title="download PCAP" /></button>
@@ -572,7 +577,7 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
                     {(ob.attrs && ob.attrs.filenameDownload && column_name.icons.includes("downloadAll")) &&
                         <button className="noFormatButton" onClick={() => downloadAll(ob)} file={ob.attrs.filenameDownload} data={obj}>  <img className="icon" alt="downloadIcon" src={downloadIcon} title="download all" /></button>
                     }
-                    {(ob.attrs && ob.attrs.filenameDownload && column_name.icons.includes("diagram") && storePersistent.getState().user.aws === false) && <a href={"/sequenceDiagram/" + ob.attrs.filenameDownload} target="_blank" rel="noopener noreferrer"><img className="icon" alt="viewIcon" src={viewIcon} title="view PCAP" /></a>}
+                    {(ob.attrs && ob.attrs.filenameDownload && column_name.icons.includes("diagram") && !user.aws) && <a href={"/sequenceDiagram/" + ob.attrs.filenameDownload} target="_blank" rel="noopener noreferrer"><img className="icon" alt="viewIcon" src={viewIcon} title="view PCAP" /></a>}
                     {(ob.dbg && ob.dbg.msg_trace && column_name.icons.includes("diagram")) && <Popup trigger={<img className="icon" alt="viewIcon" src={viewIcon} title="diagram" />} modal>
                         {close => (
                             <div className="Advanced">
@@ -586,7 +591,7 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
                         )}
                     </Popup>
                     }
-                    {(storePersistent.getState().user.aws === true && storePersistent.getState().user.jwt !== 0 && window.location.pathname.includes("/alerts")) && <Popup trigger={<img className="icon" data={obj} alt="suppressIcon" src={suppressIcon} title="suppress alert" />} modal>
+                    {(user.aws && user.jwt !== 0 && window.location.pathname.includes("/alerts")) && <Popup trigger={<img className="icon" data={obj} alt="suppressIcon" src={suppressIcon} title="suppress alert" />} modal>
                         {close => (
                             <div className="Advanced">
                                 <button className="close" onClick={close}>
@@ -601,7 +606,7 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
                         )}
                     </Popup>
                     }
-                    {storePersistent.getState().user.aws === true && (window.location.pathname.includes("/exceeded") || window.location.pathname.includes("/alerts")) &&
+                    {user.aws && (window.location.pathname.includes("/exceeded") || window.location.pathname.includes("/alerts")) &&
                         <button className="noFormatButton" onClick={() => window.tableChart.createFilterAndRedirect(obj)} data={obj}>  <img className="icon" alt="cause analysis redirect" src={overviewIcon} title="show records in cause analysis" /></button>
                     }
                     {column_name.icons.includes("details") && <Popup trigger={<img className="icon" alt="detailsIcon" src={detailsIcon} title="details" />} modal>
@@ -713,14 +718,13 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
                                     <img field={field} value={value} onClick={doUnfilter} className="icon" title="unfilter" alt="unfilterIcon" src={unfilterIcon} />
                                     <span><img onClick={() => copyToclipboard(value)} className="icon" title="copy to clipboard" alt="clipboardIcon" src={clipboardIcon} /><span id={"copyToClipboardText" + value} className="copyToClip">copied to clipboard</span></span>
                                 </div >{value}
-                                {field === "attrs.source" && storePersistent.getState().user.aws === true && (window.location.pathname.includes("/alerts") || window.location.pathname.includes("/overview")) && <BLcheck data={ob} />}
+                                {field === "attrs.source" && user.aws && (window.location.pathname.includes("/alerts") || window.location.pathname.includes("/overview")) && <BLcheck data={ob} />}
                             </span>
                         }
                     }
                 }
 
                 //encrypt state
-                let profile = storePersistent.getState().profile;
                 if (profile && profile[0] && profile[0].userprefs.mode === "encrypt") {
                     col.onSort = (field, order) => {
                         window.tableChart.orderDecrypt(field, order);
@@ -762,7 +766,6 @@ function getColumn(column_name, tags, tag, width = 0, hidden = false, dashboard)
                     }
                 }
                 //encrypt state
-                let profile = storePersistent.getState().profile;
                 if (profile && profile[0] && profile[0].userprefs.mode === "encrypt") {
                     col.onSort = (field, order) => {
                         window.tableChart.orderDecrypt(field, order);
@@ -851,7 +854,7 @@ export function tableColumns(dashboard, tags, layout) {
         }
         tag = true;
         //disable tags for end user
-        if (storePersistent.getState().user.jwt === "2") { tag = false };
+        if (store.getState().persistent.user.jwt === "2") { tag = false };
 
         for (let i = 0; i < columnsTableDefaultListConcat.length; i++) {
             let name = columnsTableDefaultListConcat[i].name ? columnsTableDefaultListConcat[i].name : columnsTableDefaultListConcat[i];

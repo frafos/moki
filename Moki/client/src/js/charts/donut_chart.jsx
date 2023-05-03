@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import * as d3 from "d3";
-import storePersistent from "../store/indexPersistent";
 import { ColorType, getExceededColor, Colors, 
     ColorsReds, getExceededName, Types, createFilter } from '../../gui';
+
+import store from "@/js/store";
 
 import emptyIcon from "/icons/empty_small.png";
 import { showTooltip } from '../helpers/tooltip';
@@ -14,7 +15,6 @@ export default class StackedChart extends Component {
             data: []
         }
         this.draw = this.draw.bind(this);
-        storePersistent.subscribe(() => this.draw(this.props.data, this.props.id, this.props.field, this.props.units));
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -78,7 +78,7 @@ export default class StackedChart extends Component {
         var color;
         var colorScale = d3.scaleOrdinal(ColorsReds);
         var colorScaleMix = d3.scaleOrdinal(Colors);
-        var profile = storePersistent.getState().profile;
+        const profile = store.getState().persistent.profile;
 
         function color(nmb, i) {
             nmb = nmb.substring(1);

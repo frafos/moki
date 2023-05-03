@@ -6,13 +6,14 @@ import isNumber from '../helpers/isNumber';
 import isIP from '../helpers/isIP';
 import { isHostnameOrIp }  from '../helpers/isHostnameOrIp';
 import isEmail from '../helpers/isEmail';
-import storePersistent from "../store/indexPersistent";
 import Popup from "reactjs-popup";
-import { setSettings } from "../actions/index";
 import querySrv from '../helpers/querySrv';
 import { elasticsearchConnection } from '../../gui';
 import deleteIcon from "/icons/delete_grey.png";
 import detailsIcon from "/icons/details.png";
+
+import store from "@/js/store";
+import { setSettings } from "@/js/slices";
 
 class Certificate extends Component {
     constructor(props) {
@@ -368,9 +369,9 @@ class Settings extends Component {
                             }
                         })
                     });
-                    let settings = JSON.parse(JSON.stringify(storePersistent.getState().settings));
+                    let settings = JSON.parse(JSON.stringify(store.getState().persistent.settings));
                     settings[0] = { app: "m_config", attrs: jsonData };
-                    storePersistent.dispatch(setSettings(settings));
+                    store.dispatch(setSettings(settings));
                 }
                 return response.json();
             }).then(function (responseData) {

@@ -1,10 +1,10 @@
 import { ColorType } from '../style/ColorType';
 import { Types } from '../style/Types';
-import storePersistent from "../../../js/store/indexPersistent";
+import store from "@/js/store";
 
 
 export function getExceededTypes() {
-  let array = storePersistent.getState().layout.types.exceeded;
+  let array = store.getState().persistent.layout.types.exceeded;
   if (array) {
     var types = []
     for (let hit of array) {

@@ -1,8 +1,7 @@
 import React, {
     Component
 } from 'react';
-import store from "../store/index";
-import storePersistent from "../store/indexPersistent";
+import store from "@/js/store";
 import { getFilters } from '../../gui';
 import querySrv from '../helpers/querySrv';
 
@@ -25,6 +24,10 @@ class SaveFilters extends Component {
     }
 
     async save(event) {
+
+        const { types, timerange } = store.getState().filter;
+        const { user, profile } = store.getState().persistent;
+        
         var filterTitle = document.getElementById("filterTitle").value;
         if (filterTitle === "") {
             alert("You have to fill filter title.");
@@ -45,17 +48,17 @@ class SaveFilters extends Component {
             data.push({ name: dashboardName });
 
             //save types
-            data.push({ types: store.getState().types });
+            data.push({ types });
 
             //save also time?
             if (isSetTimerange) {
-                data.push({ timerange: store.getState().timerange });
+                data.push({ timerange });
             }
 
 
-            var tls = storePersistent.getState().user["tls-cn"] !== "N/A" ? storePersistent.getState().user["tls-cn"] : "";
-            var checksum = storePersistent.getState().profile[0] ? storePersistent.getState().profile[0].userprefs.validation_code : "";
-            var domainID = storePersistent.getState().user.domainID !== "N/A" ? storePersistent.getState().user.domainID : "";
+            var tls = user["tls-cn"] !== "N/A" ? user["tls-cn"] : "";
+            var checksum = profile[0] ? profile[0].userprefs.validation_code : "";
+            var domainID = user.domainID !== "N/A" ? user.domainID : "";
             var Url = "api/filters/save";
             try {
                 const response = await querySrv(Url, {

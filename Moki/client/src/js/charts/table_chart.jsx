@@ -10,8 +10,6 @@ import { getSearchableAttributes, getDisplayedAttributes,
     isEncryptedAttr, createFilter, getCategory, elasticsearchConnection } from '../../gui';
 import { decryptTableHits, decryptAttr } from '../../es-response-parser';
 import AdvancedProfile from "../helpers/advancedProfile";
-import storePersistent from "../store/indexPersistent";
-import store from "../store/index";
 import { downloadPcap } from '../helpers/download/downloadPcap';
 import { downloadSD } from '../helpers/download/downloadSD';
 import { tableColumns } from '../helpers/TableColumns';
@@ -20,6 +18,7 @@ import { downloadPcapMerged } from '../helpers/download/downloadPcapMerged';
 import { parseTimestamp } from "../helpers/parseTimestamp";
 import querySrv from '../helpers/querySrv';
 
+import store from "@/js/store";
 import EventsTable from "./table/events_table"
 
 import shareIcon from "/icons/share_dark.png";
@@ -60,7 +59,7 @@ function renderExpandRow(cell, value, isSearchable, category, attr) {
   //attrs.rtp-lossavg: [15 TO *] red
   //attrs.rtp-direction:'oneway'  red
   if ((cell === "rtp-MOScqex-avg" && value < 3) || (cell === "rtp-MOScqex-min" && value < 2) || (cell === "rtp-lossmax" && value > 25) || (cell === "rtp-lossavg" && value > 15) || (cell === "rtp-direction" && value === "oneway")) {
-      return <p value={value}>
+      return <p key={cell} value={value}>
           <span className="spanTab">{cell}:</span>
           <span className="red">{value}</span>
       </p>
@@ -78,7 +77,7 @@ function renderExpandRow(cell, value, isSearchable, category, attr) {
 
   //if filename make a link
   if (cell === "filename") {
-      return <p value={value}> <span className="spanTab">{cell}: </span>
+      return <p key={cell} value={value}> <span className="spanTab">{cell}: </span>
           <span className="tab">
               <button className="noFormatButton" onClick={getPcap} file={value}>
                   <img className="icon" alt="downloadIcon" src={downloadPcapIcon} title="download PCAP" />
@@ -88,7 +87,7 @@ function renderExpandRow(cell, value, isSearchable, category, attr) {
 
   //if audio_file make download icon (only for call-end)
   if (cell === "audio_file") {
-      return <p value={value}> <span className="spanTab">{cell}: </span>
+      return <p key={cell} value={value}> <span className="spanTab">{cell}: </span>
           <span className="tab">
               <a href={value} ><img className="icon" alt="wavIcon" title="download WAV" src={downloadIcon} /></a>
           </span></p>
@@ -96,7 +95,7 @@ function renderExpandRow(cell, value, isSearchable, category, attr) {
 
   //if  reg_expire make human-readable format
   if (cell === "reg_expire" || cell === "ua_expire") {
-      return <p value={value}>
+      return <p key={cell} value={value}>
           <span className="spanTab">{cell}: </span>
           <span className="tab">{parseTimestamp(new Date(value * 1000))}</span>
       </p>
@@ -104,7 +103,7 @@ function renderExpandRow(cell, value, isSearchable, category, attr) {
 
   //special case: if filename contains "downloadWav" (only for recording) - make a wav link
   if (cell === "downloadWav") {
-      return <p value={value}> <span className="spanTab">{cell}: </span>
+      return <p key={cell} value={value}> <span className="spanTab">{cell}: </span>
           <span className="tab">
               <a href={value} ><img className="icon" alt="wavIcon" title="download WAV" src={downloadIcon} /></a>
           </span></p>
@@ -139,16 +138,17 @@ function renderExpandRow(cell, value, isSearchable, category, attr) {
 export default class ListChart extends Component {
     constructor(props) {
         super(props);
-        var layout = storePersistent.getState().layout.table;
-        const columns = tableColumns(this.props.name, this.props.tags, layout);
+
+        const { layout, user, settings } = store.getState().persistent;
+        const columns = tableColumns(this.props.name, this.props.tags, layout.table);
+
         //if there is settings with min pages, use it
-        var count = 10;
-        var aws = storePersistent.getState().user.aws;
-        if (aws !== true) {
-            if (storePersistent.getState().settings.length > 0) {
-                for (var i = 0; i < storePersistent.getState().settings[0].attrs.length; i++) {
-                    if (storePersistent.getState().settings[0].attrs[i].attribute === "eventTableCount") {
-                        count = storePersistent.getState().settings[0].attrs[i].value;
+        let count = 10;
+        if (!user.aws) {
+            if (settings.length > 0) {
+                for (var i = 0; i < settings[0].attrs.length; i++) {
+                    if (settings[0].attrs[i].attribute === "eventTableCount") {
+                        count = settings[0].attrs[i].value;
                     }
                 }
             }
@@ -201,7 +201,7 @@ export default class ListChart extends Component {
         if (nextProps.data !== this.state.data) {
             this.setState({ data: nextProps.data, total: nextProps.total });
             let copy = JSON.parse(JSON.stringify(nextProps.data));
-            let parseData = await decryptTableHits(copy, storePersistent.getState().profile, this.state.count, this.state.page, this.state.decryptAttrs);
+            let parseData = await decryptTableHits(copy, store.getState().persistent.profile, this.state.count, this.state.page, this.state.decryptAttrs);
             this.setState({
                 data: parseData,
                 seenPages: [this.state.page],
@@ -216,7 +216,7 @@ export default class ListChart extends Component {
         if (prevProps.data !== this.props.data) {
             if (this.props.type !== "raw") {
                 let copy = JSON.parse(JSON.stringify(this.props.data));
-                let parseData = await decryptTableHits(copy, storePersistent.getState().profile, this.state.count, this.state.page, this.state.decryptAttrs);
+                let parseData = await decryptTableHits(copy, store.getState().persistent.profile, this.state.count, this.state.page, this.state.decryptAttrs);
                 this.setState({
                     data: parseData,
                     seenPages: [this.state.page],
@@ -257,10 +257,13 @@ export default class ListChart extends Component {
             decryptAttrs: [field.replace('_source.', '')],
             seenPages: []
         }, async function () {
-            let copy = JSON.parse(JSON.stringify(this.state.dataEncrypted));
-            let decryptAttrData = await decryptAttr(copy, storePersistent.getState().profile, field);
+            const { profile } = store.getState().persistent;
+
+            const copy = JSON.parse(JSON.stringify(this.state.dataEncrypted));
+            const decryptAttrData = await decryptAttr(copy, profile, field);
             decryptAttrData.sort(compareStrings(field, order));
-            let parseData = await decryptTableHits(decryptAttrData, storePersistent.getState().profile, this.state.count, this.state.page, this.state.decryptAttrs);
+            const parseData = await decryptTableHits(decryptAttrData, profile, this.state.count, this.state.page, this.state.decryptAttrs);
+
             this.setState({
                 data: parseData,
                 seenPages: [this.state.page]
@@ -429,7 +432,7 @@ export default class ListChart extends Component {
             alert("You must check less than 20 events to share them. Otherwise use filter sharing.");
         }
         else {
-            let href = window.location.origin + window.location.pathname + "?from=" + store.getState().timerange[0] + "&to=" + store.getState().timerange[1];
+            let href = window.location.origin + window.location.pathname + "?from=" + store.getState().filter.timerange[0] + "&to=" + store.getState().filter.timerange[1];
             href = href + "&filter=";
             for (var i = 0; i < selected.length; i++) {
                 href = href + "_id:" + selected[i];
@@ -463,8 +466,8 @@ export default class ListChart extends Component {
     }
 
     isAdmin() {
-        var aws = storePersistent.getState().user.aws;
-        if (aws === true) {
+        const aws = store.getState().persistent.user.aws;
+        if (aws) {
 
             var user = document.getElementById("user").innerHTML;
             if (user.includes("ADMIN")) {

@@ -4,8 +4,9 @@ import React, {
 import { createFilter } from '../../gui';
 import Animation from '../helpers/Animation';
 import CountryFlag from "../helpers/countryFlag";
-import storePersistent from "../store/indexPersistent";
 import { Navigate } from 'react-router';
+
+import store from "@/js/store";
 
 import clipboardIcon from "/icons/clipboard.png";
 import filter from "/icons/filter.png";
@@ -78,7 +79,7 @@ class TableChart extends Component {
 
   //Create buttons list for paggination
   createPaggination() {
-    var data = this.state.data[0];
+    var data = this.state.data?.at(0);
     if (data) {
       var pageCount = Math.ceil(data.length / 10);
       if (pageCount >= 2) {
@@ -102,7 +103,9 @@ class TableChart extends Component {
     field = field === "attrs.to.keyword" ? "attrs.to" : field;
     field = field === "attrs.r-uri.keyword" ? "attrs.r-uri" : field;
 
-    if (storePersistent.getState().profile[0] && storePersistent.getState().profile[0].userprefs.mode && storePersistent.getState().profile[0].userprefs.mode === "anonymous" && storePersistent.getState().profile[1].userprefs.anonymizableAttrs[field] && !storePersistent.getState().profile[1].userprefs.anonymizableAttrs[field].includes("NOT-")) {
+    const { profile } = store.getState().persistent;
+
+    if (profile[0] && profile[0].userprefs.mode && profile[0].userprefs.mode === "anonymous" && profile[1].userprefs.anonymizableAttrs[field] && !profile[1].userprefs.anonymizableAttrs[field].includes("NOT-")) {
       isEncrypted = true;
     }
 
@@ -180,21 +183,21 @@ class TableChart extends Component {
     }
 
     function longestText(data) {
+      if (data.length == 0) return;
       var longestText = 0;
-      for (var i = 0; i < data[0].length; i++) {
-        if (data[0][i].key.length > longestText) {
-          longestText = data[0][i].key.length;
-        }
+      for (const record of data[0]) {
+        longestText = Math.max(longestText, record.key.length);
       }
       return longestText < 30 ? longestText : 30;
     }
+
+    const { profile } = store.getState().persistent;
+
     if (window.location.pathname === "/web") {
       var data = this.state.data[0];
 
-
       while (data && data.length < 3 && data.length !== 0) {
         data.push({ "key": "", "doc_count": "" });
-
       }
 
       return (
@@ -207,7 +210,7 @@ class TableChart extends Component {
                 return (
                   <tr key={key} style={{ "height": "30px" }}>
                     <td className="listChart filterToggleActiveWhite" id={item.key} style={{ "borderBottom": "none" }} title={item.key}>
-                      {(this.props.name.includes("COUNTRY") || this.props.name.includes("COUNTRIES")) && item.key !== "unknown" && item.key !== "" && (storePersistent.getState().profile[0] && storePersistent.getState().profile[0].mode && storePersistent.getState().profile[0].mode !== "anonymous") ? <CountryFlag countryCode={item.key} /> : <span />}
+                      {(this.props.name.includes("COUNTRY") || this.props.name.includes("COUNTRIES")) && item.key !== "unknown" && item.key !== "" && (profile[0] && profile[0].mode && profile[0].mode !== "anonymous") ? <CountryFlag countryCode={item.key} /> : <span />}
                       {this.encryptedAttr(item.key.substring(0, 16))}
                     </td>
                     {(item.doc_count !== "" && this.state.data[1]) && <td className="listChart" style={{ "borderBottom": "none", "color": "grey" }}>{roundNumber(item.doc_count / this.state.data[1] * 100) + "%"}</td>}
@@ -244,7 +247,7 @@ class TableChart extends Component {
                 return (
                   <tr key={key}>
                     <td className="filtertd listChart filterToggleActiveWhite" id={item.key} title={item.key} style={{ "width": longestText(this.state.data) * 10 + 150 + "px" }}>
-                      {(this.props.name.includes("COUNTRY") || this.props.name.includes("COUNTRIES")) && item.key !== "unknown" && storePersistent.getState().profile[0] && storePersistent.getState().profile[0].mode !== "anonymous" ? <CountryFlag countryCode={item.key} /> : <span />}
+                      {(this.props.name.includes("COUNTRY") || this.props.name.includes("COUNTRIES")) && item.key !== "unknown" && profile[0] && profile[0].mode !== "anonymous" ? <CountryFlag countryCode={item.key} /> : <span />}
                       {this.encryptedAttr(shortText(item.key, this.props.name))}
                       {this.props.field && this.props.disableFilter !== true && <span className="filterToggle">
                         <img onClick={this.filter} field={this.props.field} value={item.key} className="icon" alt="filterIcon" src={filter} />

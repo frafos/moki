@@ -1,11 +1,11 @@
-import store from "../../../js/store/index";
+import store from "@/js/store";
 
 /**
 *Get filters from redux store and return only enable ones
 * @return {array} array of filter object
 * */
 export const getFilters = () => {
-  var filt = store.getState().filters;
+  var filt = store.getState().filter.filters;
   var filters = JSON.parse(JSON.stringify(filt));
   var filtersResult = [];
 

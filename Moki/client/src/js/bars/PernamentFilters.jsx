@@ -1,8 +1,6 @@
-import React, {
-    Component
-} from 'react';
-import { setPernamentFilters } from "../actions/index";
-import store from "../store/index";
+import React, { Component } from 'react';
+import store from "@/js/store";
+import { setPermanentFilters } from "@/js/slices";
 
 //pernament filters for dashboard. 
 //Dashboard_name: list
@@ -38,7 +36,7 @@ class PernamentFilters extends Component {
     }
 
     activateFilter(event) {
-        var oldPernamentFilters = JSON.parse(JSON.stringify(store.getState().pernamentFilters));
+        var oldPernamentFilters = JSON.parse(JSON.stringify(store.getState().filter.permanentFilters));
         //enable
         if (this.state[event.currentTarget.getAttribute('id')] === false) {
             this.setState({
@@ -59,7 +57,7 @@ class PernamentFilters extends Component {
 
             oldPernamentFilters.push({ "id": event.currentTarget.getAttribute('id'), "title": "NOT "+event.currentTarget.getAttribute('filter'), "state": "enable" });
         }
-        store.dispatch(setPernamentFilters(oldPernamentFilters));
+        store.dispatch(setPermanentFilters(oldPernamentFilters));
     }
 
     render() {

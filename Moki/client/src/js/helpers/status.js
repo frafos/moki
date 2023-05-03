@@ -1,5 +1,5 @@
 import querySrv from './querySrv';
-import storePersistent from "../store/indexPersistent";
+import store from "@/js/store";
 const BASE_NAME = import.meta.env.BASE_URL;
 
 export async function status() {
@@ -43,7 +43,7 @@ export async function diskSpace() {
     let events_warning_percentage = 0;
     let isCleaningScript = false;
     //get limit for warning and cleanup script
-    let settings = storePersistent.getState().settings;
+    let settings = store.getState().persistent.settings;
     if (settings && settings[0] && settings[0].attrs) {
         settings = settings[0].attrs;
 
