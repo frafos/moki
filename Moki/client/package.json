@@ -12,6 +12,7 @@
   ],
   "dependencies": {
     "@fidm/x509": "^1.2.1",
+    "@reduxjs/toolkit": "^1.9.5",
     "@tanstack/react-table": "^8.8.5",
     "bootstrap": "^4.6.0",
     "classnames": "^2.2.6",
