@@ -10,3 +10,5 @@ npm-debug.log
 .nyc_output
 coverage
 .env
+# data file
+monitor.json_backup
