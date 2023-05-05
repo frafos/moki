@@ -29,6 +29,7 @@
     "@moki-server/server": "git+https://git@github.com/frafos/moki-server.git#master",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
+    "moment": "^2.29.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.9",

@@ -37,7 +37,7 @@ export default function TopologyChart(props) {
         var xScale = d3.scaleOrdinal(Colors);
         var legendRectSize = 15;
         var legendSpacing = 3;
-        var legendWidth = "200px";
+        var legendWidth = "250px";
         width = width - 300;//legend width
 
         if (!data || data.length === 0 || links.length === 0 || nodes.length === 0) {
@@ -416,7 +416,18 @@ export default function TopologyChart(props) {
                     }
                 })
                 .append("svg:title")
-                .text(function (d) { return d})
+                .text(function (d) {
+                    //find value to key
+                    let value = 0;
+                    for (let hit of data[0]) {
+                        if (hit.ip === d) {
+                            value = hit.value;
+                            break;
+                        }
+                    }
+
+                    return d + ": " + value;
+                })
                 .on("click", (_event, d) => {
                     createFilter(field1 + ":\"" + d + "\" OR " + field2 + ":\"" + d + "\"");
                     //bug fix: if you click but not move out

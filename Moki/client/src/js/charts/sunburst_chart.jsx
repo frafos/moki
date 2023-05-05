@@ -87,7 +87,7 @@ export default class Sunburst extends Component {
                 .attr('id', 'sunburstChartSVG')
                 .attr('width', svgWidth)
                 .attr('height', height)
-                .attr('style', "padding-top: 20px, padding-left: 10px")
+                .attr('style', "margin-left: 10px")
                 .append('g')
                 .attr('transform', 'translate(' + width / 2 + ',' + height/ 2 + ')');
 

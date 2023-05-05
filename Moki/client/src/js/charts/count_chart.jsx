@@ -68,12 +68,42 @@ export default class CountUpChart extends Component {
     }
 
     getDifference(value, valueAgo) {
-        var diff = value - valueAgo;
+        let diff = value - valueAgo;
+        diff = Math.ceil(diff);
         this.setState({ valueAgo: diff })
     }
 
     //display="none"
     render() {
+        function niceNumber(nmb, name) {
+            if (name.includes("DURATION")) {
+                var sec_num = parseInt(nmb, 10);
+                var days = Math.floor(sec_num / 86400) ? Math.floor(sec_num / 86400) + "d" : "";
+                sec_num = sec_num - (Math.floor(sec_num / 86400) * 86400);
+
+                var hours = Math.floor(sec_num / 3600) ? Math.floor(sec_num / 3600) + "h" : "";
+                sec_num = sec_num - (Math.floor(sec_num / 3600) * 3600);
+
+                var minutes = Math.floor((sec_num % 3600) / 60) ? Math.floor((sec_num % 3600) / 60) + "m" : "";
+                sec_num = sec_num - (Math.floor((sec_num % 3600) / 60) * 60);
+
+                var seconds = sec_num % 60 ? sec_num % 60 + "s" : "";
+
+                //don't  display seconds if value is in days
+                if (days) {
+                    seconds = "";
+                }
+
+                if (!days && !hours && !minutes && !seconds) return "0s";
+                return days + " " + hours + " " + minutes + " " + seconds;
+            }
+            else if (nmb) {
+                return nmb.toLocaleString();
+            } else {
+                return 0;
+            }
+        }
+
         var digits = this.getNumberLength(this.state.count);
         var style ="";
 
@@ -85,10 +115,10 @@ export default class CountUpChart extends Component {
         }
         var bucket = getTimeBucket();
         return (
-            <div id={this.props.name} className={ (window.location.pathname === "/home" || window.location.pathname === "/") ? "chart valuechartHeight" : "chart valuechart" } >
+            <div style={{"minWidth": "180px"}} id={this.props.name} className={ (window.location.pathname === "/home" || window.location.pathname === "/") ? "chart valuechartHeight" : "chart valuechart" } >
                 {window.location.pathname === "/web" && <Animation name={this.props.name} type={this.props.type} setData={this.setData} dataAll={this.state.data} autoplay={this.props.autoplay} display={this.props.displayAnimation} />}
                 <h3 className="alignLeft title" style={{ "float": "inherit" }}>{this.props.name}</h3>
-                <h4 className={"alignLeft count-chart-counter " + style} title={"last " + bucket} >{this.state.count ? this.state.count.toLocaleString() : 0}</h4>
+                <h4 className={"alignLeft count-chart-counter " + style} title={"last " + bucket} >{niceNumber(this.state.data, this.props.name)}</h4>
                 {!Number.isNaN(this.state.valueAgo) && <h4 className={"alignLeft "} title={"difference to previous"}><span style={{ "color": this.state.valueAgo === 0 ? "black" : this.state.valueAgo > 0 ? "green" : "red" }}>{this.state.valueAgo > 0 ? "(+" + this.state.valueAgo + ")" : "(" + this.state.valueAgo + ")"}</span></h4>}
             </div>
         )

@@ -1,4 +1,4 @@
-var getTemplate = function ( field, queries, supress) {
+var getTemplate = function ( field, field2, queries, supress) {
     var template = {
         "size": 0,
         track_total_hits: true,
@@ -9,7 +9,10 @@ var getTemplate = function ( field, queries, supress) {
                     "exists": {
                         "field": supress
                     }
-                }
+                },
+                "filter": [
+                    { "term": { "attrs.type": "conf-join"   }}
+                  ]
             }
         },
         "aggs": {
@@ -22,16 +25,16 @@ var getTemplate = function ( field, queries, supress) {
                     }
                 },
                  "aggs": {
-                "docs_count": {
-                    "value_count": {
-                        "field": field
+                "type_count": {
+                    "cardinality": {
+                        "field": field2
                     }
                 }
             }
             },
             "avg_count": {
                   "avg_bucket": {
-                    "buckets_path": "count_bucket>docs_count" 
+                    "buckets_path": "count_bucket>type_count" 
                   }
             }
         }

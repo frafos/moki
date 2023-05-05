@@ -8,6 +8,7 @@ import { getLayoutSettings } from './js/helpers/getLayout';
 import { getSettings } from './js/helpers/getSettings';
 import FilterBar from './js/bars/FilterBar.jsx';
 import Restricted from './js/dashboards/Restricted/Restricted';
+import Report from './js/dashboards/Report/Report';
 import Sequence from './js/pages/sequenceDiagram';
 import { Navigate } from 'react-router';
 import { paths } from "./js/controllers/paths.jsx";
@@ -52,7 +53,8 @@ class App extends Component {
             user: {},
             resizeId: "",
             autologout: null,
-            automaticLogoutTime: "never"
+            automaticLogoutTime: "never",
+            typeReport: ""
         }
         this.setFirstTimeLogin = this.setFirstTimeLogin.bind(this);
         this.redirect = this.redirect.bind(this);
@@ -95,7 +97,7 @@ class App extends Component {
             //update timeout in localstorage - more tab case
             const autoReset = localStorage.getItem("autoResetTime");
             if (parseInt(autoReset) < Date.now()) {
-                 window.location = '/logout';
+                window.location = '/logout';
                 this.cleanAutimaticTimeout();
             }
         }, 1000);
@@ -105,7 +107,7 @@ class App extends Component {
         })
     };
 
-    cleanAutimaticTimeout(){
+    cleanAutimaticTimeout() {
         clearInterval(this.state.autologout);
         window.removeEventListener('mousemove', this.updateExpiredTime);
         window.removeEventListener('scroll', this.updateExpiredTime);
@@ -158,6 +160,10 @@ class App extends Component {
                     id++;
                 }
                 store.dispatch(setFilters(result));
+            }
+
+            if (params.get("report")) {
+                this.setState({ typeReport: params.get("report") });
             }
         }
 
@@ -475,6 +481,7 @@ class App extends Component {
 * */
     async getSipUser() {
         var response = "";
+        var sip;
         try {
             var sip;
             response = await querySrv(BASE_NAME + "api/user/sip", {
@@ -512,7 +519,12 @@ class App extends Component {
                     console.info("MOKI: sip user: " + sip.user);
 
                     //get username
-                    sip.username = await getUsername();
+                    if (sip.user !== "report") {
+                        sip.username = await getUsername();
+                    }
+                    else {
+                        sip.username = "";
+                    }
 
                     //set user info :  email:email, domainID:domainID, jwt: jwtbit
                     store.dispatch(setUser(sip));
@@ -534,23 +546,35 @@ class App extends Component {
                     }
 
                     //default user: no need to log in for web
-                    if (sip.user !== "USER" && sip.user !== "DEFAULT") {
+                    if (sip.user !== "USER" && sip.user !== "DEFAULT" && sip.user !== "report") {
                         this.getHostnames();
                     }
 
                     //default user: no need to log in for web
-                    if (sip.user !== "DEFAULT") {
-                        this.getMonitorSettings();
-                    }
-                    else {
-                        //store layout
+                    //localhost: no need to log, just get layout
+                 /*   if (sip.user === "report") {
                         var jsonData = await getLayoutSettings();
+                        await this.checkURLFilters();
                         store.dispatch(setLayout(jsonData));
                         this.setState({
-                            dashboards: ["web"],
+                            dashboards: ["report"],
                             isLoading: false
                         });
                     }
+                    else {*/
+                        if (sip.user !== "DEFAULT") {
+                            this.getMonitorSettings();
+                        }
+                        else {
+                            //store layout
+                            var jsonData = await getLayoutSettings();
+                            store.dispatch(setLayout(jsonData));
+                            this.setState({
+                                dashboards: ["web"],
+                                isLoading: false
+                            });
+                        }
+                 //   }
                 }
             }
         } catch (error) {
@@ -559,7 +583,7 @@ class App extends Component {
 
             } else {
                 console.error(error);
-                window.notification.showError({ errno: 2, text: "Check elasticsearch connection and restart the page.", level: "error" });
+                window.notification.showError({ errno: 2, text: "Check elasticsearch connection and restart the page. " + error, level: "error" });
             }
         }
     }
@@ -583,6 +607,7 @@ class App extends Component {
 * */
     render() {
         var dashboards = this.state.dashboards;
+        let user = this.state.user;
 
 
         //loading screen span
@@ -623,6 +648,7 @@ class App extends Component {
                 var dashboardAlter = [...this.state.dashboards];
                 if (this.state.aws) {
                     dashboardAlter.push("profiles");
+                    dashboardAlter.push("report");
                     dashboardAlter.push("connectivityIP");
                 }
 
@@ -662,6 +688,26 @@ class App extends Component {
                     </div>
                 </div>;
             }
+            //REPORT HANDLER - one dashboard only
+            else if (aws === true && user.user === "report") {
+                console.info("Router: report mode");
+                //end user context
+                sipUserSwitch = <div className="row"
+                    id="body-row">
+                    <div className="col" >
+                        <div className="d-flex justify-content-between header" >
+                            <TimerangeBar type={this.state.typeReport} />
+                        </div>
+                        <div style={{ "marginTop": "30px" }}>
+                            <Routes>
+                                <Route exact path='/index' element={<Report name="report" typeReport={this.state.typeReport} />} />
+                                <Route exact path='/' element={<Report name="report" typeReport={this.state.typeReport}/>} />
+                                <Redirect to="/" />
+                            </Routes>
+                        </div>
+                    </div>
+                </div>;
+            }
             //END USER ROLE: show one limited dashboard
             else {
                 console.info("Router: end user mode");
@@ -680,7 +726,7 @@ class App extends Component {
                         <Notificationbar className="errorBarLoading" ></Notificationbar>
                         <div>
                             <Routes>
-                                <Route exact path='/index' element={<Restricted name="restricted" tags={this.state.tags} />} />
+                                <Route exact path='/index' element={<Restricted name="restricted" />} />
                                 <Route exact path='/' element={<Restricted name="restricted" />} />
                                 <Route path='/logout' />
                                 <Route path='/no-sip-identity/' />

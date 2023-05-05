@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { status } from '../helpers/status'
-import { diskSpace } from '../helpers/status';
+import { diskSpace, status } from '../helpers/status';
 import { Navigate } from 'react-router';
 
 import store from "@/js/store";
@@ -12,8 +11,8 @@ import warningIcon from "/icons/warning.png";
 FORMAT   {errno: X, text: Y, level: Z}
 LEVELS
 1) error
-    - {errno: 1, text: "Logstash is not running", level: "error"}
-    - {errno: 2, text: "Elasticsearch is not running", level: "error"}
+    - {errno: 1, text: "Logstash is not running or can't index event", level: "error"}
+    - {errno: 2, text: "Elasticsearch is not running or can't create index", level: "error"}
     - {errno: 3, text: "Disk full > 90%", level: "error"}
     - {errno: 6, text: "Can't connect to monitor server", level: "error" }
 2) warning
@@ -24,8 +23,8 @@ LEVELS
 */
 const NOTIFICATIONS = [
     {},
-    { errno: 1, text: "Logstash is not running", level: "error" },
-    { errno: 2, text: "Elasticsearch is not running", level: "error" },
+    { errno: 1, text: "Logstash is not running or can't index event", level: "error" },
+    { errno: 2, text: "Elasticsearch is not running or can't create index", level: "error" },
     { errno: 3, text: "Disk full > 90%", level: "error" },
     { errno: 4, text: "Disk full > 80%", level: "warning" },
     { errno: 5, text: "Downloading data", level: "info" },
@@ -48,6 +47,7 @@ class Notificationbar extends Component {
         this.dontshow = this.dontshow.bind(this);
         this.shouldShow = this.shouldShow.bind(this);
         this.update = this.update.bind(this);
+        this.getNotification = this.getNotification.bind(this);
         window.notification = this;
     }
 
@@ -127,7 +127,13 @@ class Notificationbar extends Component {
     * @return {object} 
     * */
     getNotification(errno) {
-        return NOTIFICATIONS[errno];
+        let array = [...this.state.notifications];
+        for (let j = 0; j < array.length; j++) {
+            if (array[j].errno === errno) {
+                return (array[j]);
+            }
+        }
+        return null;
     }
 
     /**

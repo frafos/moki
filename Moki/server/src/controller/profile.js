@@ -135,7 +135,7 @@ class ProfileController {
         const existIndex = await existsIndexES(indexName, res);
         //if not, create new one
         if (!existIndex) {
-          if (cfg.debug) console.info("Profile doesn't exists, creating new one with defaults values");
+          if (cfg.debug) console.info("Profile index doesn't exists, creating new one with defaults values");
 
           //mode: encrypt, plain, anonymous
           try {

@@ -263,7 +263,7 @@ class TableChart extends Component {
               })}</tbody>
             </table>
           }
-          <div style={{ "marginTop": "5px", "marginLeft": "25%", "marginBottom": "5px" }}>{this.createPaggination()}</div>
+          {this.props.paggination !== false && <div style={{ "marginTop": "5px", "marginLeft": "25%", "marginBottom": "5px" }}>{this.createPaggination()}</div>}
           {((this.state.data && this.state.data[0] && this.state.data[0].length === 0) || (this.state.data && this.state.data[0] === "")) &&
             <table style={{ "minWidth": "17em" }}>
               <tbody>

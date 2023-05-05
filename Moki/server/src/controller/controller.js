@@ -6,7 +6,7 @@ const scroll = require('../../js/template_queries/scroll');
 const fs = require('fs');
 let { timestamp_gte, timestamp_lte } = require('../utils/ts');
 const { getTimestampBucket } = require('../utils/ts');
-const { getJWTsipUserFilter, getEncryptChecksumFilter } = require('../modules/jwt');
+const { getJWTsipUserFilter, getEncryptChecksumFilter, checkIAT } = require('../modules/jwt');
 const timerange_query = require('../../js/template_queries/timerange_query');
 const { cfg } = require('../modules/config');
 
@@ -21,6 +21,12 @@ Request - array of object. {template, params, filter, index}
 class Controller {
   static request(req, res, next, requests, dashboard = "overview") {
     async function search() {
+      //check token
+      let checkiat = await checkIAT(req, res);
+      if (checkiat === "logout") {
+        return res.json({ redirect: "logout" });
+      }
+
       const client = connectToES();
       var filters = getFiltersConcat(req.body.filters);
       let types = req.body.types;
@@ -145,19 +151,19 @@ class Controller {
           isEncryptChecksumFilter = "*";
         }
 
-       
 
-          //check if domain fiter should be use
-          const isDomainFilter = await getJWTsipUserFilter(req);
-          if (isDomainFilter.domain) {
-            domainFilter = isDomainFilter.domain;
-            //check if user fiter should be use
-            if (isDomainFilter.userFilter) {
-              userFilter = isDomainFilter.userFilter;
-            }
+
+        //check if domain fiter should be use
+        const isDomainFilter = await getJWTsipUserFilter(req);
+        if (isDomainFilter.domain) {
+          domainFilter = isDomainFilter.domain;
+          //check if user fiter should be use
+          if (isDomainFilter.userFilter) {
+            userFilter = isDomainFilter.userFilter;
           }
+        }
 
-          if (requests[i].params) {
+        if (requests[i].params) {
           //check if params contains "timebucket", insert it
           let params = requests[i].params;
           if (params.includes("timebucket")) {
@@ -256,6 +262,33 @@ class Controller {
     });
   }
 
+  //scroll function for export
+  static async scroll(req, res) {
+    try {
+      const client = connectToES();
+      const responseScroll = await scroll.scroll(client, req.body.scroll_id);
+      res.json(responseScroll);
+    }
+    catch (error) {
+
+    }
+
+  }
+
+  //clean scroll function for export
+  static async cleanScroll(req, res) {
+    try {
+      const client = connectToES();
+      client.clearScroll({ "scroll_id": req.body.scroll_id })
+      res.json("ok");
+    }
+    catch (error) {
+
+    }
+
+  }
+
+
   //special case, not msearch and with scroll parameter
   static requestTable(req, res, next, requests, dashboard = "overview") {
     async function search() {
@@ -263,7 +296,7 @@ class Controller {
       let filters = getFiltersConcat(req.body.filters);
       let types = req.body.types;
       let req_index = req.body.index;
-      const querySize = req.body.params && req.body.params.size ? req.body.params.size : 500;
+      let querySize = req.body.params && req.body.params.size ? req.body.params.size : 500;
       if (cfg.debug) console.info("----------------------TABLE DATA SEARCH-------------------------");
 
       //if no types from client, get types from monitor_layout
@@ -271,7 +304,7 @@ class Controller {
         types = await checkSelectedTypes([], dashboard);
       }
       //or if client request types, use this instead 
-      else if(requests.types !== "*") {
+      else if (requests.types !== "*") {
         if (req.url.includes("exceeded") || req.url.includes("alerts")) {
           types = getTypesConcat(types, "exceeded");
         }
@@ -284,7 +317,7 @@ class Controller {
         types = "*";
       }
 
-      if(req_index){
+      if (req_index) {
         requests.index = req_index;
       }
 
@@ -297,8 +330,8 @@ class Controller {
         types = "*";
       }
 
-       //disable types for specific requests that are coming from request (e.g. different index in dashboard)
-      if(req.body.types === "*"){
+      //disable types for specific requests that are coming from request (e.g. different index in dashboard)
+      if (req.body.types === "*") {
         types = "*";
         requests.filter = "*";
       }
@@ -358,7 +391,7 @@ class Controller {
       if (requests.index === "report*") {
         filters = "*";
       }
-
+      let resp = "";
       console.info("SERVER search with filters: " + JSON.stringify(filters) + " types: " + types + " timerange: " + timestamp_gte + "-" + timestamp_lte + " timebucket: " + timebucket + " userFilter: " + userFilter + " domainFilter: " + domainFilter + " encrypt checksum filter: " + isEncryptChecksumFilter);
       //always timerange_query
       let shouldSortByTime = requests.index.includes("logstash") || requests.index.includes("collectd") || requests.index.includes("exceeded") ? true : false;
@@ -366,41 +399,18 @@ class Controller {
       if (cfg.debug) console.info(requests.index);
       if (cfg.debug) console.info(JSON.stringify(requests.query));
 
-      if (querySize > 500) {
-        var response = await client.search({
-          index: requests.index,
-          scroll: '2m',
-          "ignore_unavailable": true,
-          "preference": 1542895076143,
-          body: requests.query
+      var response = await client.search({
+        index: requests.index,
+        scroll: '5m',
+        "ignore_unavailable": true,
+        "preference": 1542895076143,
+        body: requests.query
+      });
 
-        });
-
-        const totalHits = response.hits.total.value;
-        let actualHits = response.hits.hits.length;
-        while (actualHits < totalHits) {
-          const responseScroll = await scroll.scroll(client, response._scroll_id);
-          actualHits = actualHits + responseScroll.hits.hits.length;
-          response.hits.hits = response.hits.hits.concat(responseScroll.hits.hits);
-        }
-
-        client.clearScroll({
-          "scroll_id": response._scroll_id
-        })
-      }
-      else {
-        var response = await client.search({
-          index: requests.index,
-          "ignore_unavailable": true,
-          "preference": 1542895076143,
-          body: requests.query
-        });
-      }
-      //if (cfg.debug) console.info("------ES response---------- " + JSON.stringify(response));
-
+      resp = res.json(response);
+      
       userFilter = "*";
       console.info(new Date() + " got elastic data");
-      let resp = res.json(response);
 
       client.close();
       if (typeof resp === "string") {

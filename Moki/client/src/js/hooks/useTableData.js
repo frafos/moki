@@ -71,6 +71,4 @@ function useTableData(dashboardName, withTypes = true) {
   return { calls, total };
 }
 
-class Foo {}
-export default Foo;
 export { useTableData };

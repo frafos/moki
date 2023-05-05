@@ -7,7 +7,7 @@ const { newHTTPError } = require('./index');
 const { cfg, setMonitorVersion } = require('../modules/config');
 const { connectToES } = require('../modules/elastic');
 const distinct_query = require('../../js/template_queries/distinct_query');
-const { getJWTsipUserFilter } = require('../modules/jwt');
+const { getJWTsipUserFilter, checkIAT } = require('../modules/jwt');
 const AdminController = require('./admin');
 const elastic = require('../modules/elastic');
 
@@ -1178,6 +1178,12 @@ class SettingController {
   */
   static systemStatus(req, res, next) {
     async function search() {
+      //check token
+      let checkiat = await checkIAT(req, res);
+      if (checkiat === "logout") {
+        return res.json({ redirect: "logout" });
+      }
+
       const client = connectToES(res);
       var filter = {
         index: 'status*',

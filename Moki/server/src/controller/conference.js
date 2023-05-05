@@ -54,7 +54,7 @@ class ConferenceController extends Controller {
       //AVERAGE DURATION
       { index: "logstash*", template: agg_query, params: ["avg", "attrs.duration"], filter: "attrs.type:conf-leave" },
       //AVG PARTICIPANTS
-      { index: "logstash*", template: agg_sum_bucket_query_term, params: ["attrs.from.keyword"], filter: "attrs.type:conf-join" },
+      { index: "logstash*", template: agg_sum_bucket_query_term, params: ["attrs.conf_id",  "attrs.from.keyword"], filter: "attrs.type:conf-join"},
       //TOP CONFERENCES 
       { index: "logstash*", template: agg_query, params: ["terms", "attrs.conf_id"], filter: "attrs.type:conf-join" },
       //EVENT CONFERENCE TIMELINE

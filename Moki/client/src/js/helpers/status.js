@@ -1,5 +1,7 @@
 import querySrv from './querySrv';
 import store from "@/js/store";
+import { logout } from '@/gui';
+
 const BASE_NAME = import.meta.env.BASE_URL;
 
 export async function status() {
@@ -15,6 +17,11 @@ export async function status() {
 
     const json = await response.json();
     let result = "ok";
+
+    //concurrent check
+    if(json.redirect === "logout"){
+        logout("concurrentLogin");
+    }
 
     if (json.error) {
         result = { errno: 2, text: "Elasticsearch is not running or responding.", level: "error" };

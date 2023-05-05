@@ -48,7 +48,7 @@ var getTemplate = function (field1, field2, field3, field4, field5, field6, fiel
                             "field": field5,
                             "size": 50,
                             "order": {
-                                "_term": "desc"
+                                "_key": "desc"
                             }
                         },
                         "aggs": {

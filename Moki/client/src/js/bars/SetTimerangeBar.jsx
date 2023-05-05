@@ -28,14 +28,14 @@ import refreshStartIcon from "/icons/refresh.png";
 import refreshStopIcon from "/icons/refreshStop.png";
 import { useSelector } from "react-redux";
 
-function TimerangeBar() {
+function TimerangeBar(props) {
   let timeFormat = "hh:mm:ss";
   let dateFormat = "MM-DD-YYYY";
 
   const { user, settings, profile, layout } = store.getState().persistent;
   const autoRefresh = layout.autoRefresh;
 
-  //no aws - settings from json
+  // no aws - settings from json
   if (!user.aws) {
     if (settings && settings.length > 0) {
       for (const attr of settings[0].attrs) {
@@ -70,7 +70,6 @@ function TimerangeBar() {
   const [refreshValue, setRefreshValue] = useState(30);
   const [click, setClick] = useState(false);
   const [history, setHistory] = useState([]);
-  const [openExportJSON, setOpenExportJSON] = useState(false);
 
   const refreshInterval = useRef(30000);
   const timestamp = useRef([
@@ -461,26 +460,6 @@ function TimerangeBar() {
     });
   };
 
-  const exportCSV = () => {
-    document.getElementById("CSVexport").style.display = "block";
-    setOpenExportJSON(true);
-  };
-
-  const exportJSON = () => {
-    if (store.getState().persistent.user.jwt) {
-      document.getElementById("JSONexport").style.display = "block";
-    }
-    setOpenExportJSON(true);
-  };
-
-  const exportJSONclose = () => {
-    document.getElementById("JSONexport").style.display = "none";
-    setOpenExportJSON(false);
-  };
-  const exportCSVclose = () => {
-    document.getElementById("CSVexport").style.display = "none";
-    setOpenExportJSON(false);
-  };
 
   // const sipUser = this.state.sipUser.user;
   // const aws =store.getState().user.aws;
@@ -491,22 +470,9 @@ function TimerangeBar() {
     <div id="popup">
       <div className="d-flex justify-content-between">
         {sipUserSwitch}
-        {!hiddenExport.includes(name) && (
-          <div className="dropdown float-right text-right">
-            <button
-              className="btn"
-              type="button"
-              id="dropdownMenuExportButton"
-              onClick={exportJSON}
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Export
-            </button>
-          </div>
-        )}
-
-        {name !== "wblist" && (
+        {!hiddenExport.includes(name) && user.user !== "report"  && <Export />}
+        {user.user === "report" && <div style={{"marginLeft": "30px"}}> {props.type + timerange[2]}</div>}
+        {name !== "wblist" && user.user !== "report" && (
           <div className="dropdown float-right text-right">
             <span onClick={share} className="tabletd marginRight">
               <img
@@ -555,7 +521,7 @@ function TimerangeBar() {
                 title="previous time range"
               />
             </span>
-            {autoRefresh && (
+            {autoRefresh && user.user !== "report" && (
               <span onClick={onRefresh} className="tabletd">
                 <img
                   style={{ "marginLeft": "10px", "marginRight": "0px" }}
@@ -700,13 +666,13 @@ function TimerangeBar() {
                   </button>
                 </div>
                 <hr></hr>
-                {autoRefresh && (
+                {autoRefresh && user.user !== "report" && (
                   <div className="row" style={{ "marginLeft": "15px" }}>
                     <br />
                     <h3 style={{ "marginTop": "15px" }}>Refresh</h3>
                   </div>
                 )}
-                {autoRefresh && (
+                {autoRefresh && user.user !== "report" && (
                   <div className="row" style={{ "marginLeft": "30px" }}>
                     <p style={{ "whiteSpace": "pre-wrap" }}>every</p>{" "}
                     <input
@@ -740,18 +706,6 @@ function TimerangeBar() {
           </div>
         )}
       </div>
-      {name !== "web" && (
-        <div className="export" id="JSONexport">
-          <button className="close" onClick={exportJSONclose}>
-            &times;
-          </button>
-          <Export
-            type="JSON"
-            exportOpen={openExportJSON}
-            close={exportJSONclose}
-          />
-        </div>
-      )}
     </div>
   );
 }

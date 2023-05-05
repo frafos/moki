@@ -11,9 +11,8 @@ const {
   NetworkController, OverviewController, QoSController,
   RealmController, RegistrationController,
   SettingController, SecurityController, SystemController,
-  TransportController, ProfileController
+  TransportController, ProfileController, Controller
 } = require('../controller');
-//const ReportController = require('../controller/report');
 const { nodeEnv } = require('../modules/config');
 
 module.exports = () => {
@@ -64,6 +63,10 @@ module.exports = () => {
   router
     .post('/home/charts', HomeController.getCharts);
 
+    router
+    .post('/scroll', Controller.scroll)
+    .post('/cleanScroll', Controller.cleanScroll);
+    
 
   router
     .post('/conference/charts', ConferenceController.getCharts)
@@ -136,9 +139,7 @@ module.exports = () => {
     .post('/monitoring/events', MonitoringController.getEvents)
     .post('/monitoring/sbc', MonitoringController.getSbc);
 
-  /*router
-    .post('/report', ReportController.getReport);
-*/
+
   if (nodeEnv !== 'test') {
     router.use('/docs', swaggerUi.serve);
     router.get('/docs', swaggerUi.setup(specs, { explorer: true }));

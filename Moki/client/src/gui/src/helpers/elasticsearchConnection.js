@@ -18,7 +18,7 @@ export async function elasticsearchConnection(query,  params = false) {
   }
 
   var fce = "";
-  if(params.fce){
+  if (params?.fce){
     fce = params.fce;
     delete params.fce;
   }

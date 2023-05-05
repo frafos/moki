@@ -502,7 +502,7 @@ export default function MultipleLineChart(props) {
 
   const bucket = getTimeBucket();
   return (
-    <div id={props.id} className="chart">
+    <div id={props.id} className="chart" style={{ minHeight: "217px" }}>
       <h3 className="alignLeft title" style={{ "float": "inherit" }}>
         {props.name} <span className="smallText">(interval: {bucket})</span>
       </h3>

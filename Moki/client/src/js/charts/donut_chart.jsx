@@ -222,20 +222,25 @@ export default class StackedChart extends Component {
 
 
             let angleInterpolation = d3.interpolate(pie.startAngle()(), pie.endAngle()());
-            arcs.transition()
-                .duration(1200)
-                .attrTween("d", d => {
-                    let originalEnd = d.endAngle;
-                    return t => {
-                        let currentAngle = angleInterpolation(t);
-                        if (currentAngle < d.startAngle) {
-                            return "";
-                        }
-                        d.endAngle = Math.min(currentAngle, originalEnd);
-                        return arc(d);
-                    };
-                });
 
+            //disable animation
+            const user = store.getState().persistent.user;
+            if (user.user !== "report") {
+                arcs.transition()
+                    .duration(1200)
+                    .attrTween("d", d => {
+                        let originalEnd = d.endAngle;
+                        return t => {
+                            let currentAngle = angleInterpolation(t);
+                            if (currentAngle < d.startAngle) {
+                                return "";
+                            }
+                            d.endAngle = Math.min(currentAngle, originalEnd);
+                            return arc(d);
+                        };
+                    });
+            }
+            
             var divLegend = d3.select("#divLegend" + this.props.id);
             var legendHeight = data.length * 16;
 

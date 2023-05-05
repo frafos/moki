@@ -29,10 +29,12 @@ function getLastValueInInterval(data, i) {
 /**
  * @param {string} dashboardName
  * @param {{ functors: [] }} callbacks
+ * @param {boolean} withTypes: if types need to be loaded
+ * @param {string} reportType
  * @return {{ chartsData: {}, isLoading: boolean,
     initialValuesLoaded: boolean, charts: string[] }} results
  */
-function useDashboardData(dashboardName, callbacks, withTypes = true) {
+function useDashboardData(dashboardName, callbacks, withTypes = true, reportType = null) {
   // Initialize the state
   const [isLoading, setIsLoading] = useState(true);
   const [charts, setCharts] = useState([]);
@@ -46,7 +48,7 @@ function useDashboardData(dashboardName, callbacks, withTypes = true) {
   const name = dashboardName.substr(0, dashboardName.indexOf("/"));
 
   useEffect(() => {
-    if (!withTypes) return;
+    if (!withTypes || reportType != null) return;
     loadTypes();
     return (() => {
       store.dispatch(assignTypes([]));
@@ -124,7 +126,8 @@ function useDashboardData(dashboardName, callbacks, withTypes = true) {
     // TODO: replace by react router here, notification should be in a store
     try {
       setIsLoading(true);
-      const data = await elasticsearchConnection(dashboardName);
+      const params = reportType != null ? { reportType } : null;
+      const data = await elasticsearchConnection(dashboardName, params);
 
       if (typeof data === "string") {
         window.notification.showError({
