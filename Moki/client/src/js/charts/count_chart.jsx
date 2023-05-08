@@ -1,6 +1,4 @@
-import React, {
-    Component
-} from 'react';
+import { Component } from 'react';
 import Animation from '../helpers/Animation';
 import {
     getTimeBucket

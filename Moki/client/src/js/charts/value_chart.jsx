@@ -1,9 +1,6 @@
-import React, {
-    Component
-} from 'react';
+import { Component } from 'react';
 
-
-export default class datebarChart extends Component {
+export default class ValueChart extends Component {
     constructor(props) {
         super(props);
         this.state = {

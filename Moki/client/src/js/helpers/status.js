@@ -75,7 +75,7 @@ export async function diskSpace() {
 
     const data = await res.json();
     //get node name
-    if (data && data[0] && data[0].hasOwn("nodes")) {
+    if (data && data[0] && Object.hasOwn(data[0], "nodes")) {
         var node = Object.keys(data[0].nodes)[0];
         let result = "ok";
 
