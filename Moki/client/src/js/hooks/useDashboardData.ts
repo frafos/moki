@@ -6,13 +6,19 @@ import { elasticsearchConnection } from "../../gui";
 
 import store from "@/js/store";
 import { loadTypes } from "../bars/Typebar";
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual } from "react-redux";
 import { assignTypes } from "../slices";
 import { getTypes } from "../helpers/getTypes";
+import { useAppSelector } from ".";
+
+//TODO: notification in store, not in window object
+declare global {
+    interface Window { notification: any; }
+}
 
 //special parsing data - last bucket from different parsing function
 //i = 0 - time interval ago;   i = 1 actual
-function getLastValueInInterval(data, i) {
+function getLastValueInInterval(data: any[], i: number) {
   if (data && data.length > 0 && data[1].values.length > 0) {
     //get last time interval
     let lastValue;
@@ -27,24 +33,24 @@ function getLastValueInInterval(data, i) {
 }
 
 /**
- * @param {string} dashboardName
- * @param {{ functors: [] }} callbacks
- * @param {boolean} withTypes: if types need to be loaded
- * @param {string} reportType
- * @return {{ chartsData: {}, isLoading: boolean,
-    initialValuesLoaded: boolean, charts: string[] }} results
+ * @param withTypes if types need to be loaded
  */
-function useDashboardData(dashboardName, callbacks, withTypes = true, reportType = null) {
+function useDashboardData(
+  dashboardName: any,
+  callbacks: { functors: any[] },
+  withTypes = true,
+  reportType: string | null = null
+): { chartsData: any; isLoading: boolean; charts: string[] } {
   // Initialize the state
   const [isLoading, setIsLoading] = useState(true);
-  const [charts, setCharts] = useState([]);
-  const transientState = useRef({});
+  const [charts, setCharts] = useState<string[]>([]);
+  const transientState = useRef<any>({});
 
   const { profile } = store.getState().persistent;
-  const layout = useSelector((state) => state.persistent.layout);
-  const timerange = useSelector((state) => state.filter.timerange);
-  const filters = useSelector((state) => state.filter.filters, shallowEqual);
-  const types = useSelector((state) => state.filter.types, shallowEqual);
+  const layout = useAppSelector((state) => state.persistent.layout);
+  const timerange = useAppSelector((state) => state.filter.timerange);
+  const filters = useAppSelector((state) => state.filter.filters, shallowEqual);
+  const types = useAppSelector((state) => state.filter.types, shallowEqual);
   const name = dashboardName.substr(0, dashboardName.indexOf("/"));
 
   useEffect(() => {
@@ -66,10 +72,10 @@ function useDashboardData(dashboardName, callbacks, withTypes = true, reportType
     loadData();
   }, [timerange, filters, types]);
 
-  const processESData = async (data) => {
+  const processESData = async (data: any) => {
     if (!data || !data.responses) return;
 
-    let functors = [];
+    let functors: any = [];
     for (
       let i = 0;
       (i < data.responses.length) && (i < callbacks.functors.length);

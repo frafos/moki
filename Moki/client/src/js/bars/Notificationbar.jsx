@@ -91,7 +91,7 @@ class Notificationbar extends Component {
         clearTimeout(this.state.diskSpace);
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(_prevProps, prevState) {
         console.log(prevState.notifications);
         if (prevState.redirect !== this.state.redirect) {
             this.setState({ ...this.state, redirect: false });

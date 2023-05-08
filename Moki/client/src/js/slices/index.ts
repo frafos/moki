@@ -36,15 +36,25 @@ export const {
   setTimerange,
 } = filterSlice.actions;
 
+interface PersistentState {
+  user: any,
+  profile: [],
+  settings: [],
+  layout: {
+    charts: Record<string, string[]>
+  },
+  width: number,
+}
+
 const persistentSlice = createSlice({
   name: "persistent",
   initialState: {
     user: null,
     profile: [],
     settings: [],
-    layout: [],
+    layout: {},
     width: window.innerWidth,
-  },
+  } as PersistentState,
   reducers: {
     setUser(state, action) {
       state.user = action.payload;

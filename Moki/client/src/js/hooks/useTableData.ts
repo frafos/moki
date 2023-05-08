@@ -10,8 +10,11 @@ import store from "@/js/store";
 import { shallowEqual } from "react-redux";
 import { useAppSelector } from ".";
 
-function useTableData(dashboardName: string, withTypes = true): { calls: [], total: number } {
-  const [calls, setCalls] = useState([]);
+function useTableData(
+  dashboardName: string,
+  withTypes = true,
+): { calls: any[]; total: number } {
+  const [calls, setCalls] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const timerange = useAppSelector(
     (state) => state.filter.timerange,
@@ -47,16 +50,15 @@ function useTableData(dashboardName: string, withTypes = true): { calls: [], tot
 
   /**
    * parse table hits with profile attrs
-   * @param {ES response}  array ES data
-   * @return {} stores data in state
+   * @param  array ES data
+   * @return stores data in state
    */
-  const processESData = async (esResponse: { hits: { hits: [] }}) => {
+  const processESData = async (esResponse: any) => {
     if (!esResponse) return;
 
     //only parse table fnc and set total value
     try {
       const profile = store.getState().persistent.profile;
-      console.log(esResponse)
       const data = await parseTableHits(esResponse.hits.hits, profile);
       const totalHits = esResponse.hits.total.value;
       setCalls(data);
