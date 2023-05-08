@@ -3,11 +3,11 @@ export const getAttributes = () => {
   return attributes_list;
 };
 
-export function isEncryptedAttr(attr, encrypt) {
+export function isEncryptedAttr(attr, _encrypt) {
   return attr;
 }
 
-export function cipherAttr(attr, value, profile, mode) {
+export function cipherAttr(_attr, value, _profile, _mode) {
   return value;
 }
 

@@ -1,11 +1,11 @@
 
 
-export function getGeoData(path) {
+export function getGeoData(_path) {
   return;
 }
 
 
-export function decryptGeoData(data) {
+export function decryptGeoData(_data) {
  
   return ;
 }

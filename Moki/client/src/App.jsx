@@ -105,7 +105,7 @@ class App extends Component {
         this.setState({
             autologout: autologout
         })
-    };
+    }
 
     cleanAutimaticTimeout() {
         clearInterval(this.state.autologout);

@@ -281,7 +281,7 @@ class Settings extends Component {
                             alert("You must load also 'CA cert to check for TLS events input' when 'Peer certificate verification level' is not 'ignore peer certificate'");
                             return;
                         }
-                    };
+                    }
 
                     if (data.type === "checkbox") {
                         jsonData[i].value = data.checked;
@@ -333,7 +333,7 @@ class Settings extends Component {
                     });
                 }
 
-            };
+            }
             this.setState({
                 wait: true
             });

@@ -19,8 +19,8 @@ export async function shareFilters(store ) {
 
   if (types) {
     for (const type of types) {
-      if (types.state === "enable") {
-        href = href + "&type=" + types.id;
+      if (type.state === "enable") {
+        href = href + "&type=" + type.id;
       }
     }
   } //put it into clipboard
@@ -37,4 +37,3 @@ export async function shareFilters(store ) {
     document.getElementById("tooltipshare").style.display = "none";
   }, 1000);
 }
-;

@@ -2,8 +2,6 @@ import Datetime from "react-datetime";
 
 import { useEffect, useRef, useState } from "react";
 import Export from "./Export";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { parseTimestamp } from "../helpers/parseTimestamp";
 import { shareFilters } from "../../gui";
 const hiddenExport = [
@@ -445,21 +443,17 @@ function TimerangeBar(props) {
     setClick(false);
   };
 
-  const renderPDF = () => {
-    const input = document.getElementById("context");
-    html2canvas(input).then(function (canvas) {
-      let imgData = canvas.toDataURL("image/png", 0.5);
-      let width = input.scrollWidth;
-      let height = input.scrollHeight;
-      const pdf = new jsPDF("p", "pt", [width, height]);
-
-      pdf.addImage(imgData, "PNG", 0, 0);
-      let pathname = window.location.pathname;
-      pathname = pathname.substr(1);
-      pdf.save(pathname + ".pdf");
-    });
+  const exportJSON = () => {
+    if (store.getState().persistent.user.jwt) {
+      document.getElementById("JSONexport").style.display = "block";
+    }
+    setOpenExportJSON(true);
   };
 
+  const exportJSONclose = () => {
+    document.getElementById("JSONexport").style.display = "none";
+    setOpenExportJSON(false);
+  };
 
   // const sipUser = this.state.sipUser.user;
   // const aws =store.getState().user.aws;

@@ -77,7 +77,7 @@ class TableChart extends Component {
       if (pageCount >= 2) {
         var buttons = [];
         for (var i = 0; i < pageCount; i++) {
-          buttons.push(<button value={i + 1} onClick={e => this.setPage(e.target.value)} class={this.state.page === i ? "page-link-active page-link page-link-myPadding " : "page-link page-link-myPadding "}>{i + 1}</button>);
+          buttons.push(<button value={i + 1} onClick={e => this.setPage(e.target.value)} className={this.state.page === i ? "page-link-active page-link page-link-myPadding " : "page-link page-link-myPadding "}>{i + 1}</button>);
         }
         return buttons;
       }

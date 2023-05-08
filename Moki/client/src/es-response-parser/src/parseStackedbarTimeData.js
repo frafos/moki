@@ -12,6 +12,8 @@ export default function parseStackedbarTimeData(response) {
         var innerData = {};
         var stackedbarData = [];
         var sum = 0;
+        let keyy;
+        let value;
 
         var types = getTypes();
         if(types.length > 0 && types !== "type:none") types = types.map(a => a.id);
@@ -20,15 +22,15 @@ export default function parseStackedbarTimeData(response) {
                 //special case:  exceeded data needs also type filter
                 if (window.location.pathname === "/exceeded" && (types.length > 0 && types !== "type:none")) {
                     if (types.includes(stackedbarDataParse[i].agg.buckets[j].key)) {
-                        var keyy = stackedbarDataParse[i].agg.buckets[j].key;
-                        var value = stackedbarDataParse[i].agg.buckets[j].doc_count;
+                        keyy = stackedbarDataParse[i].agg.buckets[j].key;
+                        value = stackedbarDataParse[i].agg.buckets[j].doc_count;
                         innerData[keyy] = value;
                         sum = sum + value;
                     }
                 }
                 else {
-                    var keyy = stackedbarDataParse[i].agg.buckets[j].key;
-                    var value = stackedbarDataParse[i].agg.buckets[j].doc_count;
+                    keyy = stackedbarDataParse[i].agg.buckets[j].key;
+                    value = stackedbarDataParse[i].agg.buckets[j].doc_count;
 
                     innerData[keyy] = value;
                     sum = sum + value;

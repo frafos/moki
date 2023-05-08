@@ -6,7 +6,7 @@ name: name,
 values: time, value
 
 */
-export default function parseDateAreachart(responseName, response, responseName2, responseOld) {
+export default function parseDateAreachart(responseName, response, responseName2, _responseOld) {
     if (response && response.aggregations && response.aggregations.agg && response.aggregations.agg.buckets) {
         var areachartDataParse = response.aggregations.agg.buckets;
         var areachartDataParseOld = response.aggregations.agg.buckets;

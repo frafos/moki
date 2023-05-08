@@ -6,7 +6,7 @@ import { setFilters } from "@/js/slices";
 * @param {string}  searchValue filter to store
 * @return {array} Array of all filters
 * */
-export async function createFilter(searchValue, filter_id = null, dispatch = true, decrypt = false) {
+export async function createFilter(searchValue, filter_id = null, dispatch = true, _decrypt = false) {
   var oldFilters = store.getState().filter.filters;
   var colonFirst = searchValue.indexOf(':'); 
 
@@ -18,8 +18,9 @@ export async function createFilter(searchValue, filter_id = null, dispatch = tru
   }
   var id = filter_id ? filter_id : oldFilters.length > 0 ? oldFilters[oldFilters.length - 1].id + 1 : 1; //if no dispatch - only one filter value
 
+  let joined;
   if (dispatch) {
-    var joined = oldFilters.concat({
+    joined = oldFilters.concat({
       id: id,
       title: searchValue,
       state: 'enable',
@@ -29,7 +30,7 @@ export async function createFilter(searchValue, filter_id = null, dispatch = tru
     store.dispatch(setFilters(joined));
     return joined;
   } else {
-    var joined = {
+    joined = {
       id: id,
       title: searchValue,
       state: 'enable',
@@ -38,4 +39,4 @@ export async function createFilter(searchValue, filter_id = null, dispatch = tru
     };
     return joined;
   }
-};
+}

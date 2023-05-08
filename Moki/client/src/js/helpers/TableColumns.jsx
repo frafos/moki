@@ -854,7 +854,7 @@ export function tableColumns(dashboard, tags, layout) {
         }
         tag = true;
         //disable tags for end user
-        if (store.getState().persistent.user.jwt === "2") { tag = false };
+        if (store.getState().persistent.user.jwt === "2") { tag = false }
 
         for (let i = 0; i < columnsTableDefaultListConcat.length; i++) {
             let name = columnsTableDefaultListConcat[i].name ? columnsTableDefaultListConcat[i].name : columnsTableDefaultListConcat[i];

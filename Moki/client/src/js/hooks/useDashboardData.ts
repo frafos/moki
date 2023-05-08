@@ -100,7 +100,7 @@ function useDashboardData(
           );
         } // parseEventsRateData - pass also hours and total count
         else if (functors[j].type === "parseEventsRateData") {
-          let hours = (timerange[1] - timerange[0]) / 3600000;
+          const hours = (timerange[1] - timerange[0]) / 3600000;
           transientState.current[functors[j].result] = await functors[j].func(
             data.responses[i],
             data.responses[2],
@@ -108,7 +108,7 @@ function useDashboardData(
           );
         } //multileLine domains need second result
         else if (functors[j].type === "multipleLineDataDomains") {
-          let hours = (timerange[1] - timerange[0]) / 3600000;
+          const hours = (timerange[1] - timerange[0]) / 3600000;
           transientState.current[functors[j].result] = await functors[j].func(
             data.responses[i],
             data.responses[i + 1],

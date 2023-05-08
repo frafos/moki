@@ -1,5 +1,3 @@
-import {getUsername} from "../../../js/helpers/getUsername";
-
 const deleteAllCookies = () => {
   if (!document.cookie) return;
 
@@ -22,5 +20,6 @@ export function logout() {
     window.location = '/logout';
   }
   catch (error) {
+    console.error("logout:", error)
   }
 }

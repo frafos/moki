@@ -77,7 +77,7 @@ class Settings extends Component {
                 jsonData[i].value = data.value;
             }
 
-        };
+        }
 console.log(jsonData);
 
         try {

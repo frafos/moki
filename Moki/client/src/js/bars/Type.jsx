@@ -72,7 +72,7 @@ class Type extends Component {
             <button type="button" className={this.props.state === "enable" ? "type" : "type stripes"} id={this.props.id} state={this.state.state} title={this.props.description ? this.props.description : ""} style={{ backgroundColor: this.state.color }} onClick={this.disableType}>{this.props.name}
             </button>
         )
-    };
+    }
 }
 
 export default Type;

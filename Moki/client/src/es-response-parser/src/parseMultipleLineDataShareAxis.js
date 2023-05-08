@@ -11,11 +11,12 @@ export default function parseMultipleLineDataShareAxis(responseName, response, r
         var areachartDataParse2 = response2.aggregations.agg.buckets;
         var areachartDataValue = [];
         var areachartDataFinal = [];
+        let max = 0;
 
         //old data in background
         for (var j = 0; j < areachartDataParse2.length; j++) {
             //create sum of all attrs max count
-            var max = 0;
+            max = 0;
             for (var k = 0; k < areachartDataParse2[j].agg.buckets.length; k++) {
                 max = max + areachartDataParse2[j].agg.buckets[k].agg2.value;
             }
@@ -32,7 +33,7 @@ export default function parseMultipleLineDataShareAxis(responseName, response, r
         areachartDataValue = [];
         for (j = 0; j < areachartDataParse.length; j++) {
             //create sum of all attrs max count
-            var max = 0;
+            max = 0;
             for (k = 0; k < areachartDataParse[j].agg.buckets.length; k++) {
                 if (areachartDataParse[j].agg.buckets[k]) {
                     max = max + areachartDataParse[j].agg.buckets[k].agg2.value;

@@ -92,7 +92,7 @@ class Settings extends Component {
                     attribute: jsonData[i].attribute,
                     value: jsonData[i].value
                 });
-            };
+            }
 
 
             console.info("New settings data: " + JSON.stringify(result));

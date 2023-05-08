@@ -231,7 +231,7 @@ class SimpleSequenceDiagram extends Component {
             for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
                 if (obj[path[i]]) obj = obj[path[i]];
                 else obj = "";
-            };
+            }
             if (obj) {
                 return obj;
             }

@@ -147,7 +147,7 @@ class Settings extends Component {
                     value: jsonData[i].value
                 });
 
-            };
+            }
 
             this.saveToFile();
         }

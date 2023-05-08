@@ -86,8 +86,10 @@ function getTimeSetings(ms) {
                 switch (attr.attribute) {
                     case "timeFormat":
                         timeFormat = attr.value;
+                        break;
                     case "dateFormat":
                         dateFormat = attr.value;
+                        break;
                 }
             }
     
