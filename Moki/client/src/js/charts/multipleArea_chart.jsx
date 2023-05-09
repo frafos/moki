@@ -21,6 +21,8 @@ import { setTimerange } from "@/js/slices";
 import emptyIcon from "/icons/empty_small.png";
 
 export default function MultipleAreaChart({ data, id, units, name, width }) {
+  const { timerange } = store.getState().filter;
+
   useEffect(() => {
     if (data == undefined) return;
     draw();
@@ -61,8 +63,6 @@ export default function MultipleAreaChart({ data, id, units, name, width }) {
     var circleRadius = 3;
     var circleRadiusHover = 6;
 
-    const { timerange } = store.getState().filter;
-
     var parseDate = d3.timeFormat(timestampBucket(timerange[0], timerange[1]));
 
     var svg = d3.select("#" + id)
@@ -94,7 +94,7 @@ export default function MultipleAreaChart({ data, id, units, name, width }) {
     }
 
     //max and min date
-    var maxTime = timerange[1] + getTimeBucketInt();
+    var maxTime = timerange[1] + getTimeBucketInt(timerange);
     var minTime = timerange[0];
 
     for (var i = 0; i < data.length; i++) {
@@ -279,7 +279,7 @@ export default function MultipleAreaChart({ data, id, units, name, width }) {
         .on("mouseover", function (event, d) {
           tooltip.select("div").html(
             "<strong>Time: </strong>" + parseTimestamp(d.date) + " + " +
-              getTimeBucket() + "<br/><strong>Value: </strong>" +
+              getTimeBucket(timerange) + "<br/><strong>Value: </strong>" +
               d3.format(",")(d.value) + units + "<br/> ",
           );
           showTooltip(event, tooltip);
@@ -353,12 +353,11 @@ export default function MultipleAreaChart({ data, id, units, name, width }) {
     }
   };
 
-  const bucket = getTimeBucket();
+  const bucket = getTimeBucket(timerange);
   return (
     <div id={id} className="chart">
       <h3 className="alignLeft title">
-        {name}{" "}
-        <span className="smallText">(interval: {bucket})</span>
+        {name} <span className="smallText">(interval: {bucket})</span>
       </h3>
     </div>
   );

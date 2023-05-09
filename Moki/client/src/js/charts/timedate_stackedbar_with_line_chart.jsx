@@ -59,7 +59,7 @@ export default class StackedChartLine extends Component {
             .attr('id', id + "SVG");
         //  .append('g');
         //max and min date
-        var maxTime = parseTimeData(timerange[1]) + getTimeBucketInt();
+        var maxTime = parseTimeData(timerange[1]) + getTimeBucketInt(timerange);
         var minTime = parseTimeData(timerange[0]) - (60 * 1000); //minus one minute fix for round up
 
         var x = d3.scaleBand().range([0, widthChart]).padding(0.1);
@@ -225,7 +225,7 @@ export default class StackedChartLine extends Component {
                          }
                      })*/
                 .attr('width', function (d, i) {
-                    var timebucket = getTimeBucket();
+                    var timebucket = getTimeBucket(timerange);
                     var nextTime = d.data.time;
                     if (timebucket.includes("m")) {
                         nextTime = nextTime + (timebucket.slice(0, -1) * 60 * 1000);
@@ -258,7 +258,7 @@ export default class StackedChartLine extends Component {
                     }
                 })
                 .on("mouseover", function (event, d) {
-                    tooltip.select("div").html("<strong>Time: </strong> " + parseTimestamp(d.data.time) + " + " + getTimeBucket() + "<br/><strong>Value: </strong> " + d3.format(',')(d[1] - d[0]) + units + "<br/><strong>Type: </strong>" + this.parentNode.getAttribute("type") + "<br/> ");
+                    tooltip.select("div").html("<strong>Time: </strong> " + parseTimestamp(d.data.time) + " + " + getTimeBucket(timerange) + "<br/><strong>Value: </strong> " + d3.format(',')(d[1] - d[0]) + units + "<br/><strong>Type: </strong>" + this.parentNode.getAttribute("type") + "<br/> ");
                     d3.select(this).style("cursor", "pointer");
                     showTooltip(event, tooltip)
                 })

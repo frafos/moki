@@ -4,7 +4,7 @@ import ValueChart from "@/js/charts/value_chart";
 const meta: Meta<typeof ValueChart> = {
   title: "charts/Value",
   component: ValueChart,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 };
 
 export default meta;
@@ -20,6 +20,13 @@ export const Number: Story = {
 export const Duration: Story = {
   args: {
     data: 100000,
-    name: "SUM DURATION"
-  }
-}
+    name: "SUM DURATION",
+  },
+};
+
+export const Percent: Story = {
+  args: {
+    data: 5.36,
+    name: "ASR (%)",
+  },
+};

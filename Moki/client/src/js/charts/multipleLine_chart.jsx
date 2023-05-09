@@ -66,6 +66,7 @@ export default function MultipleLineChart(props) {
   );
 
   const width = useSelector((state) => state.persistent.width);
+  const timerange = store.getState().filter.timerange;
 
   useEffect(() => {
     if (props.data == undefined) return;
@@ -162,8 +163,8 @@ export default function MultipleLineChart(props) {
     }
 
     //max and min date
-    var maxTime = store.getState().filter.timerange[1] + getTimeBucketInt();
-    var minTime = store.getState().filter.timerange[0];
+    var maxTime = timerange[1] + getTimeBucketInt(timerange);
+    var minTime = timerange[0];
     // Clean up lost tooltips
     var elements = document.getElementById("tooltip" + id);
     if (elements) {
@@ -190,10 +191,7 @@ export default function MultipleLineChart(props) {
     var circleRadius = 3;
     var circleRadiusHover = 6;
     var parseDate = d3.timeFormat(
-      timestampBucket(
-        store.getState().filter.timerange[0],
-        store.getState().filter.timerange[1],
-      ),
+      timestampBucket(timerange[0], timerange[1]),
     );
 
     var svg = d3.select("#" + id)
@@ -423,7 +421,7 @@ export default function MultipleLineChart(props) {
         .on("mouseover", function (event, d) {
           tooltip.select("div").html(
             "<strong>Time: </strong>" + parseTimestamp(d.date) + " + " +
-              getTimeBucket() + "<strong><br/>Value: </strong>" +
+              getTimeBucket(timerange) + "<strong><br/>Value: </strong>" +
               d3.format(",")(d.value) + "<br/> ",
           );
           showTooltip(event, tooltip);
@@ -500,7 +498,7 @@ export default function MultipleLineChart(props) {
     }
   };
 
-  const bucket = getTimeBucket();
+  const bucket = getTimeBucket(timerange);
   return (
     <div id={props.id} className="chart" style={{ minHeight: "217px" }}>
       <h3 className="alignLeft title" style={{ "float": "inherit" }}>

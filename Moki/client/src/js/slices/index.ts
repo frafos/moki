@@ -1,13 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+interface FilterState {
+  types: any,
+  filters: any,
+  permanentFilters: any,
+  timerange: [number, number, string],
+}
+
 const filterSlice = createSlice({
   name: "filters",
   initialState: {
     types: [],
     filters: [],
     permanentFilters: [],
-    timerange: [],
-  },
+    timerange: [] as unknown,
+  } as FilterState,
   reducers: {
     assignTypes(state, action) {
       state.types = action.payload;
@@ -49,7 +56,7 @@ interface PersistentState {
 const persistentSlice = createSlice({
   name: "persistent",
   initialState: {
-    user: null,
+    user: { aws: false },
     profile: [],
     settings: [],
     layout: {},

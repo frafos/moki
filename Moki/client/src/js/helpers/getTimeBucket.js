@@ -2,11 +2,13 @@
 Get timestamp bucket for timelines charts
 !the same settings in server side
 */
-import store from "@/js/store";
 
-export const getTimeBucket=()=>{
-    var timestamp_gte = store.getState().filter.timerange[0];
-    var timestamp_lte = store.getState().filter.timerange[1];
+/**
+ @param { [number, number] } timerange
+*/
+export const getTimeBucket = (timerange) =>{
+    const timestamp_gte = timerange[0];
+    const timestamp_lte = timerange[1];
         //timestamp < 15 min, bucket 15s
     if (timestamp_lte - timestamp_gte <= (15 * 60 * 1000)) {
         return "15s";
@@ -42,9 +44,12 @@ export const getTimeBucket=()=>{
 
 }
 
-export const getTimeBucketInt=()=>{
-    var timestamp_gte = store.getState().filter.timerange[0];
-    var timestamp_lte = store.getState().filter.timerange[1];
+/**
+* @param { [number, number] } timerange
+*/
+export const getTimeBucketInt = (timerange) => {
+    const timestamp_gte = timerange[0];
+    const timestamp_lte = timerange[1];
     // timestamp < 15 min, bucket 15s
     if (timestamp_lte - timestamp_gte <= (15 * 60 * 1000)) {
       return 15 * 1000;

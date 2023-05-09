@@ -20,7 +20,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@charts/*": ["./src/js/charts/*"],
-      "@hooks/*": ["./src/js/hooks/*"]
+      "@hooks/*": ["./src/js/hooks/*"],
     }
   },
   "include": ["src"],

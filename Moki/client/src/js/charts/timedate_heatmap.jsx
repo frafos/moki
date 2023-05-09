@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { getTimeBucket, getTimeBucketInt } from "../helpers/getTimeBucket";
 import {
@@ -12,25 +12,51 @@ import { showTooltip } from "../helpers/tooltip";
 import { ColorsGreen, ColorsRedGreen, createFilter } from "../../gui";
 
 import store from "@/js/store";
-import { setTimerange } from "@/js/slices";
+import { setTimerange as setReduxTimerange } from "@/js/slices";
 
 import emptyIcon from "/icons/empty_small.png";
 
 export default function TimedateHeatmap(
   { data, id, field, width, name, units },
 ) {
+  const timerange = store.getState().filter.timerange;
+  const setTimerange = (newTimerange) => {
+    store.dispatch(
+      setReduxTimerange(newTimerange),
+    );
+  };
+
+  return (
+    <TimedateHeatmapRender
+      {...{
+        data,
+        id,
+        field,
+        width,
+        name,
+        units,
+        timerange,
+        setTimerange,
+      }}
+    />
+  );
+}
+
+export function TimedateHeatmapRender(
+  { data, id, field, width, name, units, timerange, setTimerange },
+) {
+  const chartSVGRef = useRef(null);
+
   useEffect(() => {
     if (!data) return;
     draw();
-  }, [data, width]);
+  }, [data, width, timerange]);
 
   const draw = () => {
     units = units ? " (" + units + ")" : "";
-    //FOR UPDATE: remove chart if it's already there
-    var chart = document.getElementById(id + "SVG");
-    if (chart) {
-      chart.remove();
-    }
+
+    //FOR UPDATE: clear chart svg
+    chartSVGRef.current.innerHTML = "";
 
     // Clean up lost tooltips
     var elements = document.getElementById("tooltip" + id);
@@ -75,9 +101,9 @@ export default function TimedateHeatmap(
       colorOneShade = ColorsRedGreen;
     }
     //max and min date
-    var maxTime = parseTimeData(store.getState().filter.timerange[1]) +
-      getTimeBucketInt();
-    var minTime = parseTimeData(store.getState().filter.timerange[0]) -
+    var maxTime = parseTimeData(timerange[1]) +
+      getTimeBucketInt(timerange);
+    var minTime = parseTimeData(timerange[0]) -
       (60 * 1000); //minus one minute fix for round up
 
     //scale for brush function
@@ -85,18 +111,14 @@ export default function TimedateHeatmap(
       .range([0, width])
       .domain([minTime, maxTime]);
 
-    var parseDate = parseTimestampD3js(
-      store.getState().filter.timerange[0],
-      store.getState().filter.timerange[1],
-    );
+    var parseDate = parseTimestampD3js(timerange[0], timerange[1]);
 
     const buckets = 8;
     colorScale = d3.scaleQuantile()
       .domain([0, buckets - 1, d3.max(data, (d) => d.value)])
       .range(colorOneShade);
     var height = 1200;
-    var rootsvg = d3.select("#" + id)
-      .append("svg")
+    var rootsvg = d3.select(chartSVGRef.current)
       .attr("id", id + "SVG")
       .attr("width", wholeWidth)
       .attr("height", height + margin.top + margin.bottom);
@@ -169,9 +191,7 @@ export default function TimedateHeatmap(
         var timestamp_readiable =
           parseTimestamp(new Date(Math.trunc(timestamp_gte))) + " - " +
           parseTimestamp(new Date(Math.trunc(timestamp_lte)));
-        store.dispatch(
-          setTimerange([timestamp_gte, timestamp_lte, timestamp_readiable]),
-        );
+        setTimerange([timestamp_gte, timestamp_lte, timestamp_readiable]);
       }
 
       // tooltip
@@ -187,7 +207,7 @@ export default function TimedateHeatmap(
         .attr("class", "cell")
         .style("opacity", 0)
         .attr("width", function (d, i) {
-          var timebucket = getTimeBucket();
+          var timebucket = getTimeBucket(timerange);
           var nextTime = data[i].attr1;
           if (timebucket.includes("m")) {
             nextTime = nextTime + (timebucket.slice(0, -1) * 60 * 1000);
@@ -255,7 +275,7 @@ export default function TimedateHeatmap(
           tooltip.select("div").html(
             "<strong>" + d.attr2.charAt(0).toUpperCase() + d.attr2.slice(1) +
               ": </strong>" + value + units + "<br/><strong>Time: </strong>" +
-              parseTimestampUTC(d.attr1) + " + " + getTimeBucket(),
+              parseTimestampUTC(d.attr1) + " + " + getTimeBucket(timerange),
           );
 
           showTooltip(event, tooltip);
@@ -323,12 +343,13 @@ export default function TimedateHeatmap(
     }
   };
 
-  const bucket = getTimeBucket();
+  const bucket = getTimeBucket(timerange);
   return (
     <div id={id} className="chart">
       <h3 className="alignLeft title">
         {name} <span className="smallText">(interval: {bucket})</span>
       </h3>
+      <svg ref={chartSVGRef} /> 
     </div>
   );
 }

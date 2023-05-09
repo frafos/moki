@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as d3 from "d3";
 import { getTimeBucket, getTimeBucketInt } from "../helpers/getTimeBucket";
 import { durationFormat } from "../helpers/durationFormat";
@@ -16,7 +16,11 @@ import { setTimerange } from "@/js/slices";
 
 import emptyIcon from "/icons/empty_small.png";
 
-export default function DatebarChart({ data, id, marginLeft, height, width, name, units }) {
+export default function DatebarChart(
+  { data, id, marginLeft, height, width, name, units },
+) {
+  const { timerange } = store.getState().filter;
+
   useEffect(() => {
     if (!data) return;
     draw();
@@ -50,10 +54,8 @@ export default function DatebarChart({ data, id, marginLeft, height, width, name
     height = height - margin.top - margin.bottom;
     var colorScale = d3.scaleOrdinal(Colors);
 
-    const { timerange } = store.getState().filter;
-
     //max and min date
-    var maxTime = parseTimeData(timerange[1]) + getTimeBucketInt();
+    var maxTime = parseTimeData(timerange[1]) + getTimeBucketInt(timerange);
     var minTime = parseTimeData(timerange[0]) - (60 * 1000); //minus one minute fix for round up
 
     var xScale = d3.scaleLinear()
@@ -176,7 +178,7 @@ export default function DatebarChart({ data, id, marginLeft, height, width, name
           return xScale(d.key);
         })
         .attr("width", function (d, i) {
-          var timebucket = getTimeBucket();
+          var timebucket = getTimeBucket(timerange);
           var nextTime = d.key;
           if (timebucket.includes("m")) {
             nextTime = nextTime + (timebucket.slice(0, -1) * 60 * 1000);
@@ -208,7 +210,7 @@ export default function DatebarChart({ data, id, marginLeft, height, width, name
           tooltip.select("div").html(
             "<strong>Value:</strong> " + value + units +
               "</br><strong>Time: </strong>" + parseTimestamp(timestamp) +
-              " + " + getTimeBucket(),
+              " + " + getTimeBucket(timerange),
           );
           showTooltip(event, tooltip);
         })
@@ -247,12 +249,11 @@ export default function DatebarChart({ data, id, marginLeft, height, width, name
     }
   };
 
-  const bucket = getTimeBucket();
+  const bucket = getTimeBucket(timerange);
   return (
     <div id={id} className="chart">
       <h3 className="alignLeft title">
-        {name}{" "}
-        <span className="smallText">(interval: {bucket})</span>
+        {name} <span className="smallText">(interval: {bucket})</span>
       </h3>
     </div>
   );

@@ -1,4 +1,4 @@
-import  { useEffect } from "react";
+import { useEffect } from "react";
 import * as d3 from "d3";
 import {
   Colors,
@@ -27,6 +27,7 @@ format: time, key
 export default function StackedChart(
   { data, id, width, name, units, animation, disableFilter, keys },
 ) {
+  const { timerange } = store.getState().filter;
 
   useEffect(() => {
     if (!animation) return;
@@ -99,7 +100,6 @@ export default function StackedChart(
 
     var colorScale = d3.scaleOrdinal(Colors);
 
-    const { timerange } = store.getState().filter;
     var parseDate = parseTimestampD3js(timerange[0], timerange[1]);
 
     var rootsvg = svg.append("svg")
@@ -108,7 +108,7 @@ export default function StackedChart(
       .attr("id", id + "SVG");
 
     //max and min date
-    var maxTime = parseTimeData(timerange[1]) + getTimeBucketInt();
+    var maxTime = parseTimeData(timerange[1]) + getTimeBucketInt(timerange);
     var minTime = parseTimeData(timerange[0]) - (60 * 1000); //minus one minute fix for round up
 
     var x = d3.scaleBand().range([0, width]).padding(0.1);
@@ -210,9 +210,7 @@ export default function StackedChart(
 
       const { layout } = store.getState().persistent;
       keys = keys
-        ? layout.types[keys]
-          ? layout.types[keys]
-          : keys
+        ? layout.types[keys] ? layout.types[keys] : keys
         : layout.types["overview"];
 
       if (
@@ -304,7 +302,7 @@ export default function StackedChart(
           return xScale(d.data.time);
         })
         .attr("width", function (d, i) {
-          var timebucket = getTimeBucket();
+          var timebucket = getTimeBucket(timerange);
           var nextTime = d.data.time;
           if (timebucket.includes("m")) {
             nextTime = nextTime + (timebucket.slice(0, -1) * 60 * 1000);
@@ -347,7 +345,7 @@ export default function StackedChart(
         .on("mouseover", function (event, d) {
           tooltip.select("div").html(
             "<strong>Time: </strong> " + parseTimestamp(d.data.time) + " + " +
-              getTimeBucket() + "<br/><strong>Value: </strong> " +
+              getTimeBucket(timerange) + "<br/><strong>Value: </strong> " +
               d3.format(",")(d[1] - d[0]) + units +
               "<br/><strong>Type: </strong>" +
               this.parentNode.getAttribute("type") + "<br/> ",
@@ -419,7 +417,7 @@ export default function StackedChart(
     }
   };
 
-  const bucket = getTimeBucket();
+  const bucket = getTimeBucket(timerange);
   return (
     <div id={id} className="chart">
       <h3 className="alignLeft title" style={{ "float": "inherit" }}>

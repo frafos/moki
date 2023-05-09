@@ -3,6 +3,7 @@ import Animation from '../helpers/Animation';
 import {
     getTimeBucket
 } from "../helpers/getTimeBucket";
+import store from "@/js/store"
 
 export default class CountUpChart extends Component {
     constructor(props) {
@@ -111,7 +112,8 @@ export default class CountUpChart extends Component {
         else if(digits > 5){
             style ="count-chart-counter-sm";
         }
-        var bucket = getTimeBucket();
+        const timerange = store.getState().filter.timerange;
+        const bucket = getTimeBucket(timerange);
         return (
             <div style={{"minWidth": "180px"}} id={this.props.name} className={ (window.location.pathname === "/home" || window.location.pathname === "/") ? "chart valuechartHeight" : "chart valuechart" } >
                 {window.location.pathname === "/web" && <Animation name={this.props.name} type={this.props.type} setData={this.setData} dataAll={this.state.data} autoplay={this.props.autoplay} display={this.props.displayAnimation} />}
