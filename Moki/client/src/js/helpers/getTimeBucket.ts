@@ -34,7 +34,7 @@ export function getTimeBucket(timerange: [number, number]) {
     }
   }
   return TIME_BUCKETS[TIME_BUCKETS.length - 1].name;
-};
+}
 
 export function getTimeBucketInt(timerange: [number, number]) {
   const interval = timerange[1] - timerange[0];
@@ -44,4 +44,4 @@ export function getTimeBucketInt(timerange: [number, number]) {
     }
   }
   return TIME_BUCKETS[TIME_BUCKETS.length - 1].value;
-};
+}

@@ -68,7 +68,7 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "preview": "vite preview",
-    "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx --fix --ignore-path ./.gitignore",
+    "lint": "eslint . --ext .ts,.tsx --fix --ignore-path ./.gitignore",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   }
