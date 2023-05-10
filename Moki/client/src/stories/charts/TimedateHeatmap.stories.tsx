@@ -8,7 +8,7 @@ import { parseDateHeatmap } from "@/es-response-parser";
 
 type TimedateProps = {
   timerange: [number, number];
-  setTimerange: Function;
+  setTimerange: (timerange: number[]) => void;
   data: [];
   id: string;
   field: string;
@@ -46,7 +46,6 @@ const meta: Meta<StoryProps> = {
   render: (args) => {
     const data = generateHeatmapData(args);
     const parsedData = parseDateHeatmap(data);
-    console.log(data);
     return (
       <TimedateHeatmapRender
         {...{ ...timerangeProps(args), data: parsedData }}
