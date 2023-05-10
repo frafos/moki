@@ -7,6 +7,8 @@ import store from "@/js/store";
 /**
 *ES request API
 * @param {query}  string request path
+* @param {{ fce?: (string) => void, reportType?: string } | boolean | null }
+params
 * @return {json} data from ES
 * */
 export async function elasticsearchConnection(query,  params = false) {
