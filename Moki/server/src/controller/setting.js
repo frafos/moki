@@ -4,11 +4,10 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const { spawn } = require('child_process')
 const { newHTTPError } = require('./index');
-const { cfg, setMonitorVersion } = require('../modules/config');
+const { cfg, setMonitorVersion, getUser } = require('../modules/config');
 const { connectToES } = require('../modules/elastic');
 const distinct_query = require('../../js/template_queries/distinct_query');
 const { getJWTsipUserFilter, checkIAT } = require('../modules/jwt');
-const AdminController = require('./admin');
 const elastic = require('../modules/elastic');
 
 let domainFilter = "*";
@@ -205,7 +204,7 @@ class SettingController {
   static loadFilters(req, res, next) {
     async function search(req) {
       //get user's right to load correct filters
-      const user = AdminController.getUser(req);
+      const user = getUser(req);
       let condition;
       //admin, show everything
       if (user.jwtbit === 0) {
@@ -312,7 +311,7 @@ class SettingController {
   static saveFilter(req, res, next) {
     async function search() {
       const client = connectToES(res);
-      const user = AdminController.getUser(req);
+      const user = getUser(req);
       const sub = user.sub;
       const indexName = "filters";
       let newIndex = false;
@@ -428,30 +427,28 @@ class SettingController {
    *             example:
    *               error: "Problem writing new filters to config file"
    */
-  static deleteFilter(req, res) {
+  static async deleteFilter(req, res) {
     const client = connectToES(res);
     console.info("Deleting filter " + req.body.id);
-    client.deleteByQuery({
+    let resp = await client.deleteByQuery({
       index: 'filters',
-      type: '_doc',
       refresh: true,
       body: {
         query: {
           match: { id: req.body.id }
         }
       }
-    }, function (error) {
-      if (error) {
-        return res.status(400).send({
-          "msg": "Problem with deleting filter. " + error
-        });
-      }
-      else {
-        return res.status(200).send({
-          "msg": "Filter deleted."
-        });
-      }
-    });
+    })
+    if(resp.failures.length === 0){
+      return res.status(200).send({
+        "msg": "Filter deleted."
+      });
+    }
+    else {
+      return res.status(400).send({
+        "msg": "Problem with deleting filter. " + error
+      });
+    }
   }
 
   static parseOpenSSLCertificate(req, res, next) {

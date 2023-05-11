@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { elasticsearchConnection } from '../../gui';
-import { parseTableHits, decrypt } from '../../es-response-parser';
+import { parseTableHits } from '../../es-response-parser';
 import store from "@/js/store";
 
 const BASE_URL = import.meta.env.BASE_URL;
@@ -127,9 +127,13 @@ class Export extends Component {
     //create an element and export data
     //partialExport - fot not closing export notification
     async export(exportData, partialExport) {
+        const { timerange } = store.getState().filter;
+        const gte = timerange[0];
+        const lte = timerange[1];
+
         const element = document.createElement("a");
         let file = ""
-        element.download = "data.json";
+        element.download = "export-"+new Date(gte).toISOString()+"-"+new Date(lte).toISOString()+".json";
         // file = new Blob([this.state.blobData], { type: "text/plain" });
         // file = new Blob([JSON.stringify(this.state.blobData, null, 2)], { type: "application/json" });
         // new Blob([Buffer.from(exportData, 'base64').toString('ascii')], { type: "application/json" });

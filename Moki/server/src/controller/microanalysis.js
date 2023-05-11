@@ -101,8 +101,10 @@ class MicronalysisController extends Controller {
       { index: "logstash*", template: agg_filter, params: ["server.ip", 128], filter: "*" },
       //27 DURATION GROUP
       { index: "logstash*", template: agg_filter, params: ["attrs.durationGroup", 128], filter: "*" },
-      //7 EVENTS BY signature
+      //28 EVENTS BY signature
       { index: "logstash*", template: agg_filter, params: ['sip.request.sig', 128], filter: "*" },
+      //29 AGENT TYPE
+      { index: "logstash*", template: agg_filter, params: ["agent.type", 128], filter: "*" },
     ], "microanalysis");
   }
 

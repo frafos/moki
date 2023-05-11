@@ -323,41 +323,6 @@ class AdminController {
     }
   }
 
-  /*
-  return login user info
-  */
-  static getUser(req) {
-    let parsedHeader;
-    try {
-      parsedHeader = parseBase64(req.headers[hfName]);
-    } catch (e) {
-      console.log("ACCESS getJWTsipUserFilter: JWT parsing failed");
-      throw new Error("ACCESS: JWT parsing error");
-    }
-    const sip = parsedHeader['custom:sip'];
-    const jwtbit = parsedHeader['custom:adminlevel'];
-    const domainID = parsedHeader['custom:domainid'];
-    const subId = parsedHeader['sub'];
-    const userbackend = parsedHeader['custom:userbackend'];
-
-    if (domainID) {
-      return {
-        sip: sip,
-        jwtbit: jwtbit,
-        domain: domainID,
-        sub: subId,
-        userbackend: userbackend
-      };
-    }
-    else {
-      return {
-        sip: "admin",
-        jwtbit: 0,
-        domain: "default",
-        sub: "default"
-      };
-    }
-  }
 
   /*
 create new user with password in htpasswd
@@ -541,3 +506,5 @@ create new user with password in htpasswd
 }
 
 module.exports = AdminController;
+
+

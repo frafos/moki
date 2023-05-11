@@ -9,7 +9,7 @@ const {
 } = require('../utils/ES_queries');
 const moment = require('moment-timezone');
 const AdminController = require('./admin');
-const { getDefaults } = require('../modules/config');
+const { getDefaults, getUser } = require('../modules/config');
 const indexName = "profiles";
 const { cfg } = require('../modules/config');
 
@@ -21,7 +21,7 @@ class ProfileController {
   static storeUserSettings(req, res, next) {
     async function search() {
       if (cfg.debug) console.info("Storing settings in user profile in ES");
-      const user = AdminController.getUser(req);
+      const user = getUser(req);
       let keys = Object.keys(req.body.userprefs);
       const field = req.body.userprefs[Object.keys(req.body.userprefs)[0]];
 
@@ -79,7 +79,7 @@ class ProfileController {
   static deleteUserSettings(req, res, next) {
     async function search() {
       if (cfg.debug) console.info("Deleting user profile " + secret);
-      const user = AdminController.getUser(req);
+      const user = getUser(req);
       const secret = user.sub;
       const deleted = await deleteES(indexName, { "query": { "match": { "event.sub": secret } } }, res);
       if (deleted !== 0) {
@@ -105,7 +105,7 @@ class ProfileController {
   // /profile
   static getUserSettings(req, res, next) {
     async function search() {
-      const user = AdminController.getUser(req);
+      const user = getUser(req);
       const sub = user.sub;
       const domain = user["domain"];
       if (cfg.debug) console.info("--------------------------GETING USER PROFILE---------------------");

@@ -150,6 +150,8 @@ function MicroanalysisCharts() {
           func: parseListData,
           attrs: ["sip.request.sig"],
         }],
+        //AGENT TYPE 29
+        [{ result: "agentType", func: parseListData, attrs: ["agent.type"] }],
       ],
     },
   );
@@ -410,6 +412,15 @@ function MicroanalysisCharts() {
               data={chartsData.topNodes}
               name={"TOP HOSTs LIST"}
               field={"agent.hostname"}
+            />
+          </div>
+        )}
+        {charts["AGENT TYPE"] && (
+          <div className="col-auto">
+            <ListChart
+              data={chartsData.agentType}
+              name={"AGENT TYPE"}
+              field={"agent.type"}
             />
           </div>
         )}

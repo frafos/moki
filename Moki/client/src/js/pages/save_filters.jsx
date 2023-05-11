@@ -14,9 +14,9 @@ class SaveFilters extends Component {
         }
     }
 
-    async componentDidMount(){
+    async componentDidMount() {
         var filters = await getFilters();
-        this.setState({filters: filters});
+        this.setState({ filters: filters });
     }
 
     uid() {
@@ -29,14 +29,15 @@ class SaveFilters extends Component {
         const { user, profile } = store.getState().persistent;
         
         var filterTitle = document.getElementById("filterTitle").value;
+        var isSetTimerange = document.getElementById("time").checked;
+        var filters = await getFilters();
+
+
         if (filterTitle === "") {
             alert("You have to fill filter title.");
-        } else {
+        }
+        else {
             var dashboardName = document.getElementById("filterTitle").getAttribute("dashboard");
-            document.getElementsByClassName("close")[0].click();
-            var filters = await getFilters();
-            var isSetTimerange = document.getElementById("time").checked;
-
             var data = [];
             if (filters.length === 0) {
                 data.push({ filters: [] });
@@ -54,7 +55,7 @@ class SaveFilters extends Component {
             if (isSetTimerange) {
                 data.push({ timerange });
             }
-
+           
 
             var tls = user["tls-cn"] !== "N/A" ? user["tls-cn"] : "";
             var checksum = profile[0] ? profile[0].userprefs.validation_code : "";
@@ -99,7 +100,7 @@ class SaveFilters extends Component {
         return (
             <span>
                 <p className="modalText" > <b>Name: </b><input type="text" id="filterTitle" style={{ "width": "400px" }} dashboard={dashboard} /></p>
-                <p><b>Timerange:</b><input type="checkbox" id="time" style={{"verticalAlign": "middle", "marginLeft": "5px"}}/> </p>
+                <p><b>Timerange:</b><input type="checkbox" id="time" style={{ "verticalAlign": "middle", "marginLeft": "5px" }} /> </p>
                 <div className="modalText" >
                     <b>Active filters:</b>
                     {filters.length === 0 && <p className="tab" >No active filters</p>}
