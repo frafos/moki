@@ -9,39 +9,45 @@ const HOUR = 60 * MN;
 const DAY = 24 * HOUR;
 
 interface Bucket {
-  threshold: number,
-  value: number,
-  name: string,
+  threshold: number;
+  value: number;
+  name: string;
+  format: string;
 }
 
 // ordered increasingly by thresholds
-const TIME_BUCKETS: Bucket[]  = [
-  { threshold: 15 * MN , value: 15 * SEC, name: "15s" },
-  { threshold: 1 * HOUR, value: MN, name: "1m" },
-  { threshold: 6 * HOUR, value: 5 * MN, name: "5m" },
-  { threshold: 12 * HOUR, value: 10 * MN, name: "10m" },
-  { threshold: 1 * DAY, value: 30 * MN, name: "30m" },
-  { threshold: 3 * DAY, value: 1 * HOUR, name: "1h" },
-  { threshold: 7 * DAY, value: 3 * HOUR, name: "3h" },
-  { threshold: 30 * DAY, value: 12 * HOUR, name: "12h" },
-]
+const TIME_BUCKETS: Bucket[] = [
+  { threshold: 15 * MN, value: 15 * SEC, name: "15s", format: "%H:%H:%S" },
+  { threshold: 1 * HOUR, value: MN, name: "1m", format: "%H:%M %p" },
+  { threshold: 6 * HOUR, value: 5 * MN, name: "5m", format: "%H:%M %p" },
+  { threshold: 12 * HOUR, value: 10 * MN, name: "10m", format: "%H:%M %p" },
+  { threshold: 1 * DAY, value: 30 * MN, name: "30m", format: "%d %b %H:%M %p" },
+  { threshold: 3 * DAY, value: 1 * HOUR, name: "1h", format: "%d %b %H %p" },
+  { threshold: 7 * DAY, value: 3 * HOUR, name: "3h", format: "%d %b %H %p" },
+  { threshold: 30 * DAY, value: 12 * HOUR, name: "12h", format: "%d %b" },
+];
 
-export function getTimeBucket(timerange: [number, number]) {
+function getTimeBucketData<T extends keyof Bucket>(
+  timerange: [number, number],
+  property: T,
+): Bucket[T] {
   const interval = timerange[1] - timerange[0];
   for (const bucket of TIME_BUCKETS) {
     if (interval <= bucket.threshold) {
-      return bucket.name;
+      return bucket[property];
     }
   }
-  return TIME_BUCKETS[TIME_BUCKETS.length - 1].name;
+  return TIME_BUCKETS[TIME_BUCKETS.length - 1][property];
+}
+
+export function getTimeBucket(timerange: [number, number]) {
+  return getTimeBucketData(timerange, "name");
 }
 
 export function getTimeBucketInt(timerange: [number, number]) {
-  const interval = timerange[1] - timerange[0];
-  for (const bucket of TIME_BUCKETS) {
-    if (interval <= bucket.threshold) {
-      return bucket.value;
-    }
-  }
-  return TIME_BUCKETS[TIME_BUCKETS.length - 1].value;
+  return getTimeBucketData(timerange, "value");
+}
+
+export function getTimeBucketFormat(timerange: [number, number]) {
+  return getTimeBucketData(timerange, "format");
 }

@@ -1,7 +1,7 @@
 const TOP_MAX_WIDTH = 200;
 
 /**
-  @param {d3.Selection<HTMLDivElement, any, HTMLElement, any>} tooltip
+  @param {d3.Selection<HTMLDivElement, unknown, null, undefined>} tooltip
 */
 function showTooltip(event, tooltip) {
   const dim = tooltip.node()?.getBoundingClientRect();
@@ -17,4 +17,11 @@ function showTooltip(event, tooltip) {
     .style("top", y + "px");
 }
 
-export { showTooltip };
+/**
+  @param {d3.Selection<HTMLDivElement, unknown, null, undefined>} tooltip
+*/
+function hideTooltip(tooltip) {
+  tooltip.style("visibility", "hidden");
+}
+
+export { showTooltip, hideTooltip };

@@ -25,19 +25,9 @@ export default function TimedateHeatmap(
       setReduxTimerange(newTimerange),
     );
   };
-
   return (
     <TimedateHeatmapRender
-      {...{
-        data,
-        id,
-        field,
-        width,
-        name,
-        units,
-        timerange,
-        setTimerange,
-      }}
+      {...{ data, id, field, width, name, units, timerange, setTimerange }}
     />
   );
 }
@@ -55,16 +45,16 @@ export function TimedateHeatmapRender(
   const draw = () => {
     units = units ? " (" + units + ")" : "";
 
-    //FOR UPDATE: clear chart svg
+    // FOR UPDATE: clear chart svg
     chartSVGRef.current.innerHTML = "";
 
     // Clean up lost tooltips
-    var elements = document.getElementById("tooltip" + id);
+    let elements = document.getElementById("tooltip" + id);
     while (elements) {
       elements.parentNode.removeChild(elements);
     }
 
-    var marginLeft = 150;
+    let marginLeft = 150;
     /* if (data.length > 0) {
              var maxTextWidth = d3.max(data.map(n => n.attr2.length));
               marginLeft = maxTextWidth > 23 ? 150 : maxTextWidth > 15 ? maxTextWidth * 6 :  maxTextWidth * 9;
@@ -349,7 +339,7 @@ export function TimedateHeatmapRender(
       <h3 className="alignLeft title">
         {name} <span className="smallText">(interval: {bucket})</span>
       </h3>
-      <svg ref={chartSVGRef} /> 
+      <svg ref={chartSVGRef} />
     </div>
   );
 }

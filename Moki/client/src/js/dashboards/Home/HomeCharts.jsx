@@ -1,7 +1,6 @@
 /*
 Class to get data for all charts iin Call dashboard
 */
-import React from "react";
 import { useDashboardData, getLastValueInInterval } from "@hooks/useDashboardData";
 import TimedateHeatmap from "@charts/timedate_heatmap.jsx";
 import CountUpChart from "@charts/count_chart.jsx";
