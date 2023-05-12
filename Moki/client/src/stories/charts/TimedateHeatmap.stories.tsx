@@ -17,13 +17,7 @@ type TimedateProps = {
   units: string;
 };
 
-type FakeDataProps = {
-  seed: number;
-  sample: number;
-  valueMod: number;
-};
-
-type StoryProps = TimedateProps & TimerangeProps & FakeDataProps;
+type StoryProps = TimedateProps & TimerangeProps & ChartGeneratorProps;
 
 const meta: Meta<StoryProps> = {
   title: "charts/TimedateHeatmap",
@@ -42,6 +36,7 @@ const meta: Meta<StoryProps> = {
     startDate: Date.now(),
     endDate: Date.now() + DAY_TIME * 15,
     valueMod: 10,
+    width: 800,
   },
   render: (args) => {
     const data = generateHeatmapData(args);
@@ -63,20 +58,14 @@ export const Primary: Story = {
     id: "dateHeatmap",
     name: "TYPE DATE HEATMAP",
     field: "attrs.type",
-    width: 800,
     units: "AVG",
   },
 };
 
 export const ZoomedIn: Story = {
   args: {
+    ...Primary.args,
     startDate: 1684288472208,
     endDate: 1684419331200,
-    sample: 50,
-    id: "dateHeatmap",
-    name: "TYPE DATE HEATMAP",
-    field: "attrs.type",
-    width: 800,
-    units: "AVG",
   },
-}
+};

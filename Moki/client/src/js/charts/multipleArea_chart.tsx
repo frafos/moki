@@ -8,7 +8,6 @@ import {
 import { parseTimestamp } from "../helpers/parseTimestamp";
 import { setTickNrForTimeXAxis } from "../helpers/chart";
 import { hideTooltip, showTooltip } from "../helpers/tooltip.js";
-import { Colors } from "../../gui";
 
 import store from "@/js/store";
 import { setTimerange as setReduxTimerange } from "@/js/slices";
@@ -43,10 +42,8 @@ export default function MultipleAreaChart(
   };
 
   // TODO: as parameters
-  let color = d3.scaleOrdinal<string, string>().range(Colors);
-  if (name === "PARALLEL CALLS") {
-    color = d3.scaleOrdinal<string, string>().range(["#caa547", "#30427F"]);
-  } else if (name === "PARALLEL REGS") {
+  let color = d3.scaleOrdinal<string, string>().range(["#caa547", "#30427F"]);
+  if (name === "PARALLEL REGS") {
     color = d3.scaleOrdinal<string, string>().range(["#caa547", "#A5CA47"]);
   } else if (name === "INCIDENTS") {
     color = d3.scaleOrdinal<string, string>().range(["#caa547", "#69307F"]);
@@ -133,7 +130,7 @@ export function MultipleAreaChartRender(
     const areaStroke = "2px";
 
     const circleOpacity = "0.85";
-    const circleRadius = 3.5;
+    const circleRadius = 3;
     const circleRadiusHover = 6;
 
     const svg = d3.select(chartSVGRef.current)
@@ -142,14 +139,14 @@ export function MultipleAreaChartRender(
     // max and min time in data
     const minDateTime = d3.min(data, (chart) => (
       d3.min(chart.values, (d) => d.date)
-    ));
+    )) ?? -Infinity;
     const maxDateTime = d3.max(data, (chart) => (
       d3.max(chart.values, (d) => d.date)
-    ));
+    )) ?? Infinity;
 
-    //max and min time
-    const minTime = minDateTime ? minDateTime : timerange[0];
-    const maxTime = maxDateTime ? maxDateTime : timerange[1] + timeBucket.value;
+    // max and min time
+    const minTime = Math.max(minDateTime, timerange[0]);
+    const maxTime = Math.min(maxDateTime, timerange[1] + timeBucket.value);
 
     // min and max value in data
     const minValue = d3.min(data, (chart) => (
@@ -255,6 +252,7 @@ export function MultipleAreaChartRender(
         .style("select", "none");
       circles.selectAll(".circle").style("opacity", otherAreasOpacityHover);
       const areaChart = areas.filter((_d, i) => i === index);
+      areaChart.raise();
       areaChart.selectAll(".circle").style("opacity", circleOpacity);
       areaChart.selectAll(".area-fill")
         .select("path")

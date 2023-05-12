@@ -4,28 +4,9 @@ import { dateBetween, HOUR_TIME } from "../utils/date";
 import { getTimeBucketInt } from "@/js/helpers/getTimeBucket";
 import { arrayMaybeRemove } from "../utils/array";
 
-interface Response {
-  aggregations: {
-    agg: {
-      buckets: {
-        key: number;
-        agg: {
-          buckets: {
-            key: string;
-            doc_count: number;
-          }[];
-        };
-      }[];
-    };
-  };
-}
-
-interface GeneratorProps {
-  seed: number;
-  startDate: number;
-  endDate: number;
-  sample: number;
-  valueMod: number;
+interface DataBucket {
+  key: string,
+  doc_count: number,
 }
 
 const TYPES = [
@@ -41,8 +22,8 @@ const TYPES = [
 ];
 
 function generateHeatmapData(
-  { seed, startDate, endDate, sample, valueMod }: GeneratorProps,
-): Response {
+  { seed, startDate, endDate, sample, valueMod }: ChartGeneratorProps,
+): ESResponse<never, DataBucket> {
   const randomValue = randomLogNormal.source(randomLcg(seed))(0, 0.8);
   faker.seed(seed);
   const interval = getTimeBucketInt([startDate, endDate]);
