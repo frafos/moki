@@ -13,7 +13,7 @@ export function dateBetween(
 ) {
   const randomInterval = randomLogNormal.source(randomLcg(seed))(0, 0.6);
   let date = start;
-  const dates = [];
+  const dates = [date];
 
   for (let i = 0; i < sample; i++) {
     const mod = Math.max(1, Math.floor(randomInterval()));

@@ -36,9 +36,7 @@ export default function MultipleAreaChart(
 ) {
   const timerange = store.getState().filter.timerange;
   const setTimerange = (newTimerange: [number, number, string]) => {
-    store.dispatch(
-      setReduxTimerange(newTimerange),
-    );
+    store.dispatch(setReduxTimerange(newTimerange));
   };
 
   // TODO: as parameters
@@ -139,15 +137,14 @@ export function MultipleAreaChartRender(
     // max and min time in data
     const minDateTime = d3.min(data, (chart) => (
       d3.min(chart.values, (d) => d.date)
-    )) ?? -Infinity;
+    )) ?? timerange[0];
     const maxDateTime = d3.max(data, (chart) => (
       d3.max(chart.values, (d) => d.date)
     )) ?? Infinity;
 
     // max and min time
-    const minTime = Math.max(minDateTime, timerange[0]);
+    const minTime = Math.min(minDateTime, timerange[0]);
     const maxTime = Math.min(maxDateTime, timerange[1] + timeBucket.value);
-
     // min and max value in data
     const minValue = d3.min(data, (chart) => (
       d3.min(chart.values, (d) => d.value)
@@ -234,7 +231,7 @@ export function MultipleAreaChartRender(
 
     const styleAreaDefault = (index: number) => {
       areasFill.style("opacity", 1.0);
-      areas.raise()
+      areas.raise();
       circles.selectAll(".circle").style("opacity", circleOpacity);
       const areaChart = areas.filter((_d, i) => i === index)
         .style("cursor", "pointer");
