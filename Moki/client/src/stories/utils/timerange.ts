@@ -15,7 +15,7 @@ function timerangeHandler() {
   };
 }
 
-function timerangeProps({ startDate, endDate, ...args }: TimerangeProps) {
+function timerangeProps<T>({ startDate, endDate, ...args }: T & TimerangeProps) {
   return {
     ...args,
     timerange: [startDate, endDate],

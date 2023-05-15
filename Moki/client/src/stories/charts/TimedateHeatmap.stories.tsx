@@ -5,6 +5,7 @@ import type { TimerangeProps } from "@/stories/utils/timerange";
 import { genHeatmapData } from "@/data/charts/genHeatmapData";
 import { DAY_TIME } from "@/data/utils/date";
 import { parseDateHeatmap } from "@/es-response-parser";
+import { ChartGeneratorProps } from "@/data/types";
 
 type TimedateProps = {
   timerange: [number, number];

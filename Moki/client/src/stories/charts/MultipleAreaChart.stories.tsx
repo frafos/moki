@@ -10,6 +10,7 @@ import { scaleOrdinal } from "d3";
 import { genMultiLineData } from "@/data/charts/genMultilineData";
 import { parseMultipleLineDataShareAxis } from "@/es-response-parser";
 import { getTimeBucketInt } from "@/js/helpers/getTimeBucket";
+import { ChartGeneratorProps } from "@/data/types";
 
 type ColorScheme = "Calls" | "Registrations" | "Incidents";
 

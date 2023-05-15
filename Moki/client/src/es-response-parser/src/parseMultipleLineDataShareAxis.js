@@ -1,10 +1,6 @@
-/*
-data: 
-
-name: name,
-values: time, value
-
-*/
+/**
+ * @return {Array<{ name: string, values: Array<{date: number, value: number}> }>} value
+ */
 export default function parseMultipleLineDataShareAxis(responseName, response, responseName2, response2) {
     if (response.aggregations && response2.aggregations && response.aggregations.agg && response2.aggregations.agg) {
         var areachartDataParse = response.aggregations.agg.buckets;
