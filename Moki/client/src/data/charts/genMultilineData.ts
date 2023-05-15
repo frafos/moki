@@ -1,19 +1,25 @@
 import { randomLcg, randomLogNormal } from "d3";
 import { faker } from "@faker-js/faker";
 import { dateBetween } from "../utils/date";
+import { ChartGeneratorProps, ESResponse } from "../types";
 
 interface DataBucket {
-  agg2: { value: number };
+  key: number;
+  agg: {
+    buckets: Array<{
+      agg2: { value: number };
+    }>;
+  };
 }
 
-type GeneratorProps = {
+type Props = {
   interval: number;
   dateOffset?: number;
 } & ChartGeneratorProps;
 
-function generateMultiLineData(
+function genMultiLineData(
   { seed, startDate, endDate, sample, valueMod, dateOffset = 0, interval }:
-    GeneratorProps,
+    Props,
 ): ESResponse<never, DataBucket> {
   const randomValue = randomLogNormal.source(randomLcg(seed))(0, 0.8);
   faker.seed(seed);
@@ -35,4 +41,4 @@ function generateMultiLineData(
   return { aggregations: { agg: { buckets: data } } };
 }
 
-export { generateMultiLineData };
+export { genMultiLineData };

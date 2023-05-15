@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { TimedateHeatmapRender } from "@/js/charts/timedate_heatmap";
 import { timerangeProps } from "@/stories/utils/timerange";
 import type { TimerangeProps } from "@/stories/utils/timerange";
-import { generateHeatmapData } from "@/data/charts/timedate_heatmap";
+import { genHeatmapData } from "@/data/charts/genHeatmapData";
 import { DAY_TIME } from "@/data/utils/date";
 import { parseDateHeatmap } from "@/es-response-parser";
 
@@ -30,6 +30,8 @@ const meta: Meta<StoryProps> = {
     sample: {
       control: { type: "range", min: 0, max: 100, step: 1 },
     },
+    startDate: { control: "date" },
+    endDate: { control: "date" },
   },
   args: {
     seed: 0,
@@ -39,7 +41,7 @@ const meta: Meta<StoryProps> = {
     width: 800,
   },
   render: (args) => {
-    const data = generateHeatmapData(args);
+    const data = genHeatmapData(args);
     const parsedData = parseDateHeatmap(data);
     return (
       <TimedateHeatmapRender

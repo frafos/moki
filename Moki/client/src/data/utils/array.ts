@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 
-export function arrayMaybeRemove(
-  array: any[],
+export function arrayMaybeRemove<T>(
+  array: T[],
   probability: number,
   maxRemove: number,
 ) {

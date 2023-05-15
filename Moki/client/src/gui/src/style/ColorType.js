@@ -1,3 +1,6 @@
+/**
+  @type {Record<string, string>}
+*/
 export const ColorType = {
   'call-end': '#58a959',
   'call-start': '#61BEE2',

@@ -3,10 +3,16 @@ import { faker } from "@faker-js/faker";
 import { dateBetween, HOUR_TIME } from "../utils/date";
 import { getTimeBucketInt } from "@/js/helpers/getTimeBucket";
 import { arrayMaybeRemove } from "../utils/array";
+import { ChartGeneratorProps, ESResponse } from "../types";
 
 interface DataBucket {
-  key: string,
-  doc_count: number,
+  key: number;
+  agg: {
+    buckets: Array<{
+      key: string;
+      doc_count: number;
+    }>;
+  };
 }
 
 const TYPES = [
@@ -21,8 +27,10 @@ const TYPES = [
   "call-end",
 ];
 
-function generateHeatmapData(
-  { seed, startDate, endDate, sample, valueMod }: ChartGeneratorProps,
+type Props = ChartGeneratorProps;
+
+function genHeatmapData(
+  { seed, startDate, endDate, sample, valueMod }: Props,
 ): ESResponse<never, DataBucket> {
   const randomValue = randomLogNormal.source(randomLcg(seed))(0, 0.8);
   faker.seed(seed);
@@ -43,4 +51,4 @@ function generateHeatmapData(
   return { aggregations: { agg: { buckets: data } } };
 }
 
-export { generateHeatmapData };
+export { genHeatmapData };

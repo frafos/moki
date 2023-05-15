@@ -5,22 +5,17 @@ interface ESResponse<InnerHits, InnerAggregation> {
   };
   aggregations?: {
     agg: {
-      buckets: Array<{
-        key: number;
-        agg: {
-          buckets: Array<InnerAggregation>;
-        };
-      }>;
+      buckets: Array<InnerAggregation>
     };
   };
 }
 
 interface ChartGeneratorProps {
-  seed: number;
   startDate: number;
   endDate: number;
-  sample: number;
+  seed: number;
   valueMod: number;
-  dateOffset?: number;
-  interval?: number;
+  sample: number;
 }
+
+export type { ESResponse, ChartGeneratorProps }

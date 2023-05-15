@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface FilterState {
-  types: any,
-  filters: any,
-  permanentFilters: any,
+  types: string[],
+  filters: string[],
+  permanentFilters: string[],
   timerange: [number, number, string],
 }
 
@@ -44,11 +44,12 @@ export const {
 } = filterSlice.actions;
 
 interface PersistentState {
-  user: any,
+  user: unknown,
   profile: [],
   settings: [],
   layout: {
     charts: Record<string, string[]>
+    types: Record<string, string[]>
   },
   width: number,
 }

@@ -12,6 +12,8 @@ import { hideTooltip, showTooltip } from "../helpers/tooltip.js";
 import store from "@/js/store";
 import { setTimerange as setReduxTimerange } from "@/js/slices";
 import NoData from "./NoData";
+import { curtainTransition } from "@/js/d3helpers/curtainTransition";
+import { addGridlines } from "../d3helpers/addGridlines";
 
 interface Chart {
   name: string;
@@ -122,7 +124,7 @@ export function MultipleAreaChartRender(
 
     const otherAreasOpacityHover = 0.1;
     const areaOpacity = 0.45;
-    const areaOpacityHover = 0.7;
+    const areaOpacityHover = 0.8;
     const areaStrokeOpacity = 0.4;
     const areaStrokeOpacityHover = 1;
     const areaStroke = "2px";
@@ -131,8 +133,13 @@ export function MultipleAreaChartRender(
     const circleRadius = 3;
     const circleRadiusHover = 6;
 
+    // svg with left offset
     const svg = d3.select(chartSVGRef.current)
-      .append("g");
+      .append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    // curtain animation
+    curtainTransition(svg, width, height);
 
     // max and min time in data
     const minDateTime = d3.min(data, (chart) => (
@@ -144,7 +151,7 @@ export function MultipleAreaChartRender(
 
     // max and min time
     const minTime = Math.min(minDateTime, timerange[0]);
-    const maxTime = Math.min(maxDateTime, timerange[1] + timeBucket.value);
+    const maxTime = Math.max(maxDateTime, timerange[1] + timeBucket.value);
     // min and max value in data
     const minValue = d3.min(data, (chart) => (
       d3.min(chart.values, (d) => d.value)
@@ -177,9 +184,6 @@ export function MultipleAreaChartRender(
       );
     const yAxis = d3.axisLeft(yScale).ticks(5);
 
-    // left offset
-    svg.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
     // x axis rendering
     setTickNrForTimeXAxis(xAxis);
     svg.append("g")
@@ -191,12 +195,7 @@ export function MultipleAreaChartRender(
     svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
-      .call((g) =>
-        // grid lines
-        g.selectAll(".tick line").clone()
-          .attr("x2", width)
-          .attr("stroke-opacity", 0.1)
-      );
+      .call((g) => addGridlines(g, width));
 
     // date selection
     svg.append("g")
@@ -351,20 +350,6 @@ export function MultipleAreaChartRender(
       .attr("y", (_d, i) => (i * 15) + 10)
       .text((d) => d.name);
 
-    // curtain animation
-    const curtain = svg.append("rect")
-      .attr("x", -1 * width)
-      .attr("y", -1 * height)
-      .attr("height", height)
-      .attr("width", width)
-      .attr("class", "curtain")
-      .attr("transform", "rotate(180)")
-      .style("fill", "#ffffff");
-
-    curtain.transition()
-      .duration(1200)
-      .ease(d3.easeLinear)
-      .attr("x", -2 * width - 50);
   };
 
   return (

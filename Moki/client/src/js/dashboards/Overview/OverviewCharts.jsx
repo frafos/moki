@@ -1,11 +1,11 @@
 /*
 Class to get data for all charts iin Call dashboard
 */
-import TimedateHeatmap from "@charts/timedate_heatmap.jsx";
-import TimedateStackedChart from "@charts/timedate_stackedbar.jsx";
-import StackedChart from "@charts/stackedbar.jsx";
+import TimedateHeatmap from "@charts/timedate_heatmap";
+import TimedateStackedChart from "@charts/timedate_stackedbar";
+import StackedChart from "@charts/stackedbar";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
-import ValueChart from "@charts/value_chart.jsx";
+import ValueChart from "@charts/value_chart";
 import {
   parseAggDistinct,
   parseDateHeatmap,

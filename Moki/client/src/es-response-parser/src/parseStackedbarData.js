@@ -1,48 +1,51 @@
-/*
+/**
 special stackedbar parse function
-
-format: [value1: number, value2: number, time:timestamp, keys:[value1, value2], max: value
+* @return {Array<{ name: string, sum: number }>}
 */
 export default function parseStackedbarData(response) {
-    if (response && response.aggregations && response.aggregations.agg && response.aggregations.agg.buckets) {
+  if (
+    response && response.aggregations && response.aggregations.agg &&
+    response.aggregations.agg.buckets
+  ) {
+    const stackedbarDataParse = response.aggregations.agg.buckets;
+    const stackedbarData = [];
+    let expired = 0;
+    let del = 0;
 
-        var stackedbarDataParse = response.aggregations.agg.buckets;
-        var innerData = {};
-        var stackedbarData = [];
-        var expired = 0;
-        var del = 0;
+    for (const data of stackedbarDataParse) {
+      switch (data.key) {
+        case "reg-del":
+          del = data.doc_count;
+          break;
+        case "reg-expired":
+          expired = data.doc_count;
+          break;
+        default:
+          stackedbarData.push({
+            key: data.key,
+            name: data.key,
+            sum: data.doc_count,
+            [data.key]: data.doc_count,
+          });
+      }
+    };
 
-        for (var i = 0; i < stackedbarDataParse.length; i++) {
-            var sum = stackedbarDataParse[i].doc_count;
-            if (stackedbarDataParse[i].key === "reg-del") {
-                del = stackedbarDataParse[i].doc_count;
+    if (stackedbarData.length > 0 && del + expired > 0) {
+      stackedbarData.push({
+        "reg-del": del,
+        "reg-expired": expired,
+        name: "reg-del/reg-expired",
+        sum: del + expired
+      });
 
-            }
-            else if (stackedbarDataParse[i].key === "reg-expired") {
-                expired = stackedbarDataParse[i].doc_count;
-            }
-            else {
-                innerData[stackedbarDataParse[i].key] = stackedbarDataParse[i].doc_count;
-                innerData['name'] = stackedbarDataParse[i].key;
-                innerData['sum'] = sum;
-                stackedbarData.push(innerData);
-                innerData = {};
-
-            }
-        }
-        if (stackedbarData.length > 0 && del+expired > 0) {
-            innerData["reg-del"] = del;
-            innerData["reg-expired"] = expired;
-            innerData['name'] = "reg-del/reg-expired";
-            innerData['sum'] = del + expired;
-            stackedbarData.push(innerData);
-
-
-            //sort it by sum value
-            stackedbarData.sort(function (a, b) { return a.sum - b.sum; });
-            stackedbarData.reverse();
-        }
-        return stackedbarData;
+      //sort it by sum value
+      stackedbarData.sort(function (a, b) {
+        return a.sum - b.sum;
+      });
+      stackedbarData.reverse();
     }
-    return "";
+
+    return stackedbarData;
+  }
+  return "";
 }
