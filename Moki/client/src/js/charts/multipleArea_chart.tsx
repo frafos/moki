@@ -14,6 +14,8 @@ import { setTimerange as setReduxTimerange } from "@/js/slices";
 import NoData from "./NoData";
 import { curtainTransition } from "@/js/d3helpers/curtainTransition";
 import { addGridlines } from "../d3helpers/addGridlines";
+import { useWindowWidth } from "../hooks/useWindowWidth";
+import { useAppSelector } from "../hooks";
 
 interface Chart {
   name: string;
@@ -30,16 +32,17 @@ export interface MultipleAreaChartProps {
   id: string;
   units: string;
   name: string;
-  width: number;
 }
 
 export default function MultipleAreaChart(
-  { data, id, units, name, width }: MultipleAreaChartProps,
+  { data, id, units, name }: MultipleAreaChartProps,
 ) {
   const timerange = store.getState().filter.timerange;
   const setTimerange = (newTimerange: [number, number, string]) => {
     store.dispatch(setReduxTimerange(newTimerange));
   };
+
+  const { navbarExpanded } = useAppSelector((state) => state.view);
 
   // TODO: as parameters
   let color = d3.scaleOrdinal<string, string>().range(["#caa547", "#30427F"]);
@@ -56,8 +59,8 @@ export default function MultipleAreaChart(
         id,
         units,
         name,
-        width,
         color,
+        navbarExpanded,
         timerange: [timerange[0], timerange[1]],
         setTimerange,
       }}
@@ -70,14 +73,14 @@ export interface MultipleAreaChartRenderProps {
   id: string;
   units: string;
   name: string;
-  width: number;
   color: d3.ScaleOrdinal<string, string, never>;
+  navbarExpanded: boolean;
   timerange: [number, number];
   setTimerange: (newTimerange: [number, number, string]) => void;
 }
 
 export function MultipleAreaChartRender(
-  { data, id, units, name, width, color, timerange, setTimerange }:
+  { data, id, units, name, color, navbarExpanded, timerange, setTimerange }:
     MultipleAreaChartRenderProps,
 ) {
   const chartRef = useRef<HTMLDivElement>(null);
@@ -94,10 +97,12 @@ export function MultipleAreaChartRender(
     format: getTimeBucketFormat(timerange),
   };
 
+  const windowWidth = useWindowWidth();
+
   useEffect(() => {
     if (noData) return;
     draw();
-  }, [data, width]);
+  }, [data, windowWidth, navbarExpanded]);
 
   const draw = () => {
     if (!chartRef.current || !chartSVGRef.current || !tooltipRef.current) {
@@ -117,9 +122,11 @@ export function MultipleAreaChartRender(
     };
 
     const totalWidth = chartRef.current.clientWidth;
+    console.log(totalWidth);
     const svgHeight = chartSVGRef.current.clientHeight;
     const width = Math.max(100, totalWidth - (margin.left + margin.right));
     const height = svgHeight - margin.top - margin.bottom;
+    const formatValue = d3.format(".2s");
     const duration = 250;
 
     const otherAreasOpacityHover = 0.1;
@@ -182,7 +189,7 @@ export function MultipleAreaChartRender(
           dv: number | { valueOf(): number },
         ) => string,
       );
-    const yAxis = d3.axisLeft(yScale).ticks(5);
+    const yAxis = d3.axisLeft(yScale).ticks(5).tickFormat(formatValue);
 
     // x axis rendering
     setTickNrForTimeXAxis(xAxis);
@@ -286,9 +293,7 @@ export function MultipleAreaChartRender(
               .attr("r", circleRadiusHover);
             tooltip.select("div").html(`<strong>Time: </strong>
               ${parseTimestamp(d.date)} + ${timeBucket.name} <br />
-              <strong>Value: </strong> ${
-              d3.format(",")(d.value)
-            } ${units} <br/>`);
+              <strong>Value: </strong> ${formatValue(d.value)} ${units} <br/>`);
             showTooltip(event, tooltip);
           })
           .on("mouseout", function () {
@@ -349,7 +354,6 @@ export function MultipleAreaChartRender(
       .attr("x", width - 60)
       .attr("y", (_d, i) => (i * 15) + 10)
       .text((d) => d.name);
-
   };
 
   return (

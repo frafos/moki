@@ -7,6 +7,8 @@ import store from "@/js/store";
 import NoData from "./NoData";
 import { curtainTransition } from "../d3helpers/curtainTransition";
 import { addGridlines } from "../d3helpers/addGridlines";
+import { useAppSelector } from "../hooks";
+import { useWindowWidth } from "../hooks/useWindowWidth";
 
 export interface ChartData {
   name: string;
@@ -16,7 +18,6 @@ export interface ChartData {
 export interface Props {
   data: ChartData[];
   id: string;
-  width: number;
   name: string;
   units: string;
   keys: string;
@@ -24,7 +25,11 @@ export interface Props {
 
 export default function StackedChart({ keys, ...props }: Props) {
   const chartKeys = store.getState().persistent.layout.types[keys];
-  return <StackedChartRender {...{ ...props, keys: chartKeys }} />;
+  const { navbarExpanded } = useAppSelector((state) => state.view);
+
+  return (
+    <StackedChartRender {...{ ...props, keys: chartKeys, navbarExpanded }} />
+  );
 }
 
 function wrap(
@@ -67,14 +72,14 @@ function wrap(
 
 export type RenderProps = {
   data: ChartData[];
-  width: number;
+  navbarExpanded: boolean;
   name: string;
   units: string;
   keys: string[];
 };
 
 export function StackedChartRender(
-  { data, width, name, units, keys }: RenderProps,
+  { data, navbarExpanded, name, units, keys }: RenderProps,
 ) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartSVGRef = useRef<SVGSVGElement>(null);
@@ -83,10 +88,12 @@ export function StackedChartRender(
   const noData = data === undefined || data.length == 0 || keys.length == 0;
   const totalHeight = 250;
 
+  const windowWidth = useWindowWidth();
+
   useEffect(() => {
     if (noData) return;
     draw();
-  }, [data, width]);
+  }, [data, navbarExpanded, windowWidth]);
 
   const draw = () => {
     if (!chartRef.current || !chartSVGRef.current || !tooltipRef.current) {

@@ -1,14 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { filterReducer, persistentReducer, } from "../slices";
+import { viewReducer } from "../slices/viewSlice"
 
-import {
-  filterReducer,
-  persistentReducer,
-} from "../slices";
 
 const store = configureStore({
   reducer: {
     filter: filterReducer,
     persistent: persistentReducer,
+    view: viewReducer,
   }
 })
 

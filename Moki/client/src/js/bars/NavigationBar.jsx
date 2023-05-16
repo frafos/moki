@@ -7,6 +7,7 @@ import { setChartsWidth } from '@/js/slices';
 import logoutIcon from "/icons/log_out.png";
 import password from "/icons/password.png";
 import collapseIcon from "/icons/collapse.png";
+import { setNavbarExpanded } from "../slices/viewSlice";
 
 function NavBar(props) {
     const [collapsed, setCollapsed] = useState(false);
@@ -60,6 +61,7 @@ function NavBar(props) {
 
     const togglebar = () => {
         setCollapsed(!collapsed);
+        store.dispatch(setNavbarExpanded(!collapsed));
         const collapsedItems = document.getElementsByClassName(" menu-collapsed");
         let collapsedItemBar;
         if (!collapsed) {

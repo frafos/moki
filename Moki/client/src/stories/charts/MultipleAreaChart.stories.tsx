@@ -44,9 +44,6 @@ const meta: Meta<StoryProps> = {
       options: ["Calls", "Registrations", "Incidents"],
       control: { type: "select" },
     },
-    width: {
-      control: { type: "range", min: 50, max: 2000, step: 5 },
-    },
     sample: {
       control: { type: "range", min: 0, max: 100, step: 1 },
     },
@@ -59,7 +56,6 @@ const meta: Meta<StoryProps> = {
     endDate: Date.now() + DAY_TIME * 15,
     sample: 20,
     valueMod: 10,
-    width: 800,
   },
   render: ({ colorScheme, dataName, dataDayName, ...args }) => {
     const color = getColorScheme(colorScheme);

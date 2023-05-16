@@ -38,6 +38,5 @@ export const Default: Story = {
       "call-start",
     ],
     name: "TOTAL EVENTS IN INTERVAL",
-    width: 500,
   },
 };
