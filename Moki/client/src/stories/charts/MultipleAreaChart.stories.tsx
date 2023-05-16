@@ -4,7 +4,7 @@ import { timerangeProps } from "@/stories/utils/timerange";
 import MultipleAreaChart, {
   MultipleAreaChartRender,
   MultipleAreaChartRenderProps,
-} from "@charts/multipleArea_chart";
+} from "@charts/MultipleAreaChart";
 import { DAY_TIME } from "@/data/utils/date";
 import { scaleOrdinal } from "d3";
 import { genMultiLineData } from "@/data/charts/genMultilineData";

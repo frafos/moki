@@ -5,7 +5,7 @@ import { useDashboardData, getLastValueInInterval } from "@hooks/useDashboardDat
 import TimedateHeatmap from "@charts/timedate_heatmap.jsx";
 import CountUpChart from "@charts/count_chart.jsx";
 import ValueChart from "@charts/value_chart.jsx";
-import MultipleAreaChart from "@charts/multipleArea_chart";
+import MultipleAreaChart from "@charts/MultipleAreaChart";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import MultivalueChart from "@charts/multivalue_chart.jsx";
 import ListChart from "@charts/list_chart.jsx";

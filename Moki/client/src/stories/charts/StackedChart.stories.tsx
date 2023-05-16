@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { StackedChartRender, RenderProps } from "@/js/charts/stackedbar";
+import { StackedChartRender, RenderProps } from "@/js/charts/StackedChart";
 import { genStackedData, GeneratorProps } from "@/data/charts/genStackedData";
 import { parseStackedbarData } from "@/es-response-parser";
 

@@ -91,11 +91,15 @@ export function StackedChartRender(
   const windowWidth = useWindowWidth();
 
   useEffect(() => {
-    if (noData) return;
-    draw();
-  }, [data, navbarExpanded, windowWidth]);
+    draw(true);
+  }, [data]);
 
-  const draw = () => {
+  useEffect(() => {
+    draw();
+  }, [navbarExpanded, windowWidth]);
+
+  const draw = (transition = false) => {
+    if (noData) return;
     if (!chartRef.current || !chartSVGRef.current || !tooltipRef.current) {
       return;
     }
@@ -124,15 +128,14 @@ export function StackedChartRender(
     const formatValue = d3.format(".2s");
 
     // svg with left offset
-    const svg = d3.select(chartSVGRef.current)
+    const svgElement = d3.select(chartSVGRef.current);
+
+    const svg = svgElement
       .append("g")
       .attr(
         "transform",
         `translate(${margin.left}, ${margin.top})`,
       );
-
-    // curtain animation
-    curtainTransition(svg, width, height);
 
     // max value in data with offset
     const maxValue = d3.max(data, (d) => d.sum + 5) ?? 1;
@@ -211,7 +214,7 @@ export function StackedChartRender(
       .attr("height", function (d) {
         const height = yScale(d[0]) - yScale(d[1]) ?? 0;
         if (!height || isNaN(height)) return 0;
-        return Math.max(height, minHeight + 0.5);
+        return Math.max(height, minHeight);
       })
       .on("mouseover", function (event, d) {
         const type = d3.select(this.parentElement).attr("type");
@@ -232,6 +235,17 @@ export function StackedChartRender(
     layer.on("click", (_event, d) => {
       createFilter("attrs.type:" + d.key);
     });
+
+    // curtain animation
+    if (transition) {
+      curtainTransition(
+        svgElement,
+        totalWidth,
+        svgHeight,
+        margin.left,
+        margin.bottom,
+      );
+    }
   };
 
   return (

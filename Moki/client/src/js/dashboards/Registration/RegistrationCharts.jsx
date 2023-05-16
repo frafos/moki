@@ -2,7 +2,7 @@
 Class to get data for all charts iin Call dashboard
 */
 import ValueChart from "@charts/value_chart.jsx";
-import MultipleAreaChart from "@charts/multipleArea_chart";
+import MultipleAreaChart from "@charts/MultipleAreaChart";
 import TimedateStackedChart from "@charts/timedate_stackedbar.jsx";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import GeoIpMap from "@charts/geoip_map.jsx";

@@ -100,11 +100,15 @@ export function MultipleAreaChartRender(
   const windowWidth = useWindowWidth();
 
   useEffect(() => {
-    if (noData) return;
-    draw();
-  }, [data, windowWidth, navbarExpanded]);
+    draw(true);
+  }, [data]);
 
-  const draw = () => {
+  useEffect(() => {
+    draw(false);
+  }, [windowWidth, navbarExpanded]);
+
+  const draw = (transition = false) => {
+    if (noData) return;
     if (!chartRef.current || !chartSVGRef.current || !tooltipRef.current) {
       return;
     }
@@ -122,7 +126,6 @@ export function MultipleAreaChartRender(
     };
 
     const totalWidth = chartRef.current.clientWidth;
-    console.log(totalWidth);
     const svgHeight = chartSVGRef.current.clientHeight;
     const width = Math.max(100, totalWidth - (margin.left + margin.right));
     const height = svgHeight - margin.top - margin.bottom;
@@ -141,12 +144,11 @@ export function MultipleAreaChartRender(
     const circleRadiusHover = 6;
 
     // svg with left offset
-    const svg = d3.select(chartSVGRef.current)
+    const svgElement = d3.select(chartSVGRef.current);
+
+    const svg = svgElement
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-    // curtain animation
-    curtainTransition(svg, width, height);
 
     // max and min time in data
     const minDateTime = d3.min(data, (chart) => (
@@ -354,6 +356,17 @@ export function MultipleAreaChartRender(
       .attr("x", width - 60)
       .attr("y", (_d, i) => (i * 15) + 10)
       .text((d) => d.name);
+
+    // curtain animation
+    if (transition) {
+      curtainTransition(
+        svgElement,
+        totalWidth,
+        svgHeight,
+        margin.left,
+        margin.bottom,
+      );
+    }
   };
 
   return (
