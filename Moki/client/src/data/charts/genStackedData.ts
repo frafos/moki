@@ -15,7 +15,8 @@ interface GeneratorProps {
 
 function genStackedData(
   { seed, valueMod, keys }: GeneratorProps,
-): ESResponse<never, DataBucket> {
+): ESResponse<never, DataBucket> | [] {
+  if (!keys) return [];
   const randomValue = randomNormal.source(randomLcg(seed))(1, 0.1);
   faker.seed(seed);
 

@@ -17,7 +17,7 @@ interface Bucket {
 
 // ordered increasingly by thresholds
 const TIME_BUCKETS: Bucket[] = [
-  { threshold: 15 * MN, value: 15 * SEC, name: "15s", format: "%H:%H:%S" },
+  { threshold: 15 * MN, value: 15 * SEC, name: "15s", format: "%H:%M:%S" },
   { threshold: 1 * HOUR, value: MN, name: "1m", format: "%H:%M %p" },
   { threshold: 6 * HOUR, value: 5 * MN, name: "5m", format: "%H:%M %p" },
   { threshold: 12 * HOUR, value: 10 * MN, name: "10m", format: "%H:%M %p" },

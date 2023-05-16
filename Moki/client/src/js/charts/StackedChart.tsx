@@ -86,9 +86,8 @@ export function StackedChartRender(
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const noData = data === undefined || data.length == 0 || keys.length == 0;
-  const totalHeight = 250;
-
   const windowWidth = useWindowWidth();
+  const totalHeight = 250;
 
   useEffect(() => {
     draw(true);
@@ -238,13 +237,7 @@ export function StackedChartRender(
 
     // curtain animation
     if (transition) {
-      curtainTransition(
-        svgElement,
-        totalWidth,
-        svgHeight,
-        margin.left,
-        margin.bottom,
-      );
+      curtainTransition(svgElement, totalWidth, svgHeight, margin);
     }
   };
 

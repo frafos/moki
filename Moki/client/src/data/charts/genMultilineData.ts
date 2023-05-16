@@ -20,7 +20,8 @@ type Props = {
 function genMultiLineData(
   { seed, startDate, endDate, sample, valueMod, dateOffset = 0, interval }:
     Props,
-): ESResponse<never, DataBucket> {
+): ESResponse<never, DataBucket> | [] {
+  if (sample === 0) return [];
   const randomValue = randomLogNormal.source(randomLcg(seed))(0, 0.8);
   faker.seed(seed);
   const dates = dateBetween(

@@ -14,6 +14,12 @@ import { ChartGeneratorProps } from "@/data/types";
 
 type ColorScheme = "Calls" | "Registrations" | "Incidents";
 
+const COLOR_SCHEME = {
+  "Calls": scaleOrdinal<string, string>().range(["#caa547", "#30427F"]),
+  "Registrations": scaleOrdinal<string, string>().range(["#caa547", "#A5CA47"]),
+  "Incidents": scaleOrdinal<string, string>().range(["#caa547", "#69307F"]),
+};
+
 type FakeDataProps = {
   colorScheme: ColorScheme;
   dataName: string;
@@ -22,18 +28,6 @@ type FakeDataProps = {
 
 type StoryProps = MultipleAreaChartRenderProps & TimerangeProps & FakeDataProps;
 
-function getColorScheme(colorScheme: ColorScheme) {
-  let color = scaleOrdinal<string, string>().range(["#caa547", "#30427F"]);
-  switch (colorScheme) {
-    case "Registrations":
-      color = scaleOrdinal<string, string>().range(["#caa547", "#A5CA47"]);
-      break;
-    case "Incidents":
-      color = scaleOrdinal<string, string>().range(["#caa547", "#69307F"]);
-      break;
-  }
-  return color;
-}
 
 const meta: Meta<StoryProps> = {
   title: "charts/MultipleArea",
@@ -52,18 +46,19 @@ const meta: Meta<StoryProps> = {
   },
   args: {
     seed: 0,
+    colorScheme: "Calls",
     startDate: Date.now(),
     endDate: Date.now() + DAY_TIME * 15,
     sample: 20,
     valueMod: 10,
   },
   render: ({ colorScheme, dataName, dataDayName, ...args }) => {
-    const color = getColorScheme(colorScheme);
+    const color = COLOR_SCHEME[colorScheme];
     const interval = getTimeBucketInt([args.startDate, args.endDate]);
     const data = genMultiLineData({ ...args, interval });
     const dataDay = genMultiLineData({
       ...args,
-      interval, 
+      interval,
       dateOffset: DAY_TIME,
       endDate: args.endDate - DAY_TIME,
     });
@@ -89,7 +84,6 @@ export const Calls: Story = {
     colorScheme: "Calls",
     dataName: "Calls",
     dataDayName: "Calls-1d",
-    id: "parallelCalls",
     name: "PARALLEL CALLS",
     units: "count",
   },
@@ -103,7 +97,6 @@ export const Registrations: Story = {
     dataName: "Regs",
     dataDayName: "Regs-1d",
     name: "PARALLEL REGS",
-    id: "parallelRegs",
     units: "count",
   },
 };
@@ -116,7 +109,6 @@ export const Incidents: Story = {
     dataName: "Incident",
     dataDayName: "Incident-1d",
     name: "INCIDENTS",
-    id: "incidentCount",
     units: "count",
   },
 };

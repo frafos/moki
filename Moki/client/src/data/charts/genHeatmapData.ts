@@ -27,21 +27,24 @@ const TYPES = [
   "call-end",
 ];
 
-type Props = ChartGeneratorProps;
+type Props = {
+  types: string[]
+} & ChartGeneratorProps;
 
 function genHeatmapData(
-  { seed, startDate, endDate, sample, valueMod }: Props,
-): ESResponse<never, DataBucket> {
+  { seed, startDate, endDate, sample, valueMod, types }: Props,
+): ESResponse<never, DataBucket> | [] {
+  if (sample === 0) return [];
   const randomValue = randomLogNormal.source(randomLcg(seed))(0, 0.8);
   faker.seed(seed);
   const interval = getTimeBucketInt([startDate, endDate]);
   const dates = dateBetween(seed, startDate, endDate, interval, sample);
 
   const data = dates.map((date: number) => {
-    const types = interval <= HOUR_TIME
-      ? arrayMaybeRemove(TYPES, 0.4, 4)
-      : TYPES;
-    const buckets = types.map((type) => ({
+    const modifiedTypes = interval <= HOUR_TIME
+      ? arrayMaybeRemove(types, 0.4, 4)
+      : types;
+    const buckets = modifiedTypes.map((type) => ({
       key: type,
       doc_count: Math.floor(randomValue() * valueMod),
     }));

@@ -1,5 +1,6 @@
-/*
-special parse function for dateheatmap chart
+/**
+ * special parse function for dateheatmap chart
+ * @return {Array<{ attr1: number, attr2: string, value: number }>} value
 */
 function parseDateHeatmap(response) {
     if (response.aggregations && response.aggregations.agg && response.aggregations.agg.buckets) {

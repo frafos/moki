@@ -5,12 +5,11 @@ function curtainTransition(
   svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
   width: number,
   height: number,
-  marginLeft = 0 ,
-  marginBottom = 0,
+  margin: { left: number, bottom: number },
 ) {
   const curtain = svg.append("rect")
-    .attr("x", -1 * width - marginLeft)
-    .attr("y", -1 * height + marginBottom)
+    .attr("x", -1 * width - margin.left)
+    .attr("y", -1 * height + margin.bottom)
     .attr("height", height)
     .attr("width", width)
     .attr("class", "curtain")

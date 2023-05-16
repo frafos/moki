@@ -1,11 +1,11 @@
 /*
 Class to get data for all charts iin Call dashboard
 */
-import TopologyChart from "@charts/topology_chart.jsx";
-import Heatmap from "@charts/heatmap_chart.jsx";
-import TimedateHeatmap from "@charts/timedate_heatmap.jsx";
-import ValueChart from "@charts/value_chart.jsx";
-import MultivalueChart from "@charts/multivalue_chart.jsx";
+import TopologyChart from "@charts/topology_chart";
+import Heatmap from "@charts/heatmap_chart";
+import TimedateHeatmap from "@charts/TimedateHeatmap";
+import ValueChart from "@charts/value_chart";
+import MultivalueChart from "@charts/multivalue_chart";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import {
   parseAggData,
@@ -232,38 +232,40 @@ function ConnectivityCACharts() {
             units={"count"}
           />
         </div>
-        <div className="col">
-          <TimedateHeatmap
-            data={chartsData.avgMoS}
-            marginLeft={"150"}
-            id="avgMoS"
-            name={"AVG MoS"}
-            width={width - 300}
-            field={"attrs.rtp-MOScqex-avg"}
-            units={"AVG"}
-          />
-        </div>{" "}
-        <div className="col">
-          <TimedateHeatmap
-            data={chartsData.ratioHistory}
-            marginLeft={"150"}
-            id="ratioHistory"
-            name={"CA RATIO HISTORY"}
-            width={width - 300}
-            field={"attrs.src_ca_id"}
-            units={"AVG %"}
-          />
-        </div>{" "}
-        <div className="col">
-          <TimedateHeatmap
-            data={chartsData.caAvailability}
-            marginLeft={"150"}
-            id="caAvailability"
-            name={"CA AVAILABILITY"}
-            width={width - 300}
-            field={"attrs.dest_ca_name"}
-          />
-        </div>
+        <section className="w-100">
+          <div className="col">
+            <TimedateHeatmap
+              data={chartsData.avgMoS}
+              marginLeft={"150"}
+              id="avgMoS"
+              name={"AVG MoS"}
+              width={width - 300}
+              field={"attrs.rtp-MOScqex-avg"}
+              units={"AVG"}
+            />
+          </div>{" "}
+          <div className="col">
+            <TimedateHeatmap
+              data={chartsData.ratioHistory}
+              marginLeft={"150"}
+              id="ratioHistory"
+              name={"CA RATIO HISTORY"}
+              width={width - 300}
+              field={"attrs.src_ca_id"}
+              units={"AVG %"}
+            />
+          </div>{" "}
+          <div className="col">
+            <TimedateHeatmap
+              data={chartsData.caAvailability}
+              marginLeft={"150"}
+              id="caAvailability"
+              name={"CA AVAILABILITY"}
+              width={width - 300}
+              field={"attrs.dest_ca_name"}
+            />
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ import { curtainTransition } from "@/js/d3helpers/curtainTransition";
 import { addGridlines } from "../d3helpers/addGridlines";
 import { useWindowWidth } from "../hooks/useWindowWidth";
 import { useAppSelector } from "../hooks";
+import { addDateBrush } from "../d3helpers/addDateBrush";
 
 interface Chart {
   name: string;
@@ -29,19 +30,17 @@ interface ChartData {
 
 export interface MultipleAreaChartProps {
   data: Chart[];
-  id: string;
   units: string;
   name: string;
 }
 
 export default function MultipleAreaChart(
-  { data, id, units, name }: MultipleAreaChartProps,
+  { data, units, name }: MultipleAreaChartProps,
 ) {
   const timerange = store.getState().filter.timerange;
   const setTimerange = (newTimerange: [number, number, string]) => {
     store.dispatch(setReduxTimerange(newTimerange));
   };
-
   const { navbarExpanded } = useAppSelector((state) => state.view);
 
   // TODO: as parameters
@@ -56,7 +55,6 @@ export default function MultipleAreaChart(
     <MultipleAreaChartRender
       {...{
         data,
-        id,
         units,
         name,
         color,
@@ -70,7 +68,6 @@ export default function MultipleAreaChart(
 
 export interface MultipleAreaChartRenderProps {
   data: Chart[];
-  id: string;
   units: string;
   name: string;
   color: d3.ScaleOrdinal<string, string, never>;
@@ -80,7 +77,7 @@ export interface MultipleAreaChartRenderProps {
 }
 
 export function MultipleAreaChartRender(
-  { data, id, units, name, color, navbarExpanded, timerange, setTimerange }:
+  { data, units, name, color, navbarExpanded, timerange, setTimerange }:
     MultipleAreaChartRenderProps,
 ) {
   const chartRef = useRef<HTMLDivElement>(null);
@@ -89,15 +86,14 @@ export function MultipleAreaChartRender(
 
   const noData = data === undefined || data.length === 0 ||
     (data[0].values.length === 0 && data[1].values.length === 0);
-
+  const windowWidth = useWindowWidth();
   const totalHeight = 235;
+
   const timeBucket = {
     name: getTimeBucket(timerange),
     value: getTimeBucketInt(timerange),
     format: getTimeBucketFormat(timerange),
   };
-
-  const windowWidth = useWindowWidth();
 
   useEffect(() => {
     draw(true);
@@ -116,6 +112,10 @@ export function MultipleAreaChartRender(
     // FOR UPDATE: clear chart svg, clean up lost tooltips
     chartSVGRef.current.innerHTML = "";
     tooltipRef.current.innerHTML = "";
+
+    const tooltip = d3.select(tooltipRef.current);
+    tooltip.style("visibiliy", "hidden");
+    tooltip.append("div");
 
     units = units ? " (" + units + ")" : "";
     const margin = {
@@ -145,7 +145,6 @@ export function MultipleAreaChartRender(
 
     // svg with left offset
     const svgElement = d3.select(chartSVGRef.current);
-
     const svg = svgElement
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
@@ -161,6 +160,7 @@ export function MultipleAreaChartRender(
     // max and min time
     const minTime = Math.min(minDateTime, timerange[0]);
     const maxTime = Math.max(maxDateTime, timerange[1] + timeBucket.value);
+
     // min and max value in data
     const minValue = d3.min(data, (chart) => (
       d3.min(chart.values, (d) => d.value)
@@ -172,9 +172,8 @@ export function MultipleAreaChartRender(
     // add offset to max based on id
     let domain = 1;
     if (maxValue !== 0) {
-      const offset = id === "parallelRegs"
-        ? (maxValue - minValue)
-        : maxValue / 3;
+      const offset = maxValue / 3; // id === "parallelRegs"
+        // ? (maxValue - minValue) : maxValue / 3;
       domain = maxValue + offset;
     }
 
@@ -193,6 +192,9 @@ export function MultipleAreaChartRender(
       );
     const yAxis = d3.axisLeft(yScale).ticks(5).tickFormat(formatValue);
 
+    // date selection
+    addDateBrush(svg, width, height, xScale, setTimerange);
+
     // x axis rendering
     setTickNrForTimeXAxis(xAxis);
     svg.append("g")
@@ -205,28 +207,6 @@ export function MultipleAreaChartRender(
       .attr("class", "y axis")
       .call(yAxis)
       .call((g) => addGridlines(g, width));
-
-    // date selection
-    svg.append("g")
-      .call(
-        d3.brushX()
-          .extent([[0, 0], [width, height]])
-          .on("end", onBrushEnd),
-      );
-
-    function onBrushEnd(event: any) {
-      // Only transition after input.
-      if (!event.sourceEvent) return;
-      // Ignore empty selections.
-      if (!event.selection) return;
-      const extent = event.selection;
-      const timestamp_gte = xScale.invert(extent[0]);
-      const timestamp_lte = xScale.invert(extent[1]);
-      const timestamp_readiable =
-        parseTimestamp(new Date(Math.trunc(timestamp_gte))) + " - " +
-        parseTimestamp(new Date(Math.trunc(timestamp_lte)));
-      setTimerange([timestamp_gte, timestamp_lte, timestamp_readiable]);
-    }
 
     // area and points
     const areas = svg
@@ -272,9 +252,6 @@ export function MultipleAreaChartRender(
       .attr("class", "circle-group");
 
     // individual circle rendering
-    const tooltip = d3.select(tooltipRef.current);
-    tooltip.style("visibiliy", "hidden");
-    tooltip.append("div");
 
     circles
       .each(function (d, i) {
@@ -359,13 +336,7 @@ export function MultipleAreaChartRender(
 
     // curtain animation
     if (transition) {
-      curtainTransition(
-        svgElement,
-        totalWidth,
-        svgHeight,
-        margin.left,
-        margin.bottom,
-      );
+      curtainTransition( svgElement, totalWidth, svgHeight, margin, );
     }
   };
 
