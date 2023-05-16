@@ -7,8 +7,8 @@ const HOUR = 60 * MN;
 const DAY = 24 * HOUR;
 
 const TEST_CASES: [number, number, string, number, string][] = [
-  [0, 2 * SEC, "15s", 15 * SEC, "%H:%H:%S"],
-  [0, 14 * MN, "15s", 15 * SEC, "%H:%H:%S"],
+  [0, 2 * SEC, "15s", 15 * SEC, "%H:%M:%S"],
+  [0, 14 * MN, "15s", 15 * SEC, "%H:%M:%S"],
   [0, 1 * HOUR, "1m", 1 * MN, "%H:%M %p"],
   [0, 5 * HOUR, "5m", 5 * MN, "%H:%M %p"],
   [0, 6 * HOUR + 30 * MN, "10m", 10 * MN, "%H:%M %p"],

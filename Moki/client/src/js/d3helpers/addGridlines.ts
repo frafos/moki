@@ -14,6 +14,7 @@ function addGridlines(
 ) {
   tick.call((g) =>
     g.selectAll(".tick line").clone()
+      .attr("class", "grid-line")
       .attr("x2", width)
       .attr("stroke-opacity", 0.3)
   );
