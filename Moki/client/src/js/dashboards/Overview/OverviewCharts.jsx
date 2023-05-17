@@ -5,7 +5,7 @@ import TimedateHeatmap from "@charts/TimedateHeatmap";
 import TimedateStackedChart from "@charts/timedate_stackedbar";
 import StackedChart from "@charts/StackedChart";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
-import ValueChart from "@charts/value_chart";
+import ValueChart from "@charts/ValueChart";
 import {
   parseAggDistinct,
   parseDateHeatmap,

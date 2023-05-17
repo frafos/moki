@@ -175,7 +175,7 @@ export function TimedateHeatmapRender(
     const formatedUnits = units ? "(" + units + ")" : "";
     const margin = {
       top: 10,
-      right: 55,
+      right: 40,
       bottom: 40,
       left: marginLeft,
     };

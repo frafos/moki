@@ -2,7 +2,7 @@
 Class to get data for all charts iin Call dashboard
 */
 
-import ValueChart from "@charts/value_chart.jsx";
+import ValueChart from "@charts/ValueChart";
 import CircleChart from "@charts/circle_chart.jsx";
 import GaugeChart from "@charts/gauge_chart.jsx";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";

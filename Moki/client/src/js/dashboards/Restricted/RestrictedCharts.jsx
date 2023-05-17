@@ -1,7 +1,7 @@
 /*
 Class to get data for all charts iin Call dashboard
 */
-import ValueChart from "@charts/value_chart.jsx";
+import ValueChart from "@charts/ValueChart";
 import ListChart from "@charts/list_chart.jsx";
 import TimedateStackedChart from "@charts/timedate_stackedbar.jsx";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";

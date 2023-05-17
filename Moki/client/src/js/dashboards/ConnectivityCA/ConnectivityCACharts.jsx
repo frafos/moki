@@ -4,7 +4,7 @@ Class to get data for all charts iin Call dashboard
 import TopologyChart from "@charts/topology_chart";
 import Heatmap from "@charts/heatmap_chart";
 import TimedateHeatmap from "@charts/TimedateHeatmap";
-import ValueChart from "@charts/value_chart";
+import ValueChart from "@charts/ValueChart";
 import MultivalueChart from "@charts/multivalue_chart";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import {

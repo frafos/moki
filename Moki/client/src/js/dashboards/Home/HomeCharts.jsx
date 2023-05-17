@@ -3,8 +3,8 @@ Class to get data for all charts iin Call dashboard
 */
 import { useDashboardData, getLastValueInInterval } from "@hooks/useDashboardData";
 import TimedateHeatmap from "@charts/TimedateHeatmap";
-import CountUpChart from "@charts/count_chart";
-import ValueChart from "@charts/value_chart";
+import CountUpChart from "@charts/CountUpChart";
+import ValueChart from "@charts/ValueChart";
 import MultipleAreaChart from "@charts/MultipleAreaChart";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import MultivalueChart from "@charts/multivalue_chart";

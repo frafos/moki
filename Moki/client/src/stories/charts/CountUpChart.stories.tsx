@@ -1,21 +1,28 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import CountUpChart from "@/js/charts/count_chart";
+import CountUpChart, { Props } from "@/js/charts/CountUpChart";
 
-const meta: Meta<typeof CountUpChart> = {
+const meta: Meta<Props> = {
   title: "charts/CountUp",
   component: CountUpChart,
   tags: ['autodocs'],
 };
 
 export default meta;
-type Story = StoryObj<typeof CountUpChart>;
+type Story = StoryObj<Props>;
 
 export const Primary: Story = {
   args: {
     data: 999,
     name: "ACTUAL REGS",
-    biggerFont: "biggerFont",
     dataAgo: 123,
   },
 };
+
+export const Duration: Story = {
+  args: {
+    data: 80000,
+    name: "DURATION",
+    dataAgo: 70000,
+  }
+}
 

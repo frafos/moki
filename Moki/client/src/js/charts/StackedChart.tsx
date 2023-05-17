@@ -117,7 +117,7 @@ export function StackedChartRender(
       bottom: 80,
       top: 30,
       left: 70,
-      right: 20,
+      right: 45,
     };
 
     const totalWidth = chartRef.current.clientWidth;

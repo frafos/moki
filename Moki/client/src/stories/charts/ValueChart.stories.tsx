@@ -1,19 +1,27 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ValueChart from "@/js/charts/value_chart";
+import ValueChart, { Props } from "@/js/charts/ValueChart";
 
-const meta: Meta<typeof ValueChart> = {
+const meta: Meta<Props> = {
   title: "charts/Value",
   component: ValueChart,
+  argTypes: {
+    color: {
+      options: ["default", "zerogreen"],
+      control: { type: "select" }
+    }
+    
+  },
   tags: ["autodocs"],
 };
 
 export default meta;
-type Story = StoryObj<typeof ValueChart>;
+type Story = StoryObj<Props>;
 
 export const Number: Story = {
   args: {
-    data: 42,
+    data: 0,
     name: "# CALLS",
+    color: "zerogreen",
   },
 };
 

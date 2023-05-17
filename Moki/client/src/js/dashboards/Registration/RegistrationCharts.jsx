@@ -1,13 +1,13 @@
 /*
 Class to get data for all charts iin Call dashboard
 */
-import ValueChart from "@charts/value_chart.jsx";
+import ValueChart from "@charts/ValueChart";
 import MultipleAreaChart from "@charts/MultipleAreaChart";
-import TimedateStackedChart from "@charts/timedate_stackedbar.jsx";
+import TimedateStackedChart from "@charts/timedate_stackedbar";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
-import GeoIpMap from "@charts/geoip_map.jsx";
-import DonutChart from "@charts/donut_chart.jsx";
-import ListChart from "@charts/list_chart.jsx";
+import GeoIpMap from "@charts/geoip_map";
+import DonutChart from "@charts/donut_chart";
+import ListChart from "@charts/list_chart";
 
 import {
   parseAggCities,

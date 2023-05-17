@@ -15,17 +15,6 @@ interface DataBucket {
   };
 }
 
-const TYPES = [
-  "error",
-  "auth-failed",
-  "call-attempt",
-  "reg-new",
-  "notice",
-  "reg-del",
-  "reg-expired",
-  "call-start",
-  "call-end",
-];
 
 type Props = {
   types: string[]

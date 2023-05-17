@@ -1,10 +1,10 @@
 /*
 Class to get data for all charts iin Call dashboard
 */
-import TimedateStackedChart from "@charts/timedate_stackedbar.jsx";
-import DonutChart from "@charts/donut_chart.jsx";
-import ListChart from "@charts/list_chart.jsx";
-import ValueChart from "@charts/value_chart.jsx";
+import TimedateStackedChart from "@charts/timedate_stackedbar";
+import DonutChart from "@charts/donut_chart";
+import ListChart from "@charts/list_chart";
+import ValueChart from "@charts/ValueChart";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import {
   parseBucketData,

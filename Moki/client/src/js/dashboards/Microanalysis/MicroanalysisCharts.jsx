@@ -4,7 +4,7 @@ Class to get data for all charts iin Call dashboard
 import ListChart from "@charts/list_chart.jsx";
 import DonutChart from "@charts/donut_chart.jsx";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
-import ValueChart from "@charts/value_chart.jsx";
+import ValueChart from "@charts/ValueChart";
 import {
   parseAggDistinct,
   parseBucketData,

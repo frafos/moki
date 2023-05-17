@@ -117,19 +117,19 @@ export function MultipleAreaChartRender(
     tooltip.style("visibiliy", "hidden");
     tooltip.append("div");
 
-    units = units ? " (" + units + ")" : "";
+    const formatedUnits = units ? " (" + units + ")" : "";
     const margin = {
       top: 20,
-      right: 45,
+      right: 35,
       bottom: 40,
-      left: 100,
+      left: 50,
     };
 
     const totalWidth = chartRef.current.clientWidth;
     const svgHeight = chartSVGRef.current.clientHeight;
     const width = Math.max(100, totalWidth - (margin.left + margin.right));
     const height = svgHeight - margin.top - margin.bottom;
-    const formatValue = d3.format(".2s");
+    const formatValue = (d: number) => (d <= 1 ? d : d3.format(".2s")(d));
     const duration = 250;
 
     const otherAreasOpacityHover = 0.1;
@@ -167,13 +167,13 @@ export function MultipleAreaChartRender(
     )) ?? 0;
     const maxValue = d3.max(data, (chart) => (
       d3.max(chart.values, (d) => d.value)
-    )) ?? 0;
+    )) ?? 1;
 
     // add offset to max based on id
     let domain = 1;
     if (maxValue !== 0) {
       const offset = maxValue / 3; // id === "parallelRegs"
-        // ? (maxValue - minValue) : maxValue / 3;
+      // ? (maxValue - minValue) : maxValue / 3;
       domain = maxValue + offset;
     }
 
@@ -191,6 +191,7 @@ export function MultipleAreaChartRender(
         ) => string,
       );
     const yAxis = d3.axisLeft(yScale).ticks(5).tickFormat(formatValue);
+    console.log(formatValue(0.8))
 
     // date selection
     addDateBrush(svg, width, height, xScale, setTimerange);
@@ -272,7 +273,8 @@ export function MultipleAreaChartRender(
               .attr("r", circleRadiusHover);
             tooltip.select("div").html(`<strong>Time: </strong>
               ${parseTimestamp(d.date)} + ${timeBucket.name} <br />
-              <strong>Value: </strong> ${formatValue(d.value)} ${units} <br/>`);
+              <strong>Value: </strong> 
+              ${formatValue(d.value)} ${formatedUnits} <br/>`);
             showTooltip(event, tooltip);
           })
           .on("mouseout", function () {
@@ -336,7 +338,7 @@ export function MultipleAreaChartRender(
 
     // curtain animation
     if (transition) {
-      curtainTransition( svgElement, totalWidth, svgHeight, margin, );
+      curtainTransition(svgElement, totalWidth, svgHeight, margin);
     }
   };
 
