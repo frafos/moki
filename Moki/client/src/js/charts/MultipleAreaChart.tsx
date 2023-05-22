@@ -129,7 +129,9 @@ export function MultipleAreaChartRender(
     const svgHeight = chartSVGRef.current.clientHeight;
     const width = Math.max(100, totalWidth - (margin.left + margin.right));
     const height = svgHeight - margin.top - margin.bottom;
-    const formatValue = (d: number) => (d <= 1 ? d : d3.format(".2s")(d));
+    const formatValue = (
+      d: d3.NumberValue,
+    ) => (d.valueOf() <= 1 ? d.toString() : d3.format(".2s")(d));
     const duration = 250;
 
     const otherAreasOpacityHover = 0.1;
@@ -191,7 +193,7 @@ export function MultipleAreaChartRender(
         ) => string,
       );
     const yAxis = d3.axisLeft(yScale).ticks(5).tickFormat(formatValue);
-    console.log(formatValue(0.8))
+    console.log(formatValue(0.8));
 
     // date selection
     addDateBrush(svg, width, height, xScale, setTimerange);

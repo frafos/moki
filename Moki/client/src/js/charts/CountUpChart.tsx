@@ -16,7 +16,7 @@ export default function CountUpChart({ name, data, dataAgo }: Props) {
     return (nmb: number) => {
       if (name.includes("DURATION")) return parseDuration(nmb);
       if (nmb) return nmb.toLocaleString();
-      return 0;
+      return "0";
     };
   }
 
