@@ -23,6 +23,7 @@ import DecryptPasswordPopup from './gui/src/menu/decryptPasswordPopup';
 import store from "@/js/store";
 import { setTimerange, setUser, setChartsWidth, 
     setLayout, setSettings, setFilters } from "@/js/slices";
+import LogoVersion from './js/components/LogoVersion';
 
 const BASE_NAME = import.meta.env.BASE_URL;
 
@@ -298,6 +299,10 @@ class App extends Component {
                 //set main and secondary color
                 document.body.style.setProperty('--main', jsonData.color);
                 document.body.style.setProperty('--second', jsonData.colorSecondary);
+
+                if (import.meta.env.DEV) {
+                  monitorVersion = "5.3.0";
+                }
 
                 let monitorName = "";
                 if (!this.state.aws) {
@@ -660,12 +665,15 @@ class App extends Component {
                 //admin context
                 sipUserSwitch = <div className="row" id="body-row" >
                     <NavBar redirect={this.redirect} toggle={this.toggle} aws={this.state.aws} dashboardsUser={this.state.dashboardsUser} dashboards={this.state.dashboards} dashboardsSettings={this.state.dashboardsSettings} />
-                    <div className="row justify-content-between header" style={{ "marginRight": 0, "marginLeft": 0 }} >
-                        <span id="user" className="top" style={style}>
-                            {aws === true && <DecryptPasswordPopup />}
-                            <div style={styleUser}>{this.state.user.account}</div>
-                            {aws === true && (!this.state.admin && !this.state.siteAdmin) && <a href="/logout" > Log out </a>}
-                        </span>
+                    <div className="row justify-content-between align-items-center  header" style={{ "marginRight": 0, "marginLeft": 0 }} >
+                        <div style={{ display: "flex", marginLeft: 5, gap: 5 }}>
+                          <LogoVersion version={this.state.monitorName} />
+                          <span id="user" className="top" style={style}>
+                              {aws === true && <DecryptPasswordPopup />}
+                              <div style={styleUser}>{this.state.user.account}</div>
+                              {aws === true && (!this.state.admin && !this.state.siteAdmin) && <a href="/logout" > Log out </a>}
+                          </span>
+                        </div>
                         <TimerangeBar />
                     </div>
 
@@ -681,10 +689,6 @@ class App extends Component {
                                 <Route path="*" element={<Navigate to={dashboards.includes("home") ? "/home" : "/" + dashboards[0]} />} />
                             </Routes>
                         </div>
-                        <span className="footer" style={{ "float": "right" }}>
-                            <div>{this.state.monitorName}</div>
-                            <img src={this.state.logo} alt="logo" id="footerlogo" />
-                        </span>
                     </div>
                 </div>;
             }
