@@ -1,5 +1,6 @@
-import { parseDuration } from "../helpers/parseDuration";
-import CountUp from "react-countup";
+import { formatDuration } from "@/js/helpers/formatTime";
+import { useEffect, useRef } from "react";
+import CountUp, { useCountUp } from "react-countup";
 
 export interface Props {
   name: string;
@@ -14,11 +15,24 @@ export default function CountUpChart({ name, data, dataAgo }: Props) {
   // TODO: should be a parameter
   const niceNumber = (name: string) => {
     return (nmb: number) => {
-      if (name.includes("DURATION")) return parseDuration(nmb);
+      if (name.includes("DURATION")) return formatDuration(nmb);
       if (nmb) return nmb.toLocaleString();
       return "0";
     };
   };
+
+  const countUpRef = useRef(null);
+  const { start } = useCountUp({
+    ref: countUpRef,
+    startOnMount: false,
+    start: dataAgo,
+    end: data,
+    formattingFn: niceNumber(name),
+  });
+
+  useEffect(() => {
+    start();
+  }, [data])
 
   return (
     <div
@@ -29,11 +43,9 @@ export default function CountUpChart({ name, data, dataAgo }: Props) {
       <h3 className="alignLeft title" style={{ "float": "inherit" }}>
         {name}
       </h3>
-      <CountUp
+      <div
         className={"alignLeft count-chart-counter"}
-        start={dataAgo}
-        end={data}
-        formattingFn={niceNumber(name)}
+        ref={countUpRef}
       />
       {!Number.isNaN(valueAgo) && (
         <h4 className={"alignLeft "} title={"difference to previous"}>
