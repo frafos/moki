@@ -2,10 +2,10 @@ import { parseDuration } from "../helpers/parseDuration";
 import CountUp from "react-countup";
 
 export interface Props {
-  name: string,
-  type: string,
-  data: number,
-  dataAgo: number,
+  name: string;
+  type: string;
+  data: number;
+  dataAgo: number;
 }
 
 export default function CountUpChart({ name, data, dataAgo }: Props) {
@@ -18,17 +18,7 @@ export default function CountUpChart({ name, data, dataAgo }: Props) {
       if (nmb) return nmb.toLocaleString();
       return "0";
     };
-  }
-
-  const getNumberLength = (number: number) => (number.toString().length);
-  const digits = getNumberLength(data);
-
-  let style = "";
-  if (digits > 8) {
-    style = "count-chart-counter-xs";
-  } else if (digits > 5) {
-    style = "count-chart-counter-sm";
-  }
+  };
 
   return (
     <div
@@ -40,7 +30,7 @@ export default function CountUpChart({ name, data, dataAgo }: Props) {
         {name}
       </h3>
       <CountUp
-        className={"alignLeft count-chart-counter " + style}
+        className={"alignLeft count-chart-counter"}
         start={dataAgo}
         end={data}
         formattingFn={niceNumber(name)}
@@ -56,7 +46,7 @@ export default function CountUpChart({ name, data, dataAgo }: Props) {
                 : "red",
             }}
           >
-            {valueAgo > 0 ? "(+" + valueAgo + ")" : "(" + valueAgo + ")"}
+            {`(${valueAgo > 0 ? "+" : ""}${niceNumber(name)(valueAgo)})`}
           </span>
         </h4>
       )}
