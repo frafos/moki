@@ -5,18 +5,21 @@ import {
   getTimeBucketFormat,
   getTimeBucketInt,
 } from "../helpers/getTimeBucket";
-import { parseTimestamp } from "../helpers/parseTimestamp";
-import { setTickNrForTimeXAxis } from "../helpers/chart";
-import { hideTooltip, showTooltip } from "../helpers/tooltip.js";
 
 import store from "@/js/store";
 import { setTimerange as setReduxTimerange } from "@/js/slices";
 import NoData from "./NoData";
+import { useWindowWidth } from "@hooks/useWindowWidth";
+import { useAppSelector } from "@hooks/index";
 import { curtainTransition } from "@/js/d3helpers/curtainTransition";
-import { addGridlines } from "../d3helpers/addGridlines";
-import { useWindowWidth } from "../hooks/useWindowWidth";
-import { useAppSelector } from "../hooks";
-import { addDateBrush } from "../d3helpers/addDateBrush";
+import { addGridlines } from "@/js/d3helpers/addGridlines";
+import { addDateBrush } from "@/js/d3helpers/addDateBrush";
+import { addDateAxis } from "@/js/d3helpers/addDateAxis";
+import {
+  hideTooltip,
+  showTooltip,
+  tooltipTimeFormat,
+} from "@/js/d3helpers/tooltip";
 
 interface Chart {
   name: string;
@@ -117,7 +120,6 @@ export function MultipleAreaChartRender(
     tooltip.style("visibiliy", "hidden");
     tooltip.append("div");
 
-    const formatedUnits = units ? " (" + units + ")" : "";
     const margin = {
       top: 20,
       right: 35,
@@ -185,25 +187,11 @@ export function MultipleAreaChartRender(
       .domain([minTime, maxTime]);
     const yScale = d3.scaleLinear().domain([minValue, domain])
       .range([height, 0]);
-    const xAxis = d3.axisBottom(xScale)
-      .ticks(7)
-      .tickFormat(
-        d3.timeFormat(timeBucket.format) as (
-          dv: number | { valueOf(): number },
-        ) => string,
-      );
     const yAxis = d3.axisLeft(yScale).ticks(5).tickFormat(formatValue);
-    console.log(formatValue(0.8));
 
-    // date selection
+    // date axis and selection
     addDateBrush(svg, width, height, xScale, setTimerange);
-
-    // x axis rendering
-    setTickNrForTimeXAxis(xAxis);
-    svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", `translate(0, ${height})`)
-      .call(xAxis);
+    addDateAxis(svg, width, height, xScale, timeBucket.format);
 
     // y axis rendering
     svg.append("g")
@@ -273,11 +261,16 @@ export function MultipleAreaChartRender(
             styleAreaHover(i);
             d3.select(this).transition().duration(duration)
               .attr("r", circleRadiusHover);
-            tooltip.select("div").html(`<strong>Time: </strong>
-              ${parseTimestamp(d.date)} + ${timeBucket.name} <br />
-              <strong>Value: </strong> 
-              ${formatValue(d.value)} ${formatedUnits} <br/>`);
-            showTooltip(event, tooltip);
+            showTooltip(
+              event,
+              tooltip,
+              tooltipTimeFormat(
+                formatValue(d.value),
+                d.date,
+                timeBucket.name,
+                units,
+              ),
+            );
           })
           .on("mouseout", function () {
             styleAreaDefault(i);

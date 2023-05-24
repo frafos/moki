@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import * as d3 from "d3";
-import { durationFormat } from "../helpers/durationFormat";
+import { formatDuration } from "@/js/helpers/formatTime";
 import Animation from "../helpers/Animation";
 import { showTooltip } from "../helpers/tooltip";
 import { ColorsGreen, ColorsRedGreen, createFilter } from "../../gui";
@@ -191,7 +191,7 @@ export default function Heatmap(props) {
               .style("left", `${event.layerX - 350}px`);
           }
           if (name.includes("DURATION")) {
-            var value = durationFormat(d.value);
+            var value = formatDuration(d.value, "min");
             tooltip.select("div").html(
               "<strong>SRC:</strong> " + d.attr2 +
                 "<br/> <strong>DST: </strong>" + d.attr1 +

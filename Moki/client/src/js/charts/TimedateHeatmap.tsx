@@ -5,20 +5,27 @@ import {
   getTimeBucketFormat,
   getTimeBucketInt,
 } from "../helpers/getTimeBucket";
-import { parseTimestampUTC } from "../helpers/parseTimestamp";
-import { setTickNrForTimeXAxis } from "../helpers/chart";
-import { hideTooltip, showTooltip } from "../helpers/tooltip";
 import { ColorsGreen, ColorsRedGreen, createFilter } from "../../gui";
 
 import store from "@/js/store";
 import { setTimerange as setReduxTimerange } from "@/js/slices";
 
-import { useAppSelector } from "../hooks";
-import { useWindowWidth } from "../hooks/useWindowWidth";
+import { useAppSelector } from "@hooks/index";
+import { useWindowWidth } from "@hooks/useWindowWidth";
 import NoData from "./NoData";
-import { curtainTransition } from "../d3helpers/curtainTransition";
-import { addDateBrush } from "../d3helpers/addDateBrush";
+import { curtainTransition } from "@/js/d3helpers/curtainTransition";
+import { addDateBrush } from "@/js/d3helpers/addDateBrush";
 import { MN_TIME } from "@/data/utils/date";
+import {
+  hideTooltip,
+  showTooltip,
+  tooltipTimeFormat,
+} from "@/js/d3helpers/tooltip";
+import {
+  hideItemSelection,
+  showItemSelection,
+} from "@/js/d3helpers/itemSelection";
+import { addDateAxis } from "@/js/d3helpers/addDateAxis";
 
 export interface ChartData {
   attr1: number;
@@ -217,25 +224,12 @@ export function TimedateHeatmapRender(
       .domain(labels)
       .range([0, height])
       .paddingInner(.2).paddingOuter(.2);
-    const xAxis = d3.axisBottom(xScale)
-      .ticks(7)
-      .tickFormat(
-        d3.timeFormat(timeBucket.format) as (
-          dv: number | { valueOf(): number },
-        ) => string,
-      );
     const yAxis = d3.axisLeft(yScale)
       .tickFormat((d) => (d.length > 20 ? d.substring(0, 20) + "..." : d));
 
-    // date selection
+    // date axis and selection
     addDateBrush(svg, width, height, xScale, setTimerange);
-
-    // x axis rendering
-    setTickNrForTimeXAxis(xAxis);
-    svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", `translate(0, ${height})`)
-      .call(xAxis);
+    addDateAxis(svg, width, height, xScale, timeBucket.format);
 
     // y axis rendering
     svg.append("g")
@@ -247,6 +241,7 @@ export function TimedateHeatmapRender(
         createFilter(field + ': "' + d + '"');
       });
 
+    // cells rendering
     const rect = svg.selectAll("cell")
       .data(data).enter()
       .append("g").append("rect")
@@ -272,28 +267,28 @@ export function TimedateHeatmapRender(
       .attr("ry", 2)
       .style("opacity", 1)
       .on("mouseover", function (event, d) {
-        d3.select(this)
-          .style("stroke", "orange")
-          .style("cursor", "pointer");
-
         const formatedValue = mapValue
           ? mapValue(d.value as string)
           : (d.value as number).toFixed(2);
-
-        tooltip.select("div").html(
-          `<strong>${d.attr2.charAt(0).toUpperCase()}${d.attr2.slice(1)}
-            :</strong> ${formatedValue} ${formatedUnits} <br/> 
-            <strong>Time: </strong> 
-            ${parseTimestampUTC(d.attr1)} + ${getTimeBucket(timerange)}`,
+        showTooltip(
+          event,
+          tooltip,
+          tooltipTimeFormat(
+            formatedValue,
+            d.attr1,
+            timeBucket.name,
+            units,
+            d.attr2,
+          ),
         );
 
-        showTooltip(event, tooltip);
+        showItemSelection(d3.select(this));
       })
       .on("mousemove", function (event) {
         showTooltip(event, tooltip);
       })
       .on("mouseout", function () {
-        d3.select(this).style("stroke", "none");
+        hideItemSelection(d3.select(this));
         hideTooltip(tooltip);
       });
 

@@ -3,7 +3,7 @@ Class to get data for all charts iin Call dashboard
 */
 import SunburstChart from "@charts/sunburst_chart";
 import DonutChart from "@charts/donut_chart";
-import DatebarChart from "@charts/datebar_chart";
+import TimedateBar from "@charts/TimedateBar";
 import TableChart from "@charts/list_chart";
 import ValueChart from "@charts/ValueChart";
 import StackedChartLine from "@charts/timedate_stackedbar_with_line_chart";
@@ -194,13 +194,9 @@ function CallCharts() {
       )}
       {charts["SUM DURATION OVER TIME"] && (
         <div className="row no-gutters">
-          <DatebarChart
+          <TimedateBar
             data={chartsData.sumDurationOverTime}
-            id={"sumDurationOverTime"}
-            marginLeft={25}
-            height={200}
             name={"SUM DURATION OVER TIME"}
-            width={width - 300}
           />
         </div>
       )}

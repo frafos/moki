@@ -1,4 +1,4 @@
-import { parseDuration } from "../helpers/parseDuration";
+import { formatDuration } from "@/js/helpers/formatTime";
 
 export type ChartColors = "" | "zerogreen";
 
@@ -19,7 +19,7 @@ export default function ValueChart({ biggerFont, name, color, data }: Props) {
   // TODO: should be a parameter
   const niceNumber = (name: string) => {
     return (nmb: number) => {
-      if (name.includes("DURATION")) return parseDuration(nmb);
+      if (name.includes("DURATION")) return formatDuration(nmb);
       if (nmb) return nmb.toLocaleString();
       return 0;
     };

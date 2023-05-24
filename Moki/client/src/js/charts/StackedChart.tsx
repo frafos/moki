@@ -1,14 +1,22 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import { hideTooltip, showTooltip } from "../helpers/tooltip";
 import { Colors, ColorType, createFilter } from "../../gui";
 
 import store from "@/js/store";
 import NoData from "./NoData";
-import { curtainTransition } from "../d3helpers/curtainTransition";
-import { addGridlines } from "../d3helpers/addGridlines";
-import { useAppSelector } from "../hooks";
-import { useWindowWidth } from "../hooks/useWindowWidth";
+import { useAppSelector } from "@hooks/index";
+import { useWindowWidth } from "@hooks/useWindowWidth";
+import { curtainTransition } from "@/js/d3helpers/curtainTransition";
+import { addGridlines } from "@/js/d3helpers/addGridlines";
+import {
+  hideTooltip,
+  showTooltip,
+  tooltipTypeFormat,
+} from "@/js/d3helpers/tooltip";
+import {
+  hideItemSelection,
+  showItemSelection,
+} from "@/js/d3helpers/itemSelection";
 
 export interface ChartData {
   name: string;
@@ -111,7 +119,6 @@ export function StackedChartRender(
     tooltip.style("visibiliy", "hidden");
     tooltip.append("div");
 
-    units = units ? " (" + units + ")" : "";
     const colorScale = d3.scaleOrdinal(Colors);
     const margin = {
       bottom: 80,
@@ -216,18 +223,21 @@ export function StackedChartRender(
         return Math.max(height, minHeight);
       })
       .on("mouseover", function (event, d) {
+        showItemSelection(d3.select(this));
         const type = d3.select(this.parentElement).attr("type");
-        tooltip.select("div").html(`
-          <strong>Type: </strong> ${type} <br />
-          <strong>Count:</strong> ${formatValue(d[1] - d[0])}${units} <br />`);
         d3.select(this).style("cursor", "pointer");
-        showTooltip(event, tooltip);
+        showTooltip(
+          event,
+          tooltip,
+          tooltipTypeFormat(type, formatValue(d[1] - d[0]), units),
+        );
       })
       .on("mousemove", function (event) {
         showTooltip(event, tooltip);
       })
       .on("mouseout", function () {
         hideTooltip(tooltip);
+        hideItemSelection(d3.select(this));
       });
 
     // filter type when clicked

@@ -89,8 +89,6 @@ function HomeCharts() {
     ],
   }, false);
 
-  const width = useSelector((state) => state.persistent.width);
-
   return (
     <div>
       {isLoading && <LoadingScreenCharts />}
@@ -179,7 +177,6 @@ function HomeCharts() {
               id="dateHeatmap"
               name={"TYPE DATE HEATMAP"}
               field={"attrs.type"}
-              width={width - 300}
               units={"count"}
             />
           </div>
@@ -217,7 +214,6 @@ function HomeCharts() {
                 data={chartsData.parallelCalls}
                 name={"PARALLEL CALLS"}
                 id={"parallelCalls"}
-                width={width - 300}
                 units={"count"}
               />
             </div>
