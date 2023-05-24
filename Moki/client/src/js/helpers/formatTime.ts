@@ -3,7 +3,7 @@ import { format, timeFormat } from "d3";
 const MN = 60;
 
 function formatDuration(duration: number, unit = true) {
-  let secDuration = Math.floor(duration);
+  const secDuration = Math.floor(duration);
   const minutes = Math.floor(secDuration / MN);
   if (isNaN(minutes)) return "0 min";
   const formattedMin = minutes < 10
