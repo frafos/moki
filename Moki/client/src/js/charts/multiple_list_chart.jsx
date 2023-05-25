@@ -4,6 +4,7 @@ import { createFilter } from '../../gui';
 import filter from "/icons/filter.png";
 import unfilter from "/icons/unfilter.png";
 import emptyIcon from "/icons/empty_small.png";
+import { formatValueISO } from '../helpers/formatValue';
 
 class MultiListChart extends Component {
      constructor(props) {
@@ -22,11 +23,8 @@ unfilter(event){
   
     
 niceNumber(nmb){
-         if(nmb){
-        return nmb.toLocaleString();
-         }
-         else return nmb;
-    }
+    return formatValueISO(nmb);
+}
     
  roundNumber(nmb){
          if(nmb){

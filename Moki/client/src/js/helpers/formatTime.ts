@@ -1,4 +1,5 @@
-import { format, timeFormat } from "d3";
+import { timeFormat } from "d3";
+import { formatValueISO } from "./formatValue";
 
 const MN = 60;
 
@@ -6,9 +7,7 @@ function formatDuration(duration: number, unit = true) {
   const secDuration = Math.floor(duration);
   const minutes = Math.floor(secDuration / MN);
   if (isNaN(minutes)) return "0 min";
-  const formattedMin = minutes < 10
-    ? minutes.toString()
-    : format(".2s")(minutes);
+  const formattedMin = formatValueISO(minutes);
   if (!unit) return formattedMin;
   return `${formattedMin} min`;
 }

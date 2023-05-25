@@ -5,6 +5,7 @@ import { createFilter } from '../../gui';
 import sortIcon from "/icons/sort.png";
 import filter from "/icons/filter.png";
 import unfilter from "/icons/unfilter.png";
+import { formatValueISO } from '../helpers/formatValue';
 
 export default class multivalueChart extends Component {
     constructor(props) {
@@ -113,11 +114,7 @@ export default class multivalueChart extends Component {
 
     render() {
         function niceNumber(nmb) {
-            if (nmb) {
-                return nmb.toLocaleString();
-            } else {
-                return 0;
-            }
+            return formatValueISO(nmb);
         }
 
 

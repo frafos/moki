@@ -1,6 +1,7 @@
 import { formatDuration } from "@/js/helpers/formatTime";
 import { useEffect, useRef } from "react";
 import { useCountUp } from "react-countup";
+import { formatValueISO } from "../helpers/formatValue";
 
 export interface Props {
   name: string;
@@ -16,7 +17,7 @@ export default function CountUp({ name, data, dataAgo }: Props) {
   const niceNumber = (name: string) => {
     return (nmb: number) => {
       if (name.includes("DURATION")) return formatDuration(nmb);
-      if (nmb) return nmb.toLocaleString();
+      if (nmb) return formatValueISO(nmb);
       return "0";
     };
   };

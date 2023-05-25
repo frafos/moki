@@ -25,8 +25,9 @@ import { formatDuration } from "@/js/helpers/formatTime";
 import {
   hideItemSelection,
   showItemSelection,
-} from "../d3helpers/itemSelection";
-import { addDateAxis } from "../d3helpers/addDateAxis";
+} from "@/js/d3helpers/itemSelection";
+import { addDateAxis } from "@/js/d3helpers/addDateAxis";
+import { formatValueISO } from "@/js/helpers/formatValue";
 
 interface Props {
   data: any[];
@@ -142,7 +143,7 @@ export function TimedateBarRender(
     const formatValue = (suffix = false) => (d: d3.NumberValue) => (
       duration
         ? formatDuration(d.valueOf(), suffix)
-        : d3.format(".2s")(d.valueOf())
+        : formatValueISO(d)
     );
 
     // svg with left offset

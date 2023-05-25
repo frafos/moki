@@ -26,6 +26,7 @@ import {
   showItemSelection,
 } from "@/js/d3helpers/itemSelection";
 import { addDateAxis } from "@/js/d3helpers/addDateAxis";
+import { formatValueISO } from "../helpers/formatValue";
 
 export interface ChartData {
   attr1: number;
@@ -268,7 +269,7 @@ export function TimedateHeatmapRender(
       .on("mouseover", function (event, d) {
         const formatedValue = mapValue
           ? mapValue(d.value as string)
-          : (d.value as number).toFixed(2);
+          : formatValueISO(d.value as number);
         showTooltip(
           event,
           tooltip,

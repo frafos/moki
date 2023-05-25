@@ -17,6 +17,7 @@ import {
   hideItemSelection,
   showItemSelection,
 } from "@/js/d3helpers/itemSelection";
+import { formatValueISO } from "@/js/helpers/formatValue";
 
 export interface ChartData {
   name: string;
@@ -131,7 +132,6 @@ export function StackedChartRender(
     const svgHeight = chartSVGRef.current.clientHeight;
     const width = Math.max(100, totalWidth - (margin.left + margin.right));
     const height = svgHeight - margin.top - margin.bottom;
-    const formatValue = d3.format(".2s");
 
     // svg with left offset
     const svgElement = d3.select(chartSVGRef.current);
@@ -156,7 +156,7 @@ export function StackedChartRender(
       .range([height, 0])
       .domain([0, domain * 1.1]);
     const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale).ticks(4).tickFormat(formatValue);
+    const yAxis = d3.axisLeft(yScale).ticks(4).tickFormat(formatValueISO);
 
     // x axis rendering
     svg.append("g")
@@ -229,7 +229,7 @@ export function StackedChartRender(
         showTooltip(
           event,
           tooltip,
-          tooltipTypeFormat(type, formatValue(d[1] - d[0]), units),
+          tooltipTypeFormat(type, formatValueISO(d[1] - d[0]), units),
         );
       })
       .on("mousemove", function (event) {
