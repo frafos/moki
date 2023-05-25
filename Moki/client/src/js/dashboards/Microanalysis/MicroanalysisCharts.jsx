@@ -4,7 +4,7 @@ Class to get data for all charts iin Call dashboard
 import ListChart from "@charts/list_chart.jsx";
 import DonutChart from "@charts/donut_chart.jsx";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
-import ValueChart from "@charts/ValueChart";
+import Value from "@charts/Value";
 import {
   parseAggDistinct,
   parseBucketData,
@@ -163,13 +163,13 @@ function MicroanalysisCharts() {
       <div className="row no-gutters">
         <div className="col-auto">
           {charts["DISTINCT IP"] && (
-            <ValueChart
+            <Value
               data={chartsData.distinctIP}
               name={"DISTINCT IP"}
             />
           )}
           {charts["DISTINCT URI"] && (
-            <ValueChart
+            <Value
               data={chartsData.distinctURI}
               name={"DISTINCT URI"}
             />

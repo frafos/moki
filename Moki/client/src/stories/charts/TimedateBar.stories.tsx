@@ -4,7 +4,7 @@ import { timerangeProps } from "@/stories/utils/timerange";
 import type { TimerangeProps } from "@/stories/utils/timerange";
 import { ChartGeneratorProps } from "@/data/types";
 import { DAY_TIME } from "@/data/utils/date";
-import { genTimedateBarData } from "@/data/charts/genTimedateBarData";
+import { genTimedateBarData } from "@/data/charts/genTimedateBar";
 import { parseBucketData } from "@/es-response-parser";
 import { scaleOrdinal } from "d3";
 import { Colors } from "@/gui";

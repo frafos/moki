@@ -43,11 +43,10 @@ function SystemCharts({ hostnames }) {
       <div className="row no-gutters">
         <div className="col-6 pr-1">
           <MultipleLine
-            id="shortterm"
             data={chartsData.shortterm}
+            field={"attrs.hostname"}
             name={"LOAD-SHORTTERM"}
             hostnames={hostnames}
-            ticks={3}
           />
         </div>{" "}
         <div className="col-6 px-1">

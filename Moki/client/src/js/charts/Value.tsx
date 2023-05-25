@@ -9,7 +9,7 @@ export interface Props {
   biggerFont?: string;
 }
 
-export default function ValueChart({ biggerFont, name, color, data }: Props) {
+export default function Value({ biggerFont, name, color, data }: Props) {
   let chartColor = "grey";
   if (color === "zerogreen") {
     if (data === 0) chartColor = "green";

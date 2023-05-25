@@ -3,9 +3,9 @@ Class to get data for all charts iin Call dashboard
 */
 import TimedateHeatmap from "@charts/TimedateHeatmap";
 import TimedateStackedChart from "@charts/timedate_stackedbar";
-import StackedChart from "@charts/StackedChart";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
-import ValueChart from "@charts/ValueChart";
+import StackedChart from "@charts/StackedChart";
+import Value from "@charts/Value";
 import {
   parseAggDistinct,
   parseDateHeatmap,
@@ -52,17 +52,17 @@ function OverviewCharts() {
       <div className="row  no-gutters">
         {charts["DISTINCT IP"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.distinctIP} name={"DISTINCT IP"} />
+            <Value data={chartsData.distinctIP} name={"DISTINCT IP"} />
           </div>
         )}
         {charts["DISTINCT URI"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.distinctURI} name={"DISTINCT URI"} />
+            <Value data={chartsData.distinctURI} name={"DISTINCT URI"} />
           </div>
         )}
         {charts["TOTAL EVENTS"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.totalEvents} name={"# EVENTS"} />
+            <Value data={chartsData.totalEvents} name={"# EVENTS"} />
           </div>
         )}
       </div>

@@ -20,6 +20,7 @@ function genTimedateBarData(
   { seed, startDate, endDate, sample, valueMod }: GeneratorProps,
 ): ESResponse<never, DataBucket> | [] {
   if (sample === 0) return [];
+
   const randomValue = randomNormal.source(randomLcg(seed))(1, 0.3);
   faker.seed(seed);
 

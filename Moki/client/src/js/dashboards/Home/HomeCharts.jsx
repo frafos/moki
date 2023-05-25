@@ -3,9 +3,9 @@ Class to get data for all charts iin Call dashboard
 */
 import { useDashboardData, getLastValueInInterval } from "@hooks/useDashboardData";
 import TimedateHeatmap from "@charts/TimedateHeatmap";
-import CountUpChart from "@charts/CountUpChart";
-import ValueChart from "@charts/ValueChart";
-import MultipleAreaChart from "@charts/MultipleAreaChart";
+import CountUp from "@charts/CountUp";
+import Value from "@charts/Value";
+import MultipleLine from "@charts/MultipleLine";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import MultivalueChart from "@charts/multivalue_chart";
 import ListChart from "@charts/list_chart";
@@ -93,13 +93,13 @@ function HomeCharts() {
       <div className="row no-gutters">
         {charts["# CALLS"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.sumCallEnd} name={"# CALLS"} />
+            <Value data={chartsData.sumCallEnd} name={"# CALLS"} />
           </div>
         )}
         {charts["# ATTEMPTS"] &&
           (
             <div className="col-auto">
-              <ValueChart
+              <Value
                 data={chartsData.sumCallAttempt}
                 name={"# ATTEMPTS"}
               />
@@ -108,13 +108,13 @@ function HomeCharts() {
         {charts["SUM DURATION"] &&
           (
             <div className="col-auto">
-              <ValueChart data={chartsData.durationSum} name={"SUM DURATION"} />
+              <Value data={chartsData.durationSum} name={"SUM DURATION"} />
             </div>
           )}
         {charts["ASR (%)"] &&
           (
             <div className="col-auto">
-              <ValueChart
+              <Value
                 data={chartsData.answerSeizureRatio}
                 name={"ASR (%)"}
               />
@@ -123,25 +123,25 @@ function HomeCharts() {
         {charts["AVG DURATION"] &&
           (
             <div className="col-auto">
-              <ValueChart data={chartsData.avgDuration} name={"AVG DURATION"} />
+              <Value data={chartsData.avgDuration} name={"AVG DURATION"} />
             </div>
           )}
         {charts["DISTINCT IP"] &&
           (
             <div className="col-auto">
-              <ValueChart data={chartsData.distinctIP} name={"DISTINCT IP"} />
+              <Value data={chartsData.distinctIP} name={"DISTINCT IP"} />
             </div>
           )}
         {charts["DISTINCT URI"] &&
           (
             <div className="col-auto">
-              <ValueChart data={chartsData.distinctURI} name={"DISTINCT URI"} />
+              <Value data={chartsData.distinctURI} name={"DISTINCT URI"} />
             </div>
           )}
         {charts["# FILTRED PACKETS"] &&
           (
             <div className="col-auto">
-              <ValueChart
+              <Value
                 data={chartsData.filtredPackets}
                 name={"# FILTRED PACKETS"}
               />
@@ -150,7 +150,7 @@ function HomeCharts() {
         {charts["BLACKLISTED RATIO"] &&
           (
             <div className="col-auto">
-              <ValueChart
+              <Value
                 data={chartsData.blacklistedRatio}
                 name={"BLACKLISTED RATIO"}
               />
@@ -159,7 +159,7 @@ function HomeCharts() {
         {charts["WHITELISTED RATIO"] &&
           (
             <div className="col-auto">
-              <ValueChart
+              <Value
                 data={chartsData.whitelistedRatio}
                 name={"WHITELISTED RATIO"}
               />
@@ -208,10 +208,11 @@ function HomeCharts() {
         {charts["PARALLEL CALLS"] &&
           (
             <div className="col-10 pr-1 mr-0">
-              <MultipleAreaChart
+              <MultipleLine
+                area
+                height={220}
                 data={chartsData.parallelCalls}
                 name={"PARALLEL CALLS"}
-                id={"parallelCalls"}
                 units={"count"}
               />
             </div>
@@ -219,7 +220,7 @@ function HomeCharts() {
         {charts["ACTUAL CALLS"] &&
           (
             <div className="col-2 px-1">
-              <CountUpChart
+              <CountUp
                 data={getLastValueInInterval(chartsData.parallelCalls, 1)}
                 name={"ACTUAL CALLS"}
                 biggerFont={"biggerFont"}
@@ -235,10 +236,11 @@ function HomeCharts() {
         {charts["PARALLEL REGS"] &&
           (
             <div className="col-10 pr-1 mr-0">
-              <MultipleAreaChart
+              <MultipleLine
+                area
+                height={220}
                 data={chartsData.parallelRegs}
                 name={"PARALLEL REGS"}
-                id={"parallelRegs"}
                 units={"count"}
               />
             </div>
@@ -246,7 +248,7 @@ function HomeCharts() {
         {charts["ACTUAL REGS"] &&
           (
             <div className="col-2 px-1">
-              <CountUpChart
+              <CountUp
                 data={getLastValueInInterval(chartsData.parallelRegs, 1)}
                 name={"ACTUAL REGS"}
                 biggerFont={"biggerFont"}
@@ -261,18 +263,19 @@ function HomeCharts() {
       <div className="row no-gutters">
         {charts["INCIDENTS"] && (
           <div className="col-10 pr-1 mr-0">
-            <MultipleAreaChart
+            <MultipleLine
+              area
+              height={220}
               data={chartsData.incidentCount}
               name={"INCIDENTS"}
               units={"count"}
-              id={"incidentCount"}
             />
           </div>
         )}
         {charts["INCIDENTS ACTUAL"] &&
           (
             <div className="col-2 px-1">
-              <CountUpChart
+              <CountUp
                 data={getLastValueInInterval(chartsData.incidentCount, 1)}
                 name={"INCIDENTS ACTUAL"}
                 biggerFont={"biggerFont"}

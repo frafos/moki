@@ -1,8 +1,8 @@
 /*
 Class to get data for all charts iin Call dashboard
 */
-import ValueChart from "@charts/ValueChart";
-import MultipleAreaChart from "@charts/MultipleAreaChart";
+import Value from "@charts/Value";
+import MultipleLine from "@charts/MultipleLine";
 import TimedateStackedChart from "@charts/timedate_stackedbar";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import GeoIpMap from "@charts/geoip_map";
@@ -86,14 +86,15 @@ function RegistrationCharts() {
       </div>
       <div className="row no-gutters">
         <div className="col-10 pr-1 mr-0">
-          <MultipleAreaChart
+          <MultipleLine
+            area
+            height={220}
             data={chartsData.parallelRegs}
             name={"PARALLEL REGS"}
-            id={"parallelRegs"}
           />
         </div>
         <div className="col-2 px-1">
-          <ValueChart
+          <Value
             data={getLastValueInInterval(chartsData.parallelRegs, 1)}
             name={"ACTUAL REGS"}
             biggerFont={"biggerFont"}

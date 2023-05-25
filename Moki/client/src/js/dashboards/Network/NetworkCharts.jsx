@@ -50,22 +50,20 @@ function NetworkCharts({ hostnames }) {
         {charts["MAX CALLS BY HOST"] && (
           <div className="col-6 pr-1">
             <MultipleLine
-              id="callsByHost"
-              hostnames={chartsData.hostnames}
+              field={"attrs.hostname"}
+              hostnames={hostnames}
               data={chartsData.callsByHost}
               name={"MAX CALLS BY HOST"}
-              ticks={3}
             />
           </div>
         )}
         {charts["MAX REGS BY HOST"] && (
           <div className="col-6 px-1">
             <MultipleLine
-              id="regsByHost"
-              hostnames={chartsData.hostnames}
+              field={"attrs.hostname"}
+              hostnames={hostnames}
               data={chartsData.regsByHost}
               name={"MAX REGS BY HOST"}
-              ticks={3}
             />
           </div>
         )}
@@ -73,11 +71,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
-                id="callStartsByHost"
-                hostnames={chartsData.hostnames}
+                field={"attrs.hostname"}
+                hostnames={hostnames}
                 data={chartsData.callStartsByHost}
                 name={"MAX CALL STARTS BY HOST"}
-                ticks={3}
               />
             </div>
           )}
@@ -85,11 +82,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
-                id="relayedRtpByHost"
-                hostnames={chartsData.hostnames}
+                field={"attrs.hostname"}
+                hostnames={hostnames}
                 data={chartsData.relayedRtpByHost}
                 name={"RELAYED RTP BY HOST"}
-                ticks={3}
               />
             </div>
           )}
@@ -97,11 +93,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
-                id="txBytesByHost"
-                hostnames={chartsData.hostnames}
+                field={"attrs.hostname"}
+                hostnames={hostnames}
                 data={chartsData.txBytesByHost}
                 name={"TX BYTES BY HOST"}
-                ticks={3}
               />
             </div>
           )}
@@ -109,11 +104,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
-                id="rxPacketByHost"
-                hostnames={chartsData.hostnames}
+                field={"attrs.hostname"}
+                hostnames={hostnames}
                 data={chartsData.rxPacketByHost}
                 name={"RX PACKET BY HOST"}
-                ticks={3}
               />
             </div>
           )}
@@ -121,11 +115,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
-                id="txPacketByHost"
-                hostnames={chartsData.hostnames}
+                field={"attrs.hostname"}
+                hostnames={hostnames}
                 data={chartsData.txPacketByHost}
                 name={"TX PACKET BY HOST"}
-                ticks={3}
               />
             </div>
           )}
@@ -133,12 +126,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
-                id="rxBytesByInterface"
                 field="type_instance"
-                hostnames={chartsData.hostnames}
+                hostnames={hostnames}
                 data={chartsData.rxBytesByInterface}
                 name={"RX BYTES BY INTERFACE"}
-                ticks={3}
               />
             </div>
           )}
@@ -146,12 +137,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
-                id="txBytesByInterface"
                 field="type_instance"
-                hostnames={chartsData.hostnames}
+                hostnames={hostnames}
                 data={chartsData.txBytesByInterface}
                 name={"TX BYTES BY INTERFACE"}
-                ticks={3}
               />
             </div>
           )}
@@ -159,12 +148,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
-                id="rxPacketByInterface"
                 field="type_instance"
-                hostnames={chartsData.hostnames}
+                hostnames={hostnames}
                 data={chartsData.rxPacketByInterface}
                 name={"RX PACKETS BY INTERFACE"}
-                ticks={3}
               />
             </div>
           )}
@@ -172,12 +159,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
-                id="txPacketByInterface"
                 field="type_instance"
-                hostnames={chartsData.hostnames}
+                hostnames={hostnames}
                 data={chartsData.txPacketByInterface}
                 name={"TX PACKETS BY INTERFACE"}
-                ticks={3}
               />
             </div>
           )}
@@ -185,11 +170,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
-                id="blacklist"
-                hostnames={chartsData.hostnames}
+                field={"attrs.hostname"}
+                hostnames={hostnames}
                 data={chartsData.blacklist}
                 name={"IPS ON FW BLACKLIST BY HOST"}
-                ticks={3}
               />
             </div>
           )}
@@ -197,11 +181,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
-                id="greylist"
-                hostnames={chartsData.hostnames}
+                field={"attrs.hostname"}
+                hostnames={hostnames}
                 data={chartsData.greylist}
                 name={"IPS ON FW GREYLIST BY HOST"}
-                ticks={3}
               />
             </div>
           )}
@@ -209,11 +192,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
-                id="whitelist"
-                hostnames={chartsData.hostnames}
+                field={"attrs.hostname"}
+                hostnames={hostnames}
                 data={chartsData.whitelist}
                 name={"IPS ON FW WHITELIST BY HOST"}
-                ticks={3}
               />
             </div>
           )}
@@ -221,11 +203,10 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
-                id="dropAlert"
-                hostnames={chartsData.hostnames}
+                field={"attrs.hostname"}
+                hostnames={hostnames}
                 data={chartsData.dropAlert}
                 name={"PACKET DROP ALERT COUNTERS"}
-                ticks={3}
               />
             </div>
           )}

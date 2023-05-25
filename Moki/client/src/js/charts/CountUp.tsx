@@ -9,7 +9,7 @@ export interface Props {
   dataAgo: number;
 }
 
-export default function CountUpChart({ name, data, dataAgo }: Props) {
+export default function CountUp({ name, data, dataAgo }: Props) {
   const valueAgo = Math.ceil(data - dataAgo);
 
   // TODO: should be a parameter

@@ -4,7 +4,7 @@ Class to get data for all charts iin Call dashboard
 import TimedateStackedChart from "@charts/timedate_stackedbar";
 import DonutChart from "@charts/donut_chart";
 import ListChart from "@charts/list_chart";
-import ValueChart from "@charts/ValueChart";
+import Value from "@charts/Value";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import {
   parseBucketData,
@@ -75,7 +75,7 @@ function ExceededCharts() {
         )}
         {charts["INCIDENTS COUNT"] && (
           <div className="col-auto">
-            <ValueChart
+            <Value
               data={chartsData.exceededCount}
               name={"INCIDENTS COUNT"}
               biggerFont={"biggerFont"}

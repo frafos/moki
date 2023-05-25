@@ -2,7 +2,7 @@
 Class to get data for all charts iin Call dashboard
 */
 
-import ValueChart from "@charts/ValueChart";
+import Value from "@charts/Value";
 import CircleChart from "@charts/circle_chart.jsx";
 import GaugeChart from "@charts/gauge_chart.jsx";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
@@ -12,7 +12,6 @@ import MonitoringListChart from "@charts/monitoring_list_chart.jsx";
 import { parseTimestamp } from "../../helpers/parseTimestamp";
 import { elasticsearchConnection } from "../../../gui";
 
-import store from "@/js/store";
 import SimpleTable from "@charts/table/simple_table";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -208,19 +207,19 @@ function MonitoringCharts() {
           />
         </div>
         <div className="col-auto">
-          <ValueChart
+          <Value
             data={monitorData.loadAverage1m}
             name={"1-MIN LOAD AVG"}
           />
         </div>
         <div className="col-auto">
-          <ValueChart
+          <Value
             data={monitorData.loadAverage5m}
             name={"5-MIN LOAD AVG"}
           />
         </div>{" "}
         <div className="col-auto">
-          <ValueChart
+          <Value
             data={monitorData.loadAverage15m}
             name={"15-MIN LOAD AVG"}
           />
@@ -229,10 +228,10 @@ function MonitoringCharts() {
       <h4>MEMORY</h4>{" "}
       <div className="row no-gutters bottomMargin">
         <div className="col-auto">
-          <ValueChart data={monitorData.freeMemory} name={"FREE MEMORY (KB)"} />
+          <Value data={monitorData.freeMemory} name={"FREE MEMORY (KB)"} />
         </div>
         <div className="col-auto" style={{ "marginLeft": "5px" }}>
-          <ValueChart
+          <Value
             data={monitorData.memoryBytes}
             name={"TOTAL MEMORY (KB)"}
           />
@@ -291,11 +290,11 @@ function MonitoringCharts() {
           id={"used_disc"}
           width={300}
         />{" "}
-        <ValueChart
+        <Value
           data={monitorData.availableDiskSpace}
           name={"AVAILABLE DISK SPACE (MB)"}
         />{" "}
-        <ValueChart
+        <Value
           data={monitorData.avgResponseTime}
           name={"AVG RESPONSE (ms)"}
         />

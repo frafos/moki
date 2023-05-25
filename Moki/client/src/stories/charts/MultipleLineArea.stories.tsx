@@ -1,23 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { TimerangeProps } from "@/stories/utils/timerange";
 import { timerangeProps } from "@/stories/utils/timerange";
-import MultipleAreaChart, {
-  MultipleAreaChartRender,
-  MultipleAreaChartRenderProps,
-} from "@charts/MultipleAreaChart";
+import { MultipleLineRender, RenderProps } from "@charts/MultipleLine";
 import { DAY_TIME } from "@/data/utils/date";
-import { scaleOrdinal } from "d3";
-import { genMultiLineData } from "@/data/charts/genMultilineData";
+import { genMultiLineData } from "@/data/charts/genMultipleLineArea";
 import { parseMultipleLineDataShareAxis } from "@/es-response-parser";
 import { getTimeBucketInt } from "@/js/helpers/getTimeBucket";
 import { ChartGeneratorProps } from "@/data/types";
+import { Colors } from "@/gui";
 
-type ColorScheme = "Calls" | "Registrations" | "Incidents";
+type ColorScheme = "Default" | "Registrations" | "Incidents";
 
 const COLOR_SCHEME = {
-  "Calls": scaleOrdinal<string, string>().range(["#caa547", "#30427F"]),
-  "Registrations": scaleOrdinal<string, string>().range(["#caa547", "#A5CA47"]),
-  "Incidents": scaleOrdinal<string, string>().range(["#caa547", "#69307F"]),
+  "Default": Colors,
+  "Registrations": ["#caa547", "#A5CA47"],
+  "Incidents": ["#caa547", "#69307F"],
 };
 
 type FakeDataProps = {
@@ -26,16 +23,14 @@ type FakeDataProps = {
   dataDayName: string;
 } & ChartGeneratorProps;
 
-type StoryProps = MultipleAreaChartRenderProps & TimerangeProps & FakeDataProps;
-
+type StoryProps = RenderProps & TimerangeProps & FakeDataProps;
 
 const meta: Meta<StoryProps> = {
-  title: "charts/MultipleArea",
-  component: MultipleAreaChart,
+  title: "charts/MultipleLines/Area",
   tags: ["autodocs"],
   argTypes: {
     colorScheme: {
-      options: ["Calls", "Registrations", "Incidents"],
+      options: ["Default", "Registrations", "Incidents"],
       control: { type: "select" },
     },
     sample: {
@@ -45,8 +40,9 @@ const meta: Meta<StoryProps> = {
     endDate: { control: "date" },
   },
   args: {
+    area: true,
     seed: 0,
-    colorScheme: "Calls",
+    colorScheme: "Default",
     startDate: Date.now(),
     endDate: Date.now() + DAY_TIME * 15,
     sample: 20,
@@ -69,7 +65,7 @@ const meta: Meta<StoryProps> = {
       dataDay,
     );
     return (
-      <MultipleAreaChartRender
+      <MultipleLineRender
         {...{ ...timerangeProps(args), data: parsedData, color }}
       />
     );
@@ -81,7 +77,6 @@ type Story = StoryObj<StoryProps>;
 
 export const Calls: Story = {
   args: {
-    colorScheme: "Calls",
     dataName: "Calls",
     dataDayName: "Calls-1d",
     name: "PARALLEL CALLS",

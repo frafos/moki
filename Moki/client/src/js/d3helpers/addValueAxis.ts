@@ -15,7 +15,7 @@ function addValueAxis(
   // generate axis
   const yAxis = axisLeft(yScale)
     .ticks(nbTicks)
-    .tickFormat(formatValueISO());
+    .tickFormat(formatValueISO);
 
   // rendering
   svg.append("g")

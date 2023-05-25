@@ -148,7 +148,7 @@ export function TimedateHeatmapRender(
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const noData = data === undefined || data.length == 0;
-  const minHeight = 180;
+  const minHeight = 190;
   const windowWidth = useWindowWidth();
 
   const timeBucket = {

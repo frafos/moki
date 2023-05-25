@@ -5,7 +5,7 @@ import SunburstChart from "@charts/sunburst_chart";
 import DonutChart from "@charts/donut_chart";
 import TimedateBar from "@charts/TimedateBar";
 import TableChart from "@charts/list_chart";
-import ValueChart from "@charts/ValueChart";
+import Value from "@charts/Value";
 import StackedChartLine from "@charts/timedate_stackedbar_with_line_chart";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import {
@@ -139,42 +139,42 @@ function CallCharts() {
       <div className="row no-gutters">
         {charts["ATTEMPTs"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.sumCallAttempt} name={"ATTEMPTs"} />
+            <Value data={chartsData.sumCallAttempt} name={"ATTEMPTs"} />
           </div>
         )}
         {charts["ENDs"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.sumCallEnd} name={"ENDs"} />
+            <Value data={chartsData.sumCallEnd} name={"ENDs"} />
           </div>
         )}
         {charts["STARTs"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.sumCallStart} name={"STARTs"} />
+            <Value data={chartsData.sumCallStart} name={"STARTs"} />
           </div>
         )}
         {charts["ASR (%)"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.answerSeizureRatio} name={"ASR (%)"} />
+            <Value data={chartsData.answerSeizureRatio} name={"ASR (%)"} />
           </div>
         )}
         {charts["MAX DURATION"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.maxDuration} name={"MAX DURATION"} />
+            <Value data={chartsData.maxDuration} name={"MAX DURATION"} />
           </div>
         )}
         {charts["AVG DURATION"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.avgDuration} name={"AVG DURATION"} />
+            <Value data={chartsData.avgDuration} name={"AVG DURATION"} />
           </div>
         )}
         {charts["SUM DURATION"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.durationSum} name={"SUM DURATION"} />
+            <Value data={chartsData.durationSum} name={"SUM DURATION"} />
           </div>
         )}
         {charts["AVG MoS"] && (
           <div className="col-auto">
-            <ValueChart data={chartsData.avgMoS} name={"AVG MoS"} />
+            <Value data={chartsData.avgMoS} name={"AVG MoS"} />
           </div>
         )}
       </div>

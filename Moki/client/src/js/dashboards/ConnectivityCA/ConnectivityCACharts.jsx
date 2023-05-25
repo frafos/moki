@@ -4,7 +4,7 @@ Class to get data for all charts iin Call dashboard
 import TopologyChart from "@charts/topology_chart";
 import Heatmap from "@charts/heatmap_chart";
 import TimedateHeatmap from "@charts/TimedateHeatmap";
-import ValueChart from "@charts/ValueChart";
+import Value from "@charts/Value";
 import MultivalueChart from "@charts/multivalue_chart";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import {
@@ -109,16 +109,16 @@ function ConnectivityCACharts() {
       {isLoading && <LoadingScreenCharts />}{" "}
       <div className="row no-gutters">
         <div className="col-auto">
-          <ValueChart data={chartsData.sumCallEnd} name={"ENDs"} />
+          <Value data={chartsData.sumCallEnd} name={"ENDs"} />
         </div>{" "}
         <div className="col-auto">
-          <ValueChart data={chartsData.sumCallAttempt} name={"ATTEMPTs"} />
+          <Value data={chartsData.sumCallAttempt} name={"ATTEMPTs"} />
         </div>
         <div className="col-auto">
-          <ValueChart data={chartsData.sumCallStart} name={"STARTs"} />
+          <Value data={chartsData.sumCallStart} name={"STARTs"} />
         </div>
         <div className="col-auto">
-          <ValueChart data={chartsData.durationSum} name={"SUM DURATION"} />
+          <Value data={chartsData.durationSum} name={"SUM DURATION"} />
         </div>
       </div>
       <div className="row no-gutters">

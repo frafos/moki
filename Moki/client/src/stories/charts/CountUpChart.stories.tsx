@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import CountUpChart, { Props } from "@/js/charts/CountUpChart";
+import CountUp, { Props } from "@/js/charts/CountUp";
 
 const meta: Meta<Props> = {
-  title: "charts/CountUp",
-  component: CountUpChart,
+  title: "metrics/CountUp",
+  component: CountUp,
   tags: ['autodocs'],
 };
 

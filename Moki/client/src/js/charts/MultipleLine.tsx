@@ -1,52 +1,51 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as d3 from "d3";
 import {
   getTimeBucket,
   getTimeBucketFormat,
   getTimeBucketInt,
-} from "@/js/helpers/getTimeBucket";
-import { parseTimestamp } from "@/js/helpers/parseTimestamp";
-import { showTooltip } from "@/js/helpers/tooltip.js";
-import { Colors, createFilter } from "@/gui";
+} from "../helpers/getTimeBucket";
 
 import store from "@/js/store";
 import { setTimerange as setReduxTimerange } from "@/js/slices";
-
-import { useAppSelector } from "@hooks/index";
+import NoData from "./NoData";
 import { useWindowWidth } from "@hooks/useWindowWidth";
+import { useAppSelector } from "@hooks/index";
+import { curtainTransition } from "@/js/d3helpers/curtainTransition";
 import { addDateBrush } from "@/js/d3helpers/addDateBrush";
 import { addDateAxis } from "@/js/d3helpers/addDateAxis";
-import { curtainTransition } from "@/js/d3helpers/curtainTransition";
-import NoData from "./NoData.js";
-import { formatValueISO } from "../helpers/formatValue.js";
-import { addValueAxis } from "../d3helpers/addValueAxis.js";
+import {
+  hideTooltip,
+  showTooltip,
+  tooltipTimeFormat,
+} from "@/js/d3helpers/tooltip";
+import { addValueAxis } from "../d3helpers/addValueAxis";
+import { formatValueISO } from "../helpers/formatValue";
+import { Colors, createFilter } from "@/gui";
 
-// STATE: absolute value or rate
-const ABSOLUTE_VALUES = [
-  "BLACKLISTED IPs",
-  "WHITELISTED IPs",
-  "LOAD-SHORTTERM",
-  "LOAD-MIDTERM",
-  "LOAD-LONGTERM",
-  "MEMORY-FREE",
-  "MEMORY-USED",
-  "MEMORY-CACHED",
-  "MEMORY-BUFFERED",
-  "CPU-USER",
-  "CPU-SYSTEM",
-  "CPU-IDLE",
-];
-
-interface Props {
-  id: string;
+interface Chart {
   name: string;
-  data: any[];
-  field?: string;
-  hostnames: string[];
+  values: ChartData[];
 }
 
-export default function MultipleLine(
-  { id, name, data, field, hostnames }: Props,
+interface ChartData {
+  date: number;
+  value: number;
+}
+
+export interface Props {
+  data: Chart[];
+  units: string;
+  name: string;
+  area: boolean;
+  absolute: boolean;
+  height?: number;
+  field?: string;
+  hostnames?: Record<string, string>;
+}
+
+export default function MultipleLines(
+  { name, absolute = true, height, ...props }: Props,
 ) {
   const timerange = store.getState().filter.timerange;
   const setTimerange = (newTimerange: [number, number, string]) => {
@@ -54,47 +53,57 @@ export default function MultipleLine(
   };
   const { navbarExpanded } = useAppSelector((state) => state.view);
 
-  // TODO: should be a parameter
-  const isAbsolute = ABSOLUTE_VALUES.includes(name) ? "absolute" : "rate";
+  // TODO: as parameters
+  let colors = Colors;
+  if (name === "PARALLEL REGS") {
+    colors = ["#caa547", "#A5CA47"];
+  } else if (name === "INCIDENTS") {
+    colors = ["#caa547", "#69307F"];
+  }
 
   return (
     <MultipleLineRender
       {...{
-        id,
         name,
-        data,
-        absolute: isAbsolute,
-        field: field ?? "attrs.hostname",
-        hostnames,
+        colors,
+        absolute,
         navbarExpanded,
         timerange: [timerange[0], timerange[1]],
         setTimerange,
+        totalHeight: height,
+        ...props,
       }}
     />
   );
 }
 
 export interface RenderProps {
-  id: string;
+  data: Chart[];
+  units: string;
   name: string;
-  data: any[];
-  field: string;
-  hostnames: string[];
+  totalHeight?: number;
+  area: boolean;
   absolute: boolean;
+  colors: string[];
   navbarExpanded: boolean;
   timerange: [number, number];
   setTimerange: (newTimerange: [number, number, string]) => void;
+  field?: string;
+  hostnames?: Record<string, string>;
 }
 
 export function MultipleLineRender(
   {
-    id,
-    name,
     data,
+    units,
+    area,
+    name,
+    absolute,
+    totalHeight = 190,
+    colors = Colors,
+    navbarExpanded,
     field,
     hostnames,
-    absolute,
-    navbarExpanded,
     timerange,
     setTimerange,
   }: RenderProps,
@@ -103,9 +112,9 @@ export function MultipleLineRender(
   const chartSVGRef = useRef<SVGSVGElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
-  const noData = data === undefined || data.length === 0;
+  const noData = data === undefined || data.length === 0 ||
+    (data[0].values.length === 0 && data[1].values.length === 0);
   const windowWidth = useWindowWidth();
-  const totalHeight = 190;
 
   const timeBucket = {
     name: getTimeBucket(timerange),
@@ -113,9 +122,24 @@ export function MultipleLineRender(
     format: getTimeBucketFormat(timerange),
   };
 
+  // transform to rate if needed
+  const transformedData = useMemo(() => {
+    if (absolute || noData) return data;
+    return data.map((chart) => {
+      const values = chart.values;
+      for (let i = 0; i < values.length; i++) {
+        const current = values[i];
+        if (!current) continue;
+        const next = values[i + 1] ?? current;
+        values[i].value = next.value - current.value;
+      }
+      return { ...chart, values };
+    });
+  }, [absolute, data]);
+
   useEffect(() => {
     draw(true);
-  }, [data, hostnames]);
+  }, [transformedData]);
 
   useEffect(() => {
     draw(false);
@@ -127,34 +151,6 @@ export function MultipleLineRender(
       return;
     }
 
-    if (!absolute) {
-      const divData = [];
-      for (var k = 0; k < data.length; k++) {
-        divData.push({
-          name: data[k].name,
-          values: [],
-        });
-        for (var l = 0; l < data[k].values.length - 1; l++) {
-          if (
-            data[k].values[l + 1].value === null ||
-            data[k].values[l].value === null
-          ) {
-            divData[k].values.push({
-              date: data[k].values[l].date,
-              value: null,
-            });
-          } else {
-            let val = data[k].values[l + 1].value - data[k].values[l].value;
-            divData[k].values.push({
-              date: data[k].values[l].date,
-              value: val < 0 ? 0 : val,
-            });
-          }
-        }
-      }
-      data = divData;
-    }
-
     // FOR UPDATE: clear chart svg, clean up lost tooltips
     chartSVGRef.current.innerHTML = "";
     tooltipRef.current.innerHTML = "";
@@ -164,15 +160,15 @@ export function MultipleLineRender(
     tooltip.append("div");
 
     const margin = {
-      top: 10,
+      top: 20,
       right: 20,
       bottom: 40,
-      left: 55,
+      left: 50,
     };
 
     const totalWidth = chartRef.current.clientWidth;
     const svgHeight = chartSVGRef.current.clientHeight;
-    const svgWidth = chartSVGRef.current.clientWidth;
+
     const legendWidth = 110;
     const legendSpacer = 10;
 
@@ -181,20 +177,27 @@ export function MultipleLineRender(
       totalWidth - (margin.left + margin.right + legendWidth),
     );
     const height = svgHeight - margin.top - margin.bottom;
-    const formatValue = formatValueISO();
 
-    const color = d3.scaleOrdinal().range(Colors);
+    data = transformedData;
+    const colorScale = d3.scaleOrdinal<number, string>().range(colors);
+    const labels = data.map((chart) => chart.name);
+    const getColor = (i: number) => {
+      const name = labels[i];
+      if (hostnames && hostnames[name]) return hostnames[name];
+      return colorScale(i);
+    };
+
     const duration = 250;
     const nbValueTicks = 5;
 
-    const lineOpacity = "0.45";
-    const lineOpacityHover = "0.85";
-    const otherlinesOpacityHover = "0.1";
-    const lineStroke = "2.5px";
-    const lineStrokeHover = "2.5px";
+    const otherAreasOpacityHover = 0.1;
+    const areaOpacity = 0.45;
+    const areaOpacityHover = 0.8;
+    const areaStrokeOpacity = 0.4;
+    const areaStrokeOpacityHover = 1;
+    const areaStroke = "2px";
 
     const circleOpacity = "0.85";
-    const circleOpacityOnlineHover = "0.25";
     const circleRadius = 3;
     const circleRadiusHover = 6;
 
@@ -204,13 +207,17 @@ export function MultipleLineRender(
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    // max and min date
-    const maxTime = timerange[1] + getTimeBucketInt(timerange);
-    const minTime = timerange[0];
+    // max and min time in data
+    const minDateTime = d3.min(data, (chart) => (
+      d3.min(chart.values, (d) => d.date)
+    )) ?? timerange[0];
+    const maxDateTime = d3.max(data, (chart) => (
+      d3.max(chart.values, (d) => d.date)
+    )) ?? Infinity;
 
-    // var width = svgWidth -
-    //   (margin.left + margin.right + legendSpacer + legendWidth);
-    // if (width < 100) width = 100;
+    // max and min time
+    const minTime = Math.min(minDateTime, timerange[0]);
+    const maxTime = Math.max(maxDateTime, timerange[1] + timeBucket.value);
 
     // min and max value in data
     const minValue = d3.min(data, (chart) => (
@@ -218,158 +225,178 @@ export function MultipleLineRender(
     )) ?? 0;
     const maxValue = d3.max(data, (chart) => (
       d3.max(chart.values, (d) => d.value)
-    )) ?? 1;
+    )) ?? nbValueTicks;
+
+    // add offset to max based on id
     const domain = Math.max(maxValue, nbValueTicks);
 
     // scale and axis
     const xScale = d3.scaleLinear()
       .range([0, width])
       .domain([minTime, maxTime]);
-    const yScale = d3.scaleLinear()
-      .domain([minValue, domain + domain / 10])
+    const yScale = d3.scaleLinear().domain([minValue, domain + domain / 8])
       .range([height, 0]);
 
-    // axis and selection
+    // date and values axis and selection
     addDateBrush(svg, width, height, xScale, setTimerange);
     addDateAxis(svg, width, height, xScale, timeBucket.format);
     addValueAxis(svg, width, yScale, nbValueTicks);
 
-    // line rendering
-    const line = d3.line()
+    // area and points
+    const areas = svg
+      .append("g")
+      .attr("class", "area-group")
+      .selectAll(".area-group")
+      .data(data).enter()
+      .append("g")
+      .attr("class", "area");
+
+    const styleAreaDefault = (index: number) => {
+      areasFill.style("opacity", 1.0);
+      areas.raise();
+      circles.selectAll(".circle").style("opacity", circleOpacity);
+      const areaChart = areas.filter((_d, i) => i === index)
+        .style("cursor", "pointer");
+      areaChart.selectAll(".area-fill")
+        .selectAll("path")
+        .style("fill", getColor(index))
+        .style("fill-opacity", area ? areaOpacity : 0)
+        .style("stroke", getColor(index))
+        .style("stroke-opacity", areaStrokeOpacity)
+        .style("stroke-width", areaStroke);
+    };
+
+    const styleAreaHover = (index: number) => {
+      areasFill.style("opacity", otherAreasOpacityHover)
+        .style("select", "none");
+      circles.selectAll(".circle").style("opacity", otherAreasOpacityHover);
+      const areaChart = areas.filter((_d, i) => i === index);
+      areaChart.raise();
+      areaChart.selectAll(".circle").style("opacity", circleOpacity);
+      areaChart.selectAll(".area-fill")
+        .select("path")
+        .style("opacity", 1.0)
+        .style("fill-opacity", area ? areaOpacityHover : 0)
+        .style("stroke-opacity", areaStrokeOpacityHover);
+    };
+
+    // circle data point in area
+    const circles = areas
+      .append("g")
+      .attr("class", "circle-group");
+
+    // individual circle rendering
+    circles
+      .each(function (d, i) {
+        const circleChart = d3.select(this);
+        circleChart
+          .selectAll(".circle")
+          .data(d.values).enter()
+          .append("circle")
+          .attr("class", "circle")
+          .attr("cx", (d) => xScale(d.date))
+          .attr("cy", (d) => yScale(d.value))
+          .attr("r", circleRadius)
+          .attr("fill", getColor(i))
+          .style("opacity", circleOpacity)
+          .on("mouseover", function (event, d) {
+            styleAreaHover(i);
+            d3.select(this).transition().duration(duration)
+              .attr("r", circleRadiusHover);
+            showTooltip(
+              event,
+              tooltip,
+              tooltipTimeFormat(
+                formatValueISO(d.value),
+                d.date,
+                timeBucket.name,
+                units,
+              ),
+            );
+          })
+          .on("mouseout", function () {
+            styleAreaDefault(i);
+            d3.select(this).transition().duration(duration)
+              .attr("r", circleRadius);
+            hideTooltip(tooltip);
+          });
+      });
+
+    // area and/or lines rendering
+
+    const areaGen = d3.area<ChartData>()
+      .x((d) => xScale(d.date))
+      .y1((d) => yScale(d.value))
+      .y0(height);
+
+    const lineGen = d3.line<ChartData>()
       .x((d) => xScale(d.date))
       .y((d) => yScale(d.value));
 
-    let lines = svg.append("g")
-      .attr("class", "lines")
-      .attr("transform", "translate(5,0)");
-
-    for (let row of data) {
-      row.values = row.values.map(
-        (obj) => (obj.value == null ? { ...obj, value: 0 } : obj),
+    const areasFill = areas
+      .append("g")
+      .attr("class", "area-fill")
+      .append("path")
+      .attr(
+        "d",
+        (d) => (area ? areaGen(d.values) : lineGen(d.values)),
       );
+
+    areasFill
+      .each(function (_d, i) {
+        const chartArea = d3.select(this);
+        styleAreaDefault(i);
+        return chartArea
+          .on("mouseover", function () {
+            styleAreaHover(i);
+          })
+          .on("mouseout", function () {
+            styleAreaDefault(i);
+          });
+      });
+
+    if (!area) {
+      areasFill.attr("pointer-events", "visibleStroke");
     }
 
-    lines.selectAll(".line-group")
-      .data(data).enter()
-      .append("g")
-      .attr("class", "line-group")
-      .append("path")
-      .attr("class", "line")
-      .attr("d", (d) => (d.values ? line(d.values) : 0))
-      .style(
-        "stroke",
-        (d, i) => hostnames && hostnames[d.name] ? hostnames[d.name] : color(i),
-      )
-      .style("opacity", lineOpacity)
-      .on("mouseover", function () {
-        d3.selectAll(".line")
-          .style("opacity", otherlinesOpacityHover);
-        d3.selectAll(".circle" + id)
-          .style("opacity", circleOpacityOnlineHover);
-        d3.select(this)
-          .style("opacity", lineOpacityHover)
-          .style("stroke-width", lineStrokeHover)
-          .style("cursor", "pointer");
-      })
-      .on("mouseout", function () {
-        d3.selectAll(".line")
-          .style("opacity", lineOpacity);
-        d3.selectAll(".circle" + id)
-          .style("opacity", circleOpacity);
-        d3.select(this)
-          .style("stroke-width", lineStroke)
-          .style("cursor", "none");
-      });
-
-    // Add circles in the line
-    lines.selectAll("circle-group" + id)
-      .data(data).enter()
-      .append("g")
-      .style(
-        "fill",
-        (d, i) => hostnames && hostnames[d.name] ? hostnames[d.name] : color(i),
-      )
-      .selectAll("circle" + id)
-      .data((d) => d.values).enter()
-      .append("g")
-      .attr("class", "circle" + id)
-      .style("cursor", "pointer")
-      .on("mouseover", function (event, d) {
-        tooltip.select("div").html(
-          "<strong>Time: </strong>" + parseTimestamp(d.date) + " + " +
-            getTimeBucket(timerange) + "<strong><br/>Value: </strong>" +
-            formatValue(d.value) + "<br/> ",
-        );
-        showTooltip(event, tooltip);
-      })
-      .on("mouseout", function () {
-        tooltip.style("visibility", "hidden");
-      })
-      .on("mousemove", function (event) {
-        showTooltip(event, tooltip);
-      })
-      .append("circle")
-      .attr("cx", (d) => xScale(d.date))
-      .attr("cy", (d) => yScale(d.value))
-      .attr("r", circleRadius)
-      .style("opacity", circleOpacity)
-      .on("mouseover", function () {
-        d3.select(this)
-          .transition()
-          .duration(duration)
-          .attr("r", circleRadiusHover);
-      })
-      .on("mouseout", function () {
-        d3.select(this)
-          .transition()
-          .duration(duration)
-          .attr("r", circleRadius);
-      });
-
+    // legend
     const legend = svg.append("g")
       .selectAll(".legend")
-      .data(data)
-      .enter().append("g")
+      .data(data).enter()
+      .append("g")
       .attr("class", "legend")
-      .each(function (_d) {
-        d3.select(this)
-          .on("click", (_event, d) => createFilter(`${field}:"${d.name}"`));
+      .each(function (_d, i) {
+        const labelField = d3.select(this);
+        labelField
+          .on("mouseover", () => styleAreaHover(i))
+          .on("mouseout", () => styleAreaDefault(i));
+
+        if (field == undefined) return;
+        labelField
+          .on("click", () => createFilter(`${field}:"${_d.name}"`));
       });
 
     legend.append("rect")
-      .attr("x", (_d, i) => 0)
-      .attr("y", (_d, i) => (i < 7) ? i * 17 : 0)
-      .attr("width", (_d, i) => (i < 7) ? 10 : 0)
-      .attr("height", (_d, i) => (i < 7) ? 10 : 0)
-      .style("fill", (d, i) => {
-        if (i >= 7 || !hostnames || !hostnames[d.name]) {
-          return color(i);
-        }
-        return hostnames[d.name];
-      });
+      .attr("y", (_d, i) => (i * 15))
+      .attr("width", 10)
+      .attr("height", 10)
+      .style("fill", (_d, i) => getColor(i));
 
     legend.append("text")
+      .attr("height", 20)
       .attr("x", 20)
-      .attr("y", (_d, i) => (i < 7) ? (i * 17 + 5) : 0)
-      .text(function (d, i) {
-        if (i >= 7) return "";
-        if (d.name.length > 20) return d.name.substring(0, 20) + "...";
-        return d.name;
-      })
-      .append("svg:title")
+      .attr("y", (_d, i) => (i * 15) + 8)
       .text((d) => d.name);
 
-    legend.raise();
-    legend.attr(
-      "transform",
-      "translate(" +
-        (svgWidth - legendWidth - margin.left - margin.right + legendSpacer) +
-        ",0)",
-    );
+    legend.raise()
+      .attr("transform", `translate(${width + legendSpacer}, 0)`);
 
     // curtain animation
     if (transition) {
-      curtainTransition(svgElement, totalWidth, svgHeight, margin);
+      curtainTransition(areas, width, svgHeight, {
+        bottom: margin.bottom * 1.5,
+        left: 0,
+      });
     }
   };
 
@@ -379,7 +406,7 @@ export function MultipleLineRender(
       className="chart d-flex flex-column"
       style={{ height: totalHeight + "px" }}
     >
-      <h3 className="alignLeft title" style={{ "float": "inherit" }}>
+      <h3 className="alignLeft title">
         {name} <span className="smallText">(interval: {timeBucket.name})</span>
       </h3>
       <div ref={tooltipRef} className="tooltip" />

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import ValueChart, { Props } from "@/js/charts/ValueChart";
+import Value, { Props } from "@/js/charts/Value";
 
 const meta: Meta<Props> = {
-  title: "charts/Value",
-  component: ValueChart,
+  title: "metrics/Value",
+  component: Value,
   argTypes: {
     color: {
       options: ["default", "zerogreen"],

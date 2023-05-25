@@ -1,7 +1,7 @@
 /*
 Class to get data for all charts iin Call dashboard
 */
-import ValueChart from "@charts/ValueChart";
+import Value from "@charts/Value";
 import ListChart from "@charts/list_chart.jsx";
 import TimedateStackedChart from "@charts/timedate_stackedbar.jsx";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
@@ -59,42 +59,42 @@ function RestrictedCharts() {
       {isLoading && <LoadingScreenCharts left="0" />}{" "}
       <div className="row no-gutters">
         <div className="col-auto">
-          <ValueChart
+          <Value
             data={chartsData.sumCallEnd}
             name={"# CALLS"}
             fontSize={"1.5rem"}
           />
         </div>{" "}
         <div className="col-auto">
-          <ValueChart
+          <Value
             data={chartsData.sumCallAttempt}
             name={"# ATTEMPTS"}
             fontSize={"1.5rem"}
           />
         </div>{" "}
         <div className="col-auto">
-          <ValueChart
+          <Value
             data={chartsData.durationSum}
             name={"SUM DURATION"}
             fontSize={"1.5rem"}
           />
         </div>{" "}
         <div className="col-auto">
-          <ValueChart
+          <Value
             data={chartsData.answerSeizureRatio}
             name={"ASR (%)"}
             fontSize={"1.5rem"}
           />
         </div>{" "}
         <div className="col-auto">
-          <ValueChart
+          <Value
             data={chartsData.avgDuration}
             name={"AVG LEN (min)"}
             fontSize={"1.5rem"}
           />
         </div>{" "}
         <div className="col-auto">
-          <ValueChart data={chartsData.avgMoS} name={"AVG MoS"} />
+          <Value data={chartsData.avgMoS} name={"AVG MoS"} />
         </div>
       </div>{" "}
       <div className="row no-gutters">

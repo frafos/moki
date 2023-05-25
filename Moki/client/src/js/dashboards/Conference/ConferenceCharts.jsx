@@ -3,7 +3,7 @@ Class to get data for all charts in Conference dashboard
 */
 import TimedateStackedChart from "@charts/timedate_stackedbar";
 import ListChart from "@charts/list_chart";
-import ValueChart from "@charts/ValueChart";
+import Value from "@charts/Value";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
 import {
   parseAggAvgCnt,
@@ -54,22 +54,22 @@ function ConferenceCharts() {
       {isLoading && <LoadingScreenCharts />}
       <div className="row no-gutters">
         <div className="col-auto">
-          <ValueChart data={chartsData.activeConf} name={"ACTIVE"} />
+          <Value data={chartsData.activeConf} name={"ACTIVE"} />
         </div>
         <div className="col-auto">
-          <ValueChart data={chartsData.sumCallEnd} name={"LEAVEs"} />
+          <Value data={chartsData.sumCallEnd} name={"LEAVEs"} />
         </div>
         <div className="col-auto">
-          <ValueChart data={chartsData.sumCallStart} name={"JOINs"} />
+          <Value data={chartsData.sumCallStart} name={"JOINs"} />
         </div>
         <div className="col-auto">
-          <ValueChart data={chartsData.durationSum} name={"MAX DURATION"} />
+          <Value data={chartsData.durationSum} name={"MAX DURATION"} />
         </div>
         <div className="col-auto">
-          <ValueChart data={chartsData.durationAvg} name={"AVG DURATION"} />
+          <Value data={chartsData.durationAvg} name={"AVG DURATION"} />
         </div>
         <div className="col-auto">
-          <ValueChart
+          <Value
             data={chartsData.avgParticipants}
             name={"AVG PARTICIPANT"}
           />

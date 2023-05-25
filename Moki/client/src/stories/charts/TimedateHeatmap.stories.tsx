@@ -5,7 +5,7 @@ import {
 } from "@/js/charts/TimedateHeatmap";
 import { timerangeProps } from "@/stories/utils/timerange";
 import type { TimerangeProps } from "@/stories/utils/timerange";
-import { genHeatmapData } from "@/data/charts/genHeatmapData";
+import { genHeatmapData } from "@/data/charts/genHeatmap";
 import { DAY_TIME } from "@/data/utils/date";
 import { parseDateHeatmap } from "@/es-response-parser";
 import { ChartGeneratorProps } from "@/data/types";
