@@ -160,12 +160,13 @@ export function TimedateBarRender(
     const maxTime = Math.max(maxDateTime, timerange[1] + timeBucket.value);
 
     // max value in data
-    const maxValue = d3.max(data, (d) => d.agg.value);
-    const domain = maxValue + maxValue / 3;
+    let maxValue = d3.max(data, (d) => d.agg.value);
     let nbTicks = 5;
     if (duration) {
+      maxValue = Math.max(maxValue, 360);
       nbTicks = Math.min(nbTicks, Math.round(maxValue / 60));
     }
+    const domain = maxValue + maxValue / 3;
 
     // scale and axis
     const xScale = d3.scaleLinear()
@@ -203,7 +204,10 @@ export function TimedateBarRender(
         return 0;
       })
       .attr("y", (d) => yScale(d.agg?.value) ?? 0)
-      .attr("height", (d) => (d.agg ? height - yScale(d.agg.value) : 0))
+      .attr(
+        "height",
+        (d) => ((d.agg && d.agg.value > 60) ? height - yScale(d.agg.value) : 0),
+      )
       .on("mouseover", function (event, d) {
         const formatedValue = formatValue(true)(d.agg.value);
         showTooltip(
