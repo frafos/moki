@@ -4,7 +4,7 @@ Class to get data for all charts iin Call dashboard
 
 import { useDashboardData } from "@hooks/useDashboardData";
 import LoadingScreenCharts from "../../helpers/LoadingScreenCharts";
-import MultipleLineChart from "@charts/multipleLine_chart";
+import MultipleLine from "@charts/MultipleLine";
 import { parseMultipleLineData } from "../../../es-response-parser";
 
 function RealmCharts({ hostnames }) {
@@ -42,7 +42,7 @@ function RealmCharts({ hostnames }) {
       {isLoading && <LoadingScreenCharts />}{" "}
       <div className="row no-gutters">
         <div className="col-6 pr-1">
-          <MultipleLineChart
+          <MultipleLine
             id="maxCallsFromByHost"
             hostnames={hostnames}
             data={chartsData.maxCallsFromByHost}
@@ -51,7 +51,7 @@ function RealmCharts({ hostnames }) {
           />
         </div>
         <div className="col-6 px-1">
-          <MultipleLineChart
+          <MultipleLine
             id="maxCallsToByHost"
             data={chartsData.maxCallsToByHost}
             name={"MAX CALLS TO BY HOST"}
@@ -60,7 +60,7 @@ function RealmCharts({ hostnames }) {
           />
         </div>
         <div className="col-6 pr-1">
-          <MultipleLineChart
+          <MultipleLine
             id="maxCallsFromByrealm"
             data={chartsData.maxCallsFromByrealm}
             hostnames={chartsData.realm}
@@ -70,7 +70,7 @@ function RealmCharts({ hostnames }) {
           />
         </div>
         <div className="col-6 px-1">
-          <MultipleLineChart
+          <MultipleLine
             id="maxCallsToByrealm"
             data={chartsData.maxCallsToByrealm}
             name={"MAX CALLS TO BY REALM"}
@@ -81,7 +81,7 @@ function RealmCharts({ hostnames }) {
         </div>
 
         <div className="col-6 pr-1">
-          <MultipleLineChart
+          <MultipleLine
             id="maxStartCallsFromByHost"
             data={chartsData.maxStartCallsFromByHost}
             hostnames={hostnames}
@@ -91,7 +91,7 @@ function RealmCharts({ hostnames }) {
         </div>
 
         <div className="col-6 px-1">
-          <MultipleLineChart
+          <MultipleLine
             id="maxStartCallsToByHost"
             data={chartsData.maxStartCallsToByHost}
             hostnames={hostnames}
@@ -101,7 +101,7 @@ function RealmCharts({ hostnames }) {
         </div>
 
         <div className="col-6 pr-1">
-          <MultipleLineChart
+          <MultipleLine
             id="maxStartCallsFromByrealm"
             data={chartsData.maxStartCallsFromByrealm}
             hostnames={hostnames}
@@ -112,7 +112,7 @@ function RealmCharts({ hostnames }) {
         </div>
 
         <div className="col-6 px-1">
-          <MultipleLineChart
+          <MultipleLine
             id="maxStartCallsToByrealm"
             data={chartsData.maxStartCallsToByrealm}
             hostnames={hostnames}
@@ -123,7 +123,7 @@ function RealmCharts({ hostnames }) {
         </div>
 
         <div className="col-6 pr-1">
-          <MultipleLineChart
+          <MultipleLine
             id="rtpToByHost"
             data={chartsData.rtpToByHost}
             hostnames={hostnames}
@@ -133,7 +133,7 @@ function RealmCharts({ hostnames }) {
         </div>
 
         <div className="col-6 px-1">
-          <MultipleLineChart
+          <MultipleLine
             id="rtpFromByHost"
             data={chartsData.rtpFromByHost}
             name={"RTP RELAYED FROM BY HOST"}
@@ -143,7 +143,7 @@ function RealmCharts({ hostnames }) {
         </div>
 
         <div className="col-6 pr-1">
-          <MultipleLineChart
+          <MultipleLine
             id="rtpToByRealm"
             data={chartsData.rtpToByRealm}
             name={"RTP RELAYED TO BY REALM"}
@@ -154,7 +154,7 @@ function RealmCharts({ hostnames }) {
         </div>
 
         <div className="col-6 px-1">
-          <MultipleLineChart
+          <MultipleLine
             id="rtpFromByRealm"
             data={chartsData.rtpFromByRealm}
             name={"RTP RELAYED FROM BY REALM"}

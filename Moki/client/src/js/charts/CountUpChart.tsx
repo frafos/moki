@@ -1,6 +1,6 @@
 import { formatDuration } from "@/js/helpers/formatTime";
 import { useEffect, useRef } from "react";
-import CountUp, { useCountUp } from "react-countup";
+import { useCountUp } from "react-countup";
 
 export interface Props {
   name: string;

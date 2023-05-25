@@ -22,8 +22,6 @@ import {
   parseRatio,
 } from "../../../es-response-parser";
 
-import { useSelector } from "react-redux";
-
 function HomeCharts() {
   const { chartsData, charts, isLoading } = useDashboardData("home/charts", {
     functors: [

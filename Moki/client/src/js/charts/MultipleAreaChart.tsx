@@ -308,7 +308,8 @@ export function MultipleAreaChartRender(
       });
 
     // legend
-    const legend = svg.selectAll(".legend")
+    const legend = svg.append("g")
+      .selectAll(".legend")
       .data(data).enter()
       .append("g")
       .attr("class", "legend")

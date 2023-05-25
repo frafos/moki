@@ -179,7 +179,6 @@ export function TimedateHeatmapRender(
     tooltip.style("visibiliy", "hidden");
     tooltip.append("div");
 
-    const formatedUnits = units ? "(" + units + ")" : "";
     const margin = {
       top: 10,
       right: 40,
