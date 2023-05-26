@@ -38,14 +38,14 @@ export interface Props {
   units: string;
   name: string;
   area: boolean;
-  absolute: boolean;
+  rate?: boolean;
   height?: number;
   field?: string;
   hostnames?: Record<string, string>;
 }
 
 export default function MultipleLines(
-  { name, absolute = true, height, ...props }: Props,
+  { name, rate = false, height, ...props }: Props,
 ) {
   const timerange = store.getState().filter.timerange;
   const setTimerange = (newTimerange: [number, number, string]) => {
@@ -66,7 +66,7 @@ export default function MultipleLines(
       {...{
         name,
         colors,
-        absolute,
+        absolute: !rate,
         navbarExpanded,
         timerange: [timerange[0], timerange[1]],
         setTimerange,
@@ -125,14 +125,24 @@ export function MultipleLineRender(
   // transform to rate if needed
   const transformedData = useMemo(() => {
     if (absolute || noData) return data;
+
     return data.map((chart) => {
-      const values = chart.values;
+      let values = chart.values;
       for (let i = 0; i < values.length; i++) {
         const current = values[i];
-        if (!current) continue;
-        const next = values[i + 1] ?? current;
-        values[i].value = next.value - current.value;
+        const next = values[i + 1];
+        if (next == undefined) continue;
+
+        const valueDiff = next.value - current.value;
+        const timeDiff = next.date - current.date;
+        if (timeDiff === 0) continue;
+
+        values[i].value = valueDiff / (timeDiff / 1000);
       }
+
+      values.pop();
+      values = values.filter((data) => data.value > 0);
+
       return { ...chart, values };
     });
   }, [absolute, data]);
@@ -219,10 +229,7 @@ export function MultipleLineRender(
     const minTime = Math.min(minDateTime, timerange[0]);
     const maxTime = Math.max(maxDateTime, timerange[1] + timeBucket.value);
 
-    // min and max value in data
-    const minValue = d3.min(data, (chart) => (
-      d3.min(chart.values, (d) => d.value)
-    )) ?? 0;
+    // max value in data
     const maxValue = d3.max(data, (chart) => (
       d3.max(chart.values, (d) => d.value)
     )) ?? nbValueTicks;
@@ -234,7 +241,7 @@ export function MultipleLineRender(
     const xScale = d3.scaleLinear()
       .range([0, width])
       .domain([minTime, maxTime]);
-    const yScale = d3.scaleLinear().domain([minValue, domain + domain / 8])
+    const yScale = d3.scaleLinear().domain([0, domain + domain / 8])
       .range([height, 0]);
 
     // date and values axis and selection

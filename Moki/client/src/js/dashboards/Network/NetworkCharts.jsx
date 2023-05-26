@@ -71,6 +71,7 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
+                rate
                 field={"attrs.hostname"}
                 hostnames={hostnames}
                 data={chartsData.callStartsByHost}
@@ -82,6 +83,7 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
+                rate
                 field={"attrs.hostname"}
                 hostnames={hostnames}
                 data={chartsData.relayedRtpByHost}
@@ -93,6 +95,7 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
+                rate
                 field={"attrs.hostname"}
                 hostnames={hostnames}
                 data={chartsData.txBytesByHost}
@@ -104,6 +107,7 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
+                rate
                 field={"attrs.hostname"}
                 hostnames={hostnames}
                 data={chartsData.rxPacketByHost}
@@ -115,6 +119,7 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
+                rate
                 field={"attrs.hostname"}
                 hostnames={hostnames}
                 data={chartsData.txPacketByHost}
@@ -126,6 +131,7 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
+                rate
                 field="type_instance"
                 hostnames={hostnames}
                 data={chartsData.rxBytesByInterface}
@@ -137,6 +143,7 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
+                rate
                 field="type_instance"
                 hostnames={hostnames}
                 data={chartsData.txBytesByInterface}
@@ -148,6 +155,7 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 px-1">
               <MultipleLine
+                rate
                 field="type_instance"
                 hostnames={hostnames}
                 data={chartsData.rxPacketByInterface}
@@ -159,6 +167,7 @@ function NetworkCharts({ hostnames }) {
           (
             <div className="col-6 pr-1">
               <MultipleLine
+                rate
                 field="type_instance"
                 hostnames={hostnames}
                 data={chartsData.txPacketByInterface}

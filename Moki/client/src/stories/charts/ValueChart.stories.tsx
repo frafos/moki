@@ -19,7 +19,7 @@ type Story = StoryObj<Props>;
 
 export const Number: Story = {
   args: {
-    data: 0,
+    data: 123456,
     name: "# CALLS",
     color: "zerogreen",
   },
