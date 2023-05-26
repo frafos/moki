@@ -435,7 +435,7 @@ create new user with password in htpasswd
         }
         if (!attrExists) {
           jsonData["general"]["global-config"][i]["attrs"].push({
-            attribute: "ccmAddr",
+            attribute: attrName,
             value: value
           });
         }
@@ -449,7 +449,7 @@ create new user with password in htpasswd
       jsonData["general"]["global-config"].push({
         app: "m_config",
         attrs: [{
-          attribute: "ccmAddr",
+          attribute: attrName,
           value: value
         }]
       });
