@@ -436,7 +436,7 @@ create new user with password in htpasswd
         if (!attrExists) {
           jsonData["general"]["global-config"][i]["attrs"].push({
             attribute: "ccmAddr",
-            value: req.body.ccmAddr
+            value: value
           });
         }
 
@@ -450,7 +450,7 @@ create new user with password in htpasswd
         app: "m_config",
         attrs: [{
           attribute: "ccmAddr",
-          value: req.body.ccmAddr
+          value: value
         }]
       });
     }
